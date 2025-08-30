@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: "Gennaro";
+  font-weight: 400;
+  src: url("/fonts/gennaro.ttf");
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@font-face {
+  font-family: "Break Regular";
+  font-weight: 400;
+  src: url("/fonts/breakRegular.ttf");
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@font-face {
+  font-family: "Clash Display M";
+  font-weight: 400;
+  src: url("/fonts/ClashDisplayM.otf");
+}
+
+@font-face {
+  font-family: "Clash Display B";
+  font-weight: 400;
+  src: url("/fonts/ClashDisplayB.otf");
+}
+
+@font-face {
+  font-family: "Hermano";
+  font-weight: 400;
+  src: url("/fonts/HermanoAltoStamp.ttf");
+}
+
+@theme {
+  --color-offNegro: #0f0f0f;
+  --color-azul: #2a36f6;
+  --color-mar: #2abdf6;
+  --color-fresa: #b620e0;
+  --color-ama: #fbdb86;
+
+  --font-gen: "Gennaro";
+  --font-break: "Break Regular";
+  --font-clashM: "Clash Display M";
+  --font-clashB: "Clash Display B";
+  --font-herm: "Hermano";
+}
+
+@layer base {
+  body {
+    font-family: var(--font-clashM);
+  }
+
+  h1 {
+    font-family: var(--font-clashB);
+  }
+
+  h2 {
+    font-family: var(--font-herm);
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-clashM);
+  }
+
+  button {
+    font-family: var(--font-break);
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: var(--font-clash);
+  }
+
+  .font-mono {
+    font-family: var(--font-herm);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-gen {
+    font-family: var(--font-gen);
+  }
+  .font-break {
+    font-family: var(--font-break);
+  }
+  .font-clashM {
+    font-family: var(--font-clashM);
+  }
+  .font-clashB {
+    font-family: var(--font-clashB);
+  }
+  .font-herm {
+    font-family: var(--font-herm);
+  }
+}
+
+html {
+  background-color: #111313;
+  overflow-x: hidden;
+  color: white;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><text x='15' y='20' font-family='monospace' font-size='14' fill='white'>×</text><text x='45' y='20' font-family='monospace' font-size='14' fill='%232abdf6'>×</text><text x='15' y='50' font-family='monospace' font-size='14' fill='%232abdf6'>×</text><text x='45' y='50' font-family='monospace' font-size='14' fill='white'>×</text></svg>");
+  background-repeat: repeat;
+  scrollbar-width: 2px;
+  scrollbar-color: #2abdf6 #f1f1f1;
+  scrollbar-face-color: #078fd6;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2abdf6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #078fd6;
+}
+
+button {
+  cursor: pointer;
+}
+
+#title {
+  -webkit-text-stroke: 1px white;
+  -moz-text-stroke: 1px white;
+  text-stroke: 1px white;
 }
