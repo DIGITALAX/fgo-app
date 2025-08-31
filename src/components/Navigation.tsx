@@ -12,12 +12,12 @@ export const Navigation = () => {
       <div className="relative flex w-fit h-fit max-w-full">
         <div className="bg-black backdrop-blur-sm border-2 border-mar px-3 sm:px-6 py-2 sm:py-3 w-full">
           <div className="flex items-center space-x-2 sm:space-x-6 justify-center flex-wrap sm:flex-nowrap">
-            <div className="relative w-full h-fit flex flex-col items-center justify-start gap-2 sm:gap-0 flex-shrink-0">
-              <div className="relative font-gen uppercase flex w-full text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center tracking-widest">
+            <div className="relative w-fit h-fit flex flex-col items-center justify-start gap-2 sm:gap-0 flex-shrink-0">
+              <div className="relative font-gen uppercase flex w-fit text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center tracking-widest">
                 FGO
               </div>
               <div
-                className="absolute text-black font-gen uppercase flex w-full text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
+                className="absolute text-black font-gen uppercase flex w-fit text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
                 id="title"
               >
                 FGO
@@ -36,12 +36,12 @@ export const Navigation = () => {
                       : "hover:text-mar/80"
                   }`}
                 >
-                  <div className="relative w-full h-fit flex flex-col items-center justify-start gap-2 sm:gap-0">
-                    <div className="relative font-gen uppercase flex w-full text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center tracking-widest">
+                  <div className="relative w-fit h-fit flex flex-col items-center justify-start gap-2 sm:gap-0">
+                    <div className="relative font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center tracking-widest">
                       {item.label}
                     </div>
                     <div
-                      className="absolute text-black font-gen uppercase flex w-full text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
+                      className="absolute text-black font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
                       id="title"
                     >
                       {item.label}
