@@ -3,8 +3,8 @@ import { Child, Template } from "@/components/Item/types";
 import { ChildSelectionModalProps } from "../../../types";
 
 const validateAmountInput = (value: string): boolean => {
-  if (value === '') return true; // Allow empty for clearing
-  return /^\d+$/.test(value) && parseInt(value) > 0; // Positive whole numbers only
+  if (value === '') return true;
+  return /^\d+$/.test(value) && parseInt(value) > 0; 
 };
 
 export const useChildSelectionModal = ({

@@ -100,11 +100,11 @@ export const CreateItemModal = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-black rounded-sm border border-white w-full max-w-4xl max-h-full overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-white flex-shrink-0">
+    <div className="fixed inset-0 bg-black backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-black rounded-sm border border-white w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-full overflow-hidden flex flex-col">
+        <div className="p-3 sm:p-4 border-b border-white flex-shrink-0">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-herm text-white">
+            <h2 className="text-base sm:text-lg font-herm text-white">
               {isEditMode
                 ? `Edit ${
                     mode === "parent"
@@ -132,7 +132,7 @@ export const CreateItemModal = ({
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <form onSubmit={handleSubmit} className="p-4 space-y-6">
+          <form onSubmit={handleSubmit} className="p-3 sm:p-4 space-y-4 sm:space-y-6">
             {!(mode === "parent" && isEditMode) && (
               <div>
                 <h3 className="text-base font-herm text-white mb-3">
@@ -422,7 +422,7 @@ export const CreateItemModal = ({
                     Child Placements
                   </h3>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <p className="text-sm text-white font-herm">
                         Add up to 50 children to this{" "}
                         {mode === "parent" ? "design" : "template"}
@@ -433,7 +433,7 @@ export const CreateItemModal = ({
                         disabled={
                           loading || formData.childReferences.length >= 50
                         }
-                        className="px-3 py-2 bg-white hover:opacity-70 disabled:opacity-50 text-black text-sm font-herm rounded-sm transition-colors"
+                        className="px-3 py-2 bg-white hover:opacity-70 disabled:opacity-50 text-black text-sm font-herm rounded-sm transition-colors whitespace-nowrap"
                       >
                         Add Children ({formData.childReferences.length}/50)
                       </button>

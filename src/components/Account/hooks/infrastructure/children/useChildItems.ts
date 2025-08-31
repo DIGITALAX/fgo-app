@@ -219,7 +219,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
               : formData.physicalReferencesOpenToAll,
           standaloneAllowed: formData.standaloneAllowed,
           childUri: `ipfs://${metadataHash}`,
-          authorizedMarkets: formData.authorizedMarkets as `0x${string}`[],
+          authorizedMarkets: formData.authorizedMarkets as any as `0x${string}`[],
         };
         if (abortController?.signal.aborted) {
           throw new Error('Operation cancelled');

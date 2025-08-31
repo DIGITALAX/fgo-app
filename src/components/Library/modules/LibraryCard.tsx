@@ -27,9 +27,9 @@ export const LibraryCard = ({ data, onClick }: LibraryCardProps) => {
   return (
     <div
       onClick={handleClick}
-      className="group overflow-hidden gap-2 flex flex-col cursor-pointer transition-colors p-2"
+      className="group overflow-hidden gap-1 sm:gap-2 flex flex-col cursor-pointer transition-colors p-1 sm:p-2"
     >
-      <div className="border border-white rounded-sm p-2 group-hover:border-fresa transition-colors">
+      <div className="border border-white rounded-sm p-1 sm:p-2 group-hover:border-fresa transition-colors">
         {detalles?.imageURL && (
           <div className="aspect-square w-full relative">
             <Image
@@ -42,15 +42,15 @@ export const LibraryCard = ({ data, onClick }: LibraryCardProps) => {
           </div>
         )}
       </div>
-      <div className="border border-white rounded-sm w-full flex flex-row gap-2 justify-between p-2 text-xs uppercase font-break text-ama group-hover:border-fresa transition-colors">
-        <div className="relative w-fit h-fit flex">{data?.availability}</div>
-        <div className="relative w-fit h-fit flex">{data?.scm}</div>
+      <div className="border border-white rounded-sm w-full flex flex-row gap-1 sm:gap-2 justify-between p-1 sm:p-2 text-xs uppercase font-break text-ama group-hover:border-fresa transition-colors">
+        <div className="relative w-fit h-fit flex truncate">{data?.availability}</div>
+        <div className="relative w-fit h-fit flex truncate">{data?.scm}</div>
       </div>
-      <div className="space-y-2 border border-white rounded-sm p-2 group-hover:border-fresa transition-colors">
-        <div className="flex items-center justify-between">
-          <span className="text-xs truncate">{detalles?.proveedorT}</span>
+      <div className="space-y-1 sm:space-y-2 border border-white rounded-sm p-1 sm:p-2 group-hover:border-fresa transition-colors">
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-xs truncate flex-1 min-w-0">{detalles?.proveedorT}</span>
           <span
-            className={`px-2 py-1 rounded bg-ama/20 border border-ama text-xs`}
+            className={`px-1 sm:px-2 py-1 rounded bg-ama/20 border border-ama text-xs whitespace-nowrap flex-shrink-0`}
           >
             {statusLabel}
           </span>
@@ -62,20 +62,20 @@ export const LibraryCard = ({ data, onClick }: LibraryCardProps) => {
 
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
-            <span>Digital:</span>
-            <span className="text-ama">{detalles?.precioD}</span>
+            <span className="truncate">Digital:</span>
+            <span className="text-ama truncate ml-1">{detalles?.precioD}</span>
           </div>
           {detalles?.precioP && (
             <div className="flex justify-between">
-              <span>Physical:</span>
-              <span className="text-ama">{detalles?.precioP}</span>
+              <span className="truncate">Physical:</span>
+              <span className="text-ama truncate ml-1">{detalles?.precioP}</span>
             </div>
           )}
           <div className="flex justify-between">
-            <span>Usage:</span>
-            <span className="text-white">{data.usageCount}</span>
+            <span className="truncate">Usage:</span>
+            <span className="text-white truncate ml-1">{data.usageCount}</span>
           </div>
-          <div className="text-sm font-gen">{formattedDate}</div>
+          <div className="text-xs sm:text-sm font-gen truncate">{formattedDate}</div>
         </div>
       </div>
     </div>

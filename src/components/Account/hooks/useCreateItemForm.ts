@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { CreateItemFormData, ChildReference, FulfillmentWorkflow } from "../types";
+import { CreateItemFormData, ChildReference, Workflow } from "../types";
 import { Child, Template } from "@/components/Item/types";
 import { Parent } from "../types";
 import { formatPrice } from "@/lib/helpers/pricing";
@@ -7,13 +7,11 @@ import { parseAvailability } from "@/lib/helpers/availability";
 import { fetchMetadataFromIPFS } from "@/lib/helpers/ipfs";
 
 const validateNumberInput = (value: string, fieldType: 'price' | 'edition'): boolean => {
-  if (value === '') return true; // Allow empty for user to clear field
+  if (value === '') return true;
   
   if (fieldType === 'price') {
-    // Prices: non-negative decimals (0.00 minimum)
     return /^\d*\.?\d*$/.test(value) && parseFloat(value) >= 0;
   } else if (fieldType === 'edition') {
-    // Editions: non-negative whole numbers (0 minimum)
     return /^\d+$/.test(value) && parseInt(value) >= 0;
   }
   
@@ -56,10 +54,14 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
       if ('designId' in editItem) {
         const parent = editItem as Parent;
         const authorizedMarkets = Array.isArray(parent.authorizedMarkets) 
-          ? parent.authorizedMarkets as string[]
+          ? parent.authorizedMarkets.map((market: any) => 
+              typeof market === 'string' ? market : market.contractAddress || market.id
+            )
           : parent.authorizedMarkets && typeof parent.authorizedMarkets === 'object'
-            ? Object.values(parent.authorizedMarkets) as string[]
-            : [] as string[];
+            ? Object.values(parent.authorizedMarkets).map((market: any) => 
+                typeof market === 'string' ? market : market.contractAddress || market.id
+              )
+            : [];
 
         return {
           digitalPrice: formatPrice(parent.digitalPrice, 18),
@@ -92,9 +94,11 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
       } else {
         const childOrTemplate = editItem as Child | Template;
         const authorizedMarkets = Array.isArray(childOrTemplate.authorizedMarkets) 
-          ? childOrTemplate.authorizedMarkets 
+          ? childOrTemplate.authorizedMarkets.map((market: any) => 
+              typeof market === 'string' ? market : market.contractAddress || market.id
+            )
           : childOrTemplate.authorizedMarkets && typeof childOrTemplate.authorizedMarkets === 'string'
-            ? childOrTemplate.authorizedMarkets.split(",").map(m => m.trim()).filter(m => m) 
+            ? (childOrTemplate.authorizedMarkets as string).split(",").map((m: string) => m.trim()).filter((m: string) => m) 
             : [];
         return {
           digitalPrice: formatPrice(childOrTemplate.digitalPrice, 18),
@@ -193,7 +197,6 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
-    // Metadata fields
     if (name === 'title' || name === 'description' || name === 'prompt' || name === 'aiModel' || name === 'workflow') {
       setFormData(prev => ({
         ...prev,
@@ -203,7 +206,6 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
         }
       }));
     } 
-    // Availability field
     else if (name === "availability") {
       const newAvailability = parseInt(value);
       setFormData(prev => ({ 
@@ -216,7 +218,6 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
         maxPhysicalEditions: newAvailability === 0 ? "0" : prev.maxPhysicalEditions,
       }));
     }
-    // Price fields - allow decimals, non-negative
     else if (name === 'digitalPrice' || name === 'physicalPrice') {
       if (validateNumberInput(value, 'price')) {
         setFormData(prev => ({ 
@@ -225,7 +226,6 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
         }));
       }
     }
-    // Edition fields - whole numbers only, non-negative  
     else if (name === 'maxPhysicalEditions' || name === 'maxDigitalEditions' || name === 'version') {
       if (validateNumberInput(value, 'edition')) {
         setFormData(prev => ({ 
@@ -234,7 +234,6 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
         }));
       }
     }
-    // All other fields
     else {
       setFormData(prev => ({ 
         ...prev, 
@@ -315,7 +314,7 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
     }));
   }, []);
 
-  const handleWorkflowChange = useCallback((workflow: FulfillmentWorkflow) => {
+  const handleWorkflowChange = useCallback((workflow: Workflow) => {
     setFormData(prev => ({
       ...prev,
       fulfillmentWorkflow: workflow

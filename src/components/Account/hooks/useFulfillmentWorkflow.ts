@@ -156,7 +156,7 @@ export const useFulfillmentWorkflow = (initialWorkflow?: Workflow) => {
         (total, sub) => total + sub.splitBasisPoints,
         0
       );
-      return Math.max(0, 10000 - totalSubSplit); // 10000 basis points = 100%
+      return Math.max(0, 10000 - totalSubSplit);
     },
     []
   );

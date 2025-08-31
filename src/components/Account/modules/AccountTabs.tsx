@@ -10,19 +10,19 @@ export const AccountTabs = ({ activeTab, onTabChange }: AccountTabsProps) => {
   ];
 
   return (
-    <div className="border-b border-white bg-black mb-6">
-      <div className="flex overflow-x-auto">
+    <div className="border-b border-white bg-black mb-3 sm:mb-6">
+      <div className="flex overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-herm border-b-2 whitespace-nowrap transition-colors ${
+            className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-herm border-b-2 whitespace-nowrap transition-colors min-w-0 flex-shrink-0 ${
               activeTab === tab.id
                 ? "border-ama text-ama bg-ama/10"
                 : "border-transparent text-white/60 hover:text-white hover:bg-white/10"
             }`}
           >
-            <span>{tab.label}</span>
+            <span className="truncate">{tab.label}</span>
           </button>
         ))}
       </div>

@@ -193,7 +193,7 @@ export const useTemplateItems = (contractAddress: string) => {
               : formData.physicalReferencesOpenToAll,
           standaloneAllowed: formData.standaloneAllowed,
           childUri: `ipfs://${metadataHash}`,
-          authorizedMarkets: formData.authorizedMarkets as `0x${string}`[],
+          authorizedMarkets: formData.authorizedMarkets as any as `0x${string}`[],
         };
 
         const placements = await Promise.all(
