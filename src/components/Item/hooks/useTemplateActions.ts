@@ -26,12 +26,9 @@ export const useTemplateActions = (
 
   const isReserved = Number(template?.status) === 0;
   const areAllChildrenAuthorized =
-    template?.childReferences?.every(
-      (childRef: any) =>
-        Number(childRef.child?.status) === 1 ||
-        childRef.child?.isApproved === true
-    ) || false;
+    template?.childReferences?.length == template?.authorizedChildren?.length;
   const canCreate = isReserved && areAllChildrenAuthorized;
+
 
   const handleCreateTemplate = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
@@ -172,8 +169,6 @@ export const useTemplateActions = (
               ? formData.availability
               : parseInt(template.availability),
           makeImmutable: !template.isImmutable && formData.isImmutable === true,
-          digitalMarketsOpenToAll: formData.digitalMarketsOpenToAll,
-          physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll,
           standaloneAllowed:
             formData.standaloneAllowed !== undefined
               ? formData.standaloneAllowed
@@ -196,7 +191,7 @@ export const useTemplateActions = (
         const hash = await walletClient.writeContract({
           address: contractAddress as `0x${string}`,
           abi: ABIS.FGOTemplateChild,
-          functionName: "updateTemplate",
+          functionName: "updateChild",
           args: [updateParams],
         });
 

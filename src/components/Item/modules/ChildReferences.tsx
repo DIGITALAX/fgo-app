@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { ChildMetadata, ChildReferencesProps } from "../types";
+import {  ChildReferencesProps } from "../types";
 import Image from "next/image";
 
 export const ChildReferences = ({ childData }: ChildReferencesProps) => {

@@ -22,15 +22,9 @@ export const useParentActions = (
   const canDelete = parseInt(parent?.totalPurchases || "0") === 0;
 
   const isReserved = Number(parent?.status) === 0;
-  const areAllChildrenApproved =
-    !parent?.childReferences ||
-    parent.childReferences.length === 0 ||
-    parent.childReferences.every(
-      (childRef: any) =>
-        Number(childRef.child?.status) === 1 ||
-        childRef.child?.isApproved === true
-    );
-  const canCreate = isReserved && areAllChildrenApproved;
+  const areAllChildrenAuthorized =
+    parent?.childReferences?.length == parent?.authorizedChildren?.length;
+  const canCreate = isReserved && areAllChildrenAuthorized;
 
   const handleCreateParent = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
@@ -125,8 +119,6 @@ export const useParentActions = (
         physicalPrice: parseEther(formData.physicalPrice || "0"),
         maxDigitalEditions: BigInt(formData.maxDigitalEditions || "0"),
         maxPhysicalEditions: BigInt(formData.maxPhysicalEditions || "0"),
-        digitalMarketsOpenToAll: formData.digitalMarketsOpenToAll || false,
-        physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll || false,
         authorizedMarkets: formData.authorizedMarkets?.length > 0 
           ? (formData.authorizedMarkets as `0x${string}`[])
           : ((Array.isArray(parent.authorizedMarkets)

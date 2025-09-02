@@ -11,7 +11,11 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
     handleParentClick,
     formatTimestamp,
     getStatusInfo,
-  } = useItemRequests();
+    getImageUrl,
+    processedParentRequests,
+    processedTemplateRequests,
+    loading,
+  } = useItemRequests(item);
 
   const getItemId = () => {
     if ("childId" in item) return item.childId;
@@ -53,12 +57,8 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
   } = useApprovalActions(getContractAddress(), getItemId(), getContractType());
 
   const hasRequests =
-    ("templateRequests" in item &&
-      item.templateRequests &&
-      item.templateRequests.length > 0) ||
-    ("parentRequests" in item &&
-      item.parentRequests &&
-      item.parentRequests.length > 0) ||
+    processedTemplateRequests.length > 0 ||
+    processedParentRequests.length > 0 ||
     (item.marketRequests && item.marketRequests.length > 0);
 
   if (!hasRequests) {
@@ -156,13 +156,11 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
         </div>
       )}
 
-      {"templateRequests" in item &&
-        item.templateRequests &&
-        item.templateRequests.length > 0 && (
+      {processedTemplateRequests.length > 0 && (
           <div className="mb-6">
             <h4 className="text-ama font-herm mb-3">Template Requests</h4>
             <div className="space-y-3">
-              {item.templateRequests.map((request, index: number) => (
+              {processedTemplateRequests.map((request, index: number) => (
                 <div
                   key={index}
                   className="bg-black/20 border border-white/30 rounded-sm p-4"
@@ -177,9 +175,16 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
                               request.templateId
                             )
                           }
-                          className="text-ama hover:text-ama/80 font-herm text-sm underline"
+                          className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
                         >
-                          Template {request.templateId}
+                          {request.template?.metadata?.image && (
+                            <img
+                              src={getImageUrl(request.template.metadata.image)}
+                              alt=""
+                              className="w-6 h-6 rounded-sm object-cover"
+                            />
+                          )}
+                          {request.template?.metadata?.title || `Template ${request.templateId}`}
                         </button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
@@ -248,13 +253,11 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
           </div>
         )}
 
-      {"parentRequests" in item &&
-        item.parentRequests &&
-        item.parentRequests.length > 0 && (
+      {processedParentRequests.length > 0 && (
           <div>
             <h4 className="text-ama font-herm mb-3">Parent Requests</h4>
             <div className="space-y-3">
-              {item.parentRequests.map((request, index: number) => (
+              {processedParentRequests.map((request, index: number) => (
                 <div
                   key={index}
                   className="bg-black/20 border border-white/30 rounded-sm p-4"
@@ -269,9 +272,16 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
                               request.parentId
                             )
                           }
-                          className="text-ama hover:text-ama/80 font-herm text-sm underline"
+                          className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
                         >
-                          Parent {request.parentId}
+                          {request.parent?.metadata?.image && (
+                            <img
+                              src={getImageUrl(request.parent.metadata.image)}
+                              alt=""
+                              className="w-6 h-6 rounded-sm object-cover"
+                            />
+                          )}
+                          {request.parent?.metadata?.title || `Parent ${request.parentId}`}
                         </button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">

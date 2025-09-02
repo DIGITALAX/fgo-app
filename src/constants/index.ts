@@ -94,11 +94,11 @@ export const getCurrentNetwork = (): NetworkConfig => {
 
 export const CORE_CONTRACT_ADDRESSES: Record<number, CoreContractAddresses> = {
   [NETWORKS.LENS_TESTNET.chainId]: {
-    Factory: "0x045c34c6604cc9f1c3d24961d36292b9db583ead",
+    Factory: "0x906b05fb0e297d6c8c1d812ae872d2daa6c4b3c8",
     TestToken: "0xE5E9D4C119a28302EDa029155bF00efd35E06c93",
   },
   [NETWORKS.LENS_MAINNET.chainId]: {
-    Factory: "0x045c34c6604cc9f1c3d24961d36292b9db583ead",
+    Factory: "0x906b05fb0e297d6c8c1d812ae872d2daa6c4b3c8",
     TestToken: "0xE5E9D4C119a28302EDa029155bF00efd35E06c93",
   },
 };

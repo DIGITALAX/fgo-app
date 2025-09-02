@@ -93,6 +93,7 @@ export const useCreateParent = (contractAddress: string) => {
         },
       };
 
+
       const hash = await walletClient.writeContract({
         address: contractAddress as `0x${string}`,
         abi: ABIS.FGOParent,

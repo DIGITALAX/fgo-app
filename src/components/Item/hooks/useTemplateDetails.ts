@@ -70,7 +70,6 @@ export const useTemplateDetails = (
           finalAuthorizedChildren = [...finalAuthorizedChildren, ...childRefsToAdd];
         }
 
-
         setTemplate({
           templateId: templateData.templateId,
           templateContract: templateData.templateContract,

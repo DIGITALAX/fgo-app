@@ -104,28 +104,28 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                 </button>
               </div>
 
-              {Object.entries(customFields).map(([key, value], index) => (
-                <div key={index} className="flex gap-2 mb-2">
+              {customFields.map((field) => (
+                <div key={field.id} className="flex gap-2 mb-2">
                   <input
                     type="text"
-                    value={key}
+                    value={field.key}
                     onChange={(e) =>
-                      updateCustomField(key, e.target.value, value)
+                      updateCustomField(field.id, e.target.value, field.value)
                     }
                     placeholder="Field name"
                     className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
                   />
                   <input
                     type="text"
-                    value={value}
+                    value={field.value}
                     onChange={(e) =>
-                      updateCustomField(key, key, e.target.value)
+                      updateCustomField(field.id, field.key, e.target.value)
                     }
                     placeholder="Field value"
                     className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
                   />
                   <button
-                    onClick={() => removeCustomField(key)}
+                    onClick={() => removeCustomField(field.id)}
                     className="px-3 py-2 text-fresa hover:text-ama text-sm font-herm"
                   >
                     Remove
@@ -133,7 +133,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                 </div>
               ))}
 
-              {Object.keys(customFields).length === 0 && (
+              {customFields.length === 0 && (
                 <p className="text-ama text-sm font-herm">
                   No custom fields added. Click + Add Field to add key-value
                   pairs.

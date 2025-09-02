@@ -19,13 +19,18 @@ export const useChildSelectionModal = ({
   const [configuring, setConfiguring] = useState<Child | Template | null>(null);
   const [amount, setAmount] = useState("1");
   const [instructions, setInstructions] = useState("");
-  const [customFields, setCustomFields] = useState<Record<string, string>>({});
+  const [customFields, setCustomFields] = useState<Array<{id: string, key: string, value: string}>>([]);
 
   useEffect(() => {
     if (isOpen && editingPlacement) {
       setAmount(editingPlacement.amount);
       setInstructions(editingPlacement.instructions);
-      setCustomFields(editingPlacement.customFields);
+      const fieldsArray = Object.entries(editingPlacement.customFields || {}).map(([key, value], index) => ({
+        id: `field_${Date.now()}_${index}`,
+        key,
+        value
+      }));
+      setCustomFields(fieldsArray);
       setConfiguring({
         childId: editingPlacement.childId,
         childContract: editingPlacement.childContract,
@@ -34,7 +39,7 @@ export const useChildSelectionModal = ({
       setConfiguring(null);
       setAmount("1");
       setInstructions("");
-      setCustomFields({});
+      setCustomFields([]);
     }
   }, [isOpen, editingPlacement]);
 
@@ -46,7 +51,7 @@ export const useChildSelectionModal = ({
     setConfiguring(item);
     setAmount("1");
     setInstructions("");
-    setCustomFields({});
+    setCustomFields([]);
   }, []);
 
   const handleCancel = useCallback(() => {
@@ -56,7 +61,7 @@ export const useChildSelectionModal = ({
     setConfiguring(null);
     setAmount("1");
     setInstructions("");
-    setCustomFields({});
+    setCustomFields([]);
     if (!onCancel) {
       onClose();
     }
@@ -75,34 +80,34 @@ export const useChildSelectionModal = ({
         : (configuring as Child).childContract,
       amount,
       instructions,
-      customFields,
+      customFields: customFields.reduce((acc, field) => {
+        acc[field.key] = field.value;
+        return acc;
+      }, {} as Record<string, string>),
     });
 
     setConfiguring(null);
   }, [configuring, amount, instructions, customFields, onSelect]);
 
   const addCustomField = useCallback(() => {
-    const key = `field_${Object.keys(customFields).length + 1}`;
-    setCustomFields((prev) => ({ ...prev, [key]: "" }));
-  }, [customFields]);
+    const newField = {
+      id: `field_${Date.now()}`,
+      key: `field_${customFields.length + 1}`,
+      value: ""
+    };
+    setCustomFields((prev) => [...prev, newField]);
+  }, [customFields.length]);
 
-  const updateCustomField = useCallback((oldKey: string, newKey: string, value: string) => {
-    setCustomFields((prev) => {
-      const updated = { ...prev };
-      if (oldKey !== newKey && updated[oldKey] !== undefined) {
-        delete updated[oldKey];
-      }
-      updated[newKey] = value;
-      return updated;
-    });
+  const updateCustomField = useCallback((id: string, key: string, value: string) => {
+    setCustomFields((prev) => 
+      prev.map(field => 
+        field.id === id ? { ...field, key, value } : field
+      )
+    );
   }, []);
 
-  const removeCustomField = useCallback((key: string) => {
-    setCustomFields((prev) => {
-      const updated = { ...prev };
-      delete updated[key];
-      return updated;
-    });
+  const removeCustomField = useCallback((id: string) => {
+    setCustomFields((prev) => prev.filter(field => field.id !== id));
   }, []);
 
   const getFilteredItems = useCallback((items: (Child | Template)[]) => {
@@ -111,6 +116,16 @@ export const useChildSelectionModal = ({
       const matchesType = selectedType === "children" ? !isTemplate : isTemplate;
 
       if (!matchesType) return false;
+
+      if (isTemplate) {
+        const template = item as Template;
+        const templateStatus = Number(template.status);
+        if (templateStatus !== 0 && templateStatus !== 1) return false;
+      } else {
+        const child = item as Child;
+        const childStatus = Number(child.status);
+        if (childStatus !== 1) return false;
+      }
 
       const itemId = isTemplate
         ? (item as Template).templateId
@@ -125,8 +140,19 @@ export const useChildSelectionModal = ({
   }, [selectedType, selectedIds]);
 
   const getCounts = useCallback((items: (Child | Template)[]) => {
-    const childrenCount = items.filter((item) => !("templateId" in item)).length;
-    const templatesCount = items.filter((item) => "templateId" in item).length;
+    const childrenCount = items.filter((item) => {
+      if ("templateId" in item) return false;
+      const child = item as Child;
+      return Number(child.status) === 1;
+    }).length;
+    
+    const templatesCount = items.filter((item) => {
+      if (!("templateId" in item)) return false;
+      const template = item as Template;
+      const templateStatus = Number(template.status);
+      return templateStatus === 0 || templateStatus === 1;
+    }).length;
+    
     return { childrenCount, templatesCount };
   }, []);
 

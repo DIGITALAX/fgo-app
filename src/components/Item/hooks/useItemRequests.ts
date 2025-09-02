@@ -1,8 +1,54 @@
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getIPFSUrl } from "@/lib/helpers/ipfs";
+import { ensureMetadata } from "@/lib/helpers/metadata";
+import { Child, Template, ParentRequests, TemplateRequests } from "../types";
+import { Parent } from "@/components/Account/types";
 
-export const useItemRequests = () => {
+export const useItemRequests = (item: Child | Template | Parent) => {
   const router = useRouter();
+  const [processedParentRequests, setProcessedParentRequests] = useState<ParentRequests[]>([]);
+  const [processedTemplateRequests, setProcessedTemplateRequests] = useState<TemplateRequests[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const processRequests = async () => {
+      setLoading(true);
+      
+      try {
+        if ("parentRequests" in item && item.parentRequests && item.parentRequests.length > 0) {
+          const processedParents = await Promise.all(
+            item.parentRequests.map(async (request: any) => {
+              if (request.parent) {
+                const processedParent = await ensureMetadata(request.parent);
+                return { ...request, parent: processedParent };
+              }
+              return request;
+            })
+          );
+          setProcessedParentRequests(processedParents);
+        }
+
+        if ("templateRequests" in item && item.templateRequests && item.templateRequests.length > 0) {
+          const processedTemplates = await Promise.all(
+            item.templateRequests.map(async (request: any) => {
+              if (request.template) {
+                const processedTemplate = await ensureMetadata(request.template);
+                return { ...request, template: processedTemplate };
+              }
+              return request;
+            })
+          );
+          setProcessedTemplateRequests(processedTemplates);
+        }
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    processRequests();
+  }, [item]);
 
   const handleTemplateClick = useCallback((templateContract: string, templateId: string) => {
     const path = `/library/template/${templateContract}/${templateId}`;
@@ -40,10 +86,18 @@ export const useItemRequests = () => {
     };
   }, []);
 
+  const getImageUrl = useCallback((imageUri: string): string => {
+    return getIPFSUrl(imageUri);
+  }, []);
+
   return {
     handleTemplateClick,
     handleParentClick,
     formatTimestamp,
     getStatusInfo,
+    getImageUrl,
+    processedParentRequests,
+    processedTemplateRequests,
+    loading,
   };
 };

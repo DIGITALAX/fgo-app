@@ -137,8 +137,6 @@ export const ChildDetails = ({
             ? formData.availability
             : parseInt(child.availability),
         makeImmutable: !child.isImmutable && formData.isImmutable === true,
-        digitalMarketsOpenToAll: formData.digitalMarketsOpenToAll,
-        physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll,
         standaloneAllowed:
           formData.standaloneAllowed !== undefined
             ? formData.standaloneAllowed

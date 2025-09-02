@@ -29,13 +29,16 @@ export const FulfillerTab = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-herm text-white mb-1">Fulfiller Dashboard</h2>
+          <h2 className="text-xl font-herm text-white mb-1">
+            Fulfiller Dashboard
+          </h2>
           <p className="text-white/60 font-herm text-sm">
             Manage market contracts and fulfill orders
           </p>
         </div>
         <div className="text-sm text-white/60 font-herm">
-          {marketContracts.length} contract{marketContracts.length !== 1 ? 's' : ''}
+          {marketContracts.length} contract
+          {marketContracts.length !== 1 ? "s" : ""}
         </div>
       </div>
 
@@ -70,15 +73,15 @@ export const FulfillerTab = () => {
         </div>
       ) : (
         <div className="bg-black border border-white rounded-sm p-6 text-center">
-          <div className="mb-4">
-            <span className="text-4xl">📦</span>
-          </div>
-          <h3 className="text-lg font-herm text-white mb-2">No Market Contracts Found</h3>
+          <h3 className="text-lg font-herm text-white mb-2">
+            No Market Contracts Found
+          </h3>
           <p className="text-white/60 mb-4 font-herm text-sm">
             You don't have access to any market contracts yet.
           </p>
           <p className="text-xs text-white/40 font-herm">
-            Contact an infrastructure owner to get fulfiller access to market contracts.
+            Contact an infrastructure owner to get fulfiller access to market
+            contracts.
           </p>
         </div>
       )}

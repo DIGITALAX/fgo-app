@@ -148,6 +148,13 @@ export interface ParentRequests {
   approved: boolean;
   approvedAmount: string;
   timestamp: string;
+  parent?: {
+    uri: string;
+    metadata: {
+      image: string;
+      title: string;
+    };
+  };
 }
 
 export interface TemplateRequests {
@@ -159,6 +166,13 @@ export interface TemplateRequests {
   approved: boolean;
   approvedAmount: string;
   timestamp: string;
+  template?: {
+    uri: string;
+    metadata: {
+      image: string;
+      title: string;
+    };
+  };
 }
 
 export interface MarketRequests {

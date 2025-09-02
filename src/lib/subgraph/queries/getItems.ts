@@ -12,6 +12,7 @@ query($parentContract: String!) {
         title
       }
     }
+    infraCurrency
     digitalPrice
     physicalPrice
     status
@@ -394,6 +395,7 @@ query($templateId: Int!, $templateContract: String!) {
       childId
       uri 
       amount
+      isTemplate
       childTemplate {
         uri
         metadata {
@@ -441,6 +443,13 @@ query($templateId: Int!, $templateContract: String!) {
       approved
       approvedAmount
       timestamp
+      parent {
+        uri 
+        metadata {
+          image
+          title
+        }
+      }
     }
     templateRequests {
       childId
@@ -451,6 +460,13 @@ query($templateId: Int!, $templateContract: String!) {
       approved
       approvedAmount
       timestamp
+      template {
+        uri 
+        metadata {
+          image
+          title
+        }
+      }
     }
     marketRequests {
       tokenId
@@ -596,6 +612,13 @@ query($childId: Int!, $childContract: String!) {
       approved
       approvedAmount
       timestamp
+      parent {
+        uri 
+        metadata {
+          image
+          title
+        }
+      }
     }
     templateRequests {
       childId
@@ -606,6 +629,13 @@ query($childId: Int!, $childContract: String!) {
       approved
       approvedAmount
       timestamp
+      template {
+        uri 
+        metadata {
+          image
+          title
+        }
+      }
     }
     marketRequests {
       tokenId

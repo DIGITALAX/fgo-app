@@ -295,24 +295,25 @@ export const FulfillmentWorkflowModal = ({
                                     
                                     <div>
                                       <label className="block text-xs text-ama font-herm mb-1">
-                                        Split (basis points)
+                                        Split (%)
                                       </label>
                                       <input
                                         type="number"
                                         min="0"
-                                        max="10000"
-                                        value={sub.splitBasisPoints}
+                                        max="100"
+                                        step="0.01"
+                                        value={sub.splitBasisPoints / 100}
                                         onChange={(e) =>
                                           updateSubPerformer(index, subIndex, {
                                             ...sub,
-                                            splitBasisPoints: parseInt(e.target.value) || 0,
+                                            splitBasisPoints: Math.round((parseFloat(e.target.value) || 0) * 100),
                                           }, true)
                                         }
                                         className="w-full px-2 py-1 bg-black border border-white rounded-sm text-white text-xs focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                                        placeholder="1000 = 10%"
+                                        placeholder="10.00"
                                       />
                                       <div className="text-xs text-ama mt-1 font-herm">
-                                        {(sub.splitBasisPoints / 100).toFixed(2)}%
+                                        {sub.splitBasisPoints / 100}% split
                                       </div>
                                     </div>
                                   </div>
@@ -467,24 +468,25 @@ export const FulfillmentWorkflowModal = ({
                                     
                                     <div>
                                       <label className="block text-xs text-ama mb-1">
-                                        Split (basis points)
+                                        Split (%)
                                       </label>
                                       <input
                                         type="number"
                                         min="0"
-                                        max="10000"
-                                        value={sub.splitBasisPoints}
+                                        max="100"
+                                        step="0.01"
+                                        value={sub.splitBasisPoints / 100}
                                         onChange={(e) =>
                                           updateSubPerformer(index, subIndex, {
                                             ...sub,
-                                            splitBasisPoints: parseInt(e.target.value) || 0,
+                                            splitBasisPoints: Math.round((parseFloat(e.target.value) || 0) * 100),
                                           }, false)
                                         }
                                         className="w-full px-2 py-1 bg-black border border-white rounded text-white text-xs focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama"
-                                        placeholder="1000 = 10%"
+                                        placeholder="10.00"
                                       />
                                       <div className="text-xs text-ama mt-1">
-                                        {(sub.splitBasisPoints / 100).toFixed(2)}%
+                                        {sub.splitBasisPoints / 100}% split
                                       </div>
                                     </div>
                                   </div>

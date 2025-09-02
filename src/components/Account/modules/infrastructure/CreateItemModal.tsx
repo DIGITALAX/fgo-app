@@ -328,7 +328,7 @@ export const CreateItemModal = ({
                           </span>
                         </label>
                       )}
-                    {(formData.availability === 0 ||
+                    {!isEditMode && (formData.availability === 0 ||
                       formData.availability === 2) && (
                       <label className="flex items-center">
                         <input
@@ -344,7 +344,7 @@ export const CreateItemModal = ({
                         </span>
                       </label>
                     )}
-                    {(formData.availability === 1 ||
+                    {!isEditMode && (formData.availability === 1 ||
                       formData.availability === 2) && (
                       <label className="flex items-center">
                         <input
@@ -360,7 +360,7 @@ export const CreateItemModal = ({
                         </span>
                       </label>
                     )}
-                    {mode !== "parent" &&
+                    {!isEditMode && mode !== "parent" &&
                       (formData.availability === 0 ||
                         formData.availability === 2) && (
                         <label className="flex items-center">
@@ -377,7 +377,7 @@ export const CreateItemModal = ({
                           </span>
                         </label>
                       )}
-                    {mode !== "parent" &&
+                    {!isEditMode && mode !== "parent" &&
                       (formData.availability === 1 ||
                         formData.availability === 2) && (
                         <label className="flex items-center">
