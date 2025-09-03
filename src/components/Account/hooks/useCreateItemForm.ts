@@ -6,20 +6,24 @@ import { formatPrice } from "@/lib/helpers/pricing";
 import { parseAvailability } from "@/lib/helpers/availability";
 import { fetchMetadataFromIPFS } from "@/lib/helpers/ipfs";
 
-const validateNumberInput = (value: string, fieldType: 'price' | 'edition'): boolean => {
-  if (value === '') return true;
-  
-  if (fieldType === 'price') {
+const validateNumberInput = (
+  value: string,
+  fieldType: "price" | "edition"
+): boolean => {
+  if (value === "") return true;
+
+  if (fieldType === "price") {
     return /^\d*\.?\d*$/.test(value) && parseFloat(value) >= 0;
-  } else if (fieldType === 'edition') {
+  } else if (fieldType === "edition") {
     return /^\d+$/.test(value) && parseInt(value) >= 0;
   }
-  
+
   return false;
 };
 
-
-const parsePlacementFromURI = async (placement: any): Promise<ChildReference> => {
+const parsePlacementFromURI = async (
+  placement: any
+): Promise<ChildReference> => {
   try {
     if (placement.uri) {
       const metadata = await fetchMetadataFromIPFS(placement.uri);
@@ -28,40 +32,50 @@ const parsePlacementFromURI = async (placement: any): Promise<ChildReference> =>
         childContract: placement.childContract,
         amount: placement.amount,
         instructions: metadata.instructions || "",
-        customFields: metadata.customFields || {}
+        customFields: metadata.customFields || {},
       };
     }
   } catch (error) {
     console.error("Failed to parse placement URI:", error);
   }
-  
+
   return {
     childId: placement.childId,
     childContract: placement.childContract,
     amount: placement.amount,
     instructions: "",
-    customFields: {}
+    customFields: {},
   };
 };
 
-export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMode?: boolean) => {
-  const [parsedChildReferences, setParsedChildReferences] = useState<ChildReference[]>([]);
-  
+export const useCreateItemForm = (
+  editItem?: Child | Template | Parent,
+  isEditMode?: boolean
+) => {
+  const [parsedChildReferences, setParsedChildReferences] = useState<
+    ChildReference[]
+  >([]);
+
   const initializeFormData = () => {
     if (isEditMode && editItem) {
       const metadata = editItem.metadata;
-      
-      if ('designId' in editItem) {
+
+      if ("designId" in editItem) {
         const parent = editItem as Parent;
-        const authorizedMarkets = Array.isArray(parent.authorizedMarkets) 
-          ? parent.authorizedMarkets.map((market: any) => 
-              typeof market === 'string' ? market : market.contractAddress || market.id
+        const authorizedMarkets = Array.isArray(parent.authorizedMarkets)
+          ? parent.authorizedMarkets.map((market: any) =>
+              typeof market === "string"
+                ? market
+                : market.contractAddress || market.id
             )
-          : parent.authorizedMarkets && typeof parent.authorizedMarkets === 'object'
-            ? Object.values(parent.authorizedMarkets).map((market: any) => 
-                typeof market === 'string' ? market : market.contractAddress || market.id
-              )
-            : [];
+          : parent.authorizedMarkets &&
+            typeof parent.authorizedMarkets === "object"
+          ? Object.values(parent.authorizedMarkets).map((market: any) =>
+              typeof market === "string"
+                ? market
+                : market.contractAddress || market.id
+            )
+          : [];
 
         return {
           digitalPrice: formatPrice(parent.digitalPrice, 18),
@@ -71,8 +85,8 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
           maxDigitalEditions: parent.maxDigitalEditions || "0",
           availability: parseAvailability(parent.availability),
           isImmutable: false,
-          digitalMarketsOpenToAll: parent.digitalMarketsOpenToAll === "true",
-          physicalMarketsOpenToAll: parent.physicalMarketsOpenToAll === "true",
+          digitalMarketsOpenToAll: parent.digitalMarketsOpenToAll === true,
+          physicalMarketsOpenToAll: parent.physicalMarketsOpenToAll === true,
           digitalReferencesOpenToAll: true,
           physicalReferencesOpenToAll: true,
           standaloneAllowed: true,
@@ -93,13 +107,21 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
         };
       } else {
         const childOrTemplate = editItem as Child | Template;
-        const authorizedMarkets = Array.isArray(childOrTemplate.authorizedMarkets) 
-          ? childOrTemplate.authorizedMarkets.map((market: any) => 
-              typeof market === 'string' ? market : market.contractAddress || market.id
+        const authorizedMarkets = Array.isArray(
+          childOrTemplate.authorizedMarkets
+        )
+          ? childOrTemplate.authorizedMarkets.map((market: any) =>
+              typeof market === "string"
+                ? market
+                : market.contractAddress || market.id
             )
-          : childOrTemplate.authorizedMarkets && typeof childOrTemplate.authorizedMarkets === 'string'
-            ? (childOrTemplate.authorizedMarkets as string).split(",").map((m: string) => m.trim()).filter((m: string) => m) 
-            : [];
+          : childOrTemplate.authorizedMarkets &&
+            typeof childOrTemplate.authorizedMarkets === "string"
+          ? (childOrTemplate.authorizedMarkets as string)
+              .split(",")
+              .map((m: string) => m.trim())
+              .filter((m: string) => m)
+          : [];
         return {
           digitalPrice: formatPrice(childOrTemplate.digitalPrice, 18),
           physicalPrice: formatPrice(childOrTemplate.physicalPrice, 18),
@@ -110,19 +132,22 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
           isImmutable: childOrTemplate.isImmutable,
           digitalMarketsOpenToAll: childOrTemplate.digitalMarketsOpenToAll,
           physicalMarketsOpenToAll: childOrTemplate.physicalMarketsOpenToAll,
-          digitalReferencesOpenToAll: childOrTemplate.digitalReferencesOpenToAll,
-          physicalReferencesOpenToAll: childOrTemplate.physicalReferencesOpenToAll,
-          standaloneAllowed: childOrTemplate.standaloneAllowed === "true",
+          digitalReferencesOpenToAll:
+            childOrTemplate.digitalReferencesOpenToAll,
+          physicalReferencesOpenToAll:
+            childOrTemplate.physicalReferencesOpenToAll,
+          standaloneAllowed: childOrTemplate.standaloneAllowed === true,
           authorizedMarkets,
-          childReferences: parsedChildReferences.length > 0 
-            ? parsedChildReferences 
-            : (childOrTemplate as Template).childReferences?.map(cp => ({
-                childId: cp.childId,
-                childContract: cp.childContract,
-                amount: cp.amount,
-                instructions: "",
-                customFields: {}
-              })) || [],
+          childReferences:
+            parsedChildReferences.length > 0
+              ? parsedChildReferences
+              : (childOrTemplate as Template).childReferences?.map((cp) => ({
+                  childId: cp.childId,
+                  childContract: cp.childContract,
+                  amount: cp.amount,
+                  instructions: "",
+                  customFields: {},
+                })) || [],
           metadata: {
             title: metadata?.title || "",
             description: metadata?.description || "",
@@ -169,155 +194,190 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
     };
   };
 
-  const [formData, setFormData] = useState<CreateItemFormData>(initializeFormData());
+  const [formData, setFormData] = useState<CreateItemFormData>(
+    initializeFormData()
+  );
 
   useEffect(() => {
     const parseChildReferences = async () => {
-      if (isEditMode && editItem && 'childReferences' in editItem && editItem.childReferences && !('templateId' in editItem)) {
+      if (
+        isEditMode &&
+        editItem &&
+        "childReferences" in editItem &&
+        editItem.childReferences &&
+        !("templateId" in editItem)
+      ) {
         const parsed = await Promise.all(
-          editItem.childReferences.map(cp => parsePlacementFromURI(cp))
+          editItem.childReferences.map((cp) => parsePlacementFromURI(cp))
         );
         setParsedChildReferences(parsed);
-        
-        setFormData(prev => ({
+
+        setFormData((prev) => ({
           ...prev,
-          childReferences: parsed
+          childReferences: parsed,
         }));
       }
     };
 
     if (isEditMode && editItem) {
       setFormData(initializeFormData());
-      if (!('templateId' in editItem)) {
+      if (!("templateId" in editItem)) {
         parseChildReferences();
       }
     }
   }, [editItem, isEditMode]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'title' || name === 'description' || name === 'prompt' || name === 'aiModel' || name === 'workflow') {
-      setFormData(prev => ({
-        ...prev,
-        metadata: {
-          ...prev.metadata,
-          [name]: value
+  const handleInputChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >
+    ) => {
+      const { name, value } = e.target;
+
+      if (
+        name === "title" ||
+        name === "description" ||
+        name === "prompt" ||
+        name === "aiModel" ||
+        name === "workflow"
+      ) {
+        setFormData((prev) => ({
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            [name]: value,
+          },
+        }));
+      } else if (name === "availability") {
+        const newAvailability = parseInt(value);
+        setFormData((prev) => ({
+          ...prev,
+          [name]: newAvailability,
+          digitalMarketsOpenToAll:
+            newAvailability === 1 ? false : prev.digitalMarketsOpenToAll,
+          digitalReferencesOpenToAll:
+            newAvailability === 1 ? false : prev.digitalReferencesOpenToAll,
+          physicalMarketsOpenToAll:
+            newAvailability === 0 ? false : prev.physicalMarketsOpenToAll,
+          physicalReferencesOpenToAll:
+            newAvailability === 0 ? false : prev.physicalReferencesOpenToAll,
+          maxPhysicalEditions:
+            newAvailability === 0 ? "0" : prev.maxPhysicalEditions,
+        }));
+      } else if (name === "digitalPrice" || name === "physicalPrice") {
+        if (validateNumberInput(value, "price")) {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+          }));
         }
-      }));
-    } 
-    else if (name === "availability") {
-      const newAvailability = parseInt(value);
-      setFormData(prev => ({ 
-        ...prev, 
-        [name]: newAvailability,
-        digitalMarketsOpenToAll: newAvailability === 1 ? false : prev.digitalMarketsOpenToAll,
-        digitalReferencesOpenToAll: newAvailability === 1 ? false : prev.digitalReferencesOpenToAll,
-        physicalMarketsOpenToAll: newAvailability === 0 ? false : prev.physicalMarketsOpenToAll,
-        physicalReferencesOpenToAll: newAvailability === 0 ? false : prev.physicalReferencesOpenToAll,
-        maxPhysicalEditions: newAvailability === 0 ? "0" : prev.maxPhysicalEditions,
-      }));
-    }
-    else if (name === 'digitalPrice' || name === 'physicalPrice') {
-      if (validateNumberInput(value, 'price')) {
-        setFormData(prev => ({ 
-          ...prev, 
-          [name]: value 
+      } else if (
+        name === "maxPhysicalEditions" ||
+        name === "maxDigitalEditions" ||
+        name === "version"
+      ) {
+        if (validateNumberInput(value, "edition")) {
+          setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+          }));
+        }
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
         }));
       }
-    }
-    else if (name === 'maxPhysicalEditions' || name === 'maxDigitalEditions' || name === 'version') {
-      if (validateNumberInput(value, 'edition')) {
-        setFormData(prev => ({ 
-          ...prev, 
-          [name]: value 
+    },
+    []
+  );
+
+  const handleCheckboxChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, checked } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    },
+    []
+  );
+
+  const handleFileChange = useCallback(
+    (field: string, files: FileList | null) => {
+      if (field === "image" && files && files[0]) {
+        setFormData((prev) => ({
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            image: files[0],
+          },
+        }));
+      } else if (field === "attachments" && files) {
+        const newAttachments = Array.from(files);
+        setFormData((prev) => ({
+          ...prev,
+          metadata: {
+            ...prev.metadata,
+            attachments: newAttachments,
+          },
         }));
       }
-    }
-    else {
-      setFormData(prev => ({ 
-        ...prev, 
-        [name]: value 
-      }));
-    }
-  }, []);
-
-  const handleCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData(prev => ({ 
-      ...prev, 
-      [name]: checked 
-    }));
-  }, []);
-
-  const handleFileChange = useCallback((field: string, files: FileList | null) => {
-    if (field === 'image' && files && files[0]) {
-      setFormData(prev => ({
-        ...prev,
-        metadata: {
-          ...prev.metadata,
-          image: files[0]
-        }
-      }));
-    } else if (field === 'attachments' && files) {
-      const newAttachments = Array.from(files);
-      setFormData(prev => ({
-        ...prev,
-        metadata: {
-          ...prev.metadata,
-          attachments: newAttachments
-        }
-      }));
-    }
-  }, []);
+    },
+    []
+  );
 
   const handleTagsChange = useCallback((tags: string[]) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       metadata: {
         ...prev.metadata,
-        tags
-      }
+        tags,
+      },
     }));
   }, []);
 
   const handleLorasChange = useCallback((loras: string[]) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       metadata: {
         ...prev.metadata,
-        loras
-      }
+        loras,
+      },
     }));
   }, []);
 
   const addChildReference = useCallback((placement: ChildReference) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      childReferences: [...prev.childReferences, placement]
+      childReferences: [...prev.childReferences, placement],
     }));
   }, []);
 
   const removeChildReference = useCallback((index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      childReferences: prev.childReferences.filter((_, i) => i !== index)
+      childReferences: prev.childReferences.filter((_, i) => i !== index),
     }));
   }, []);
 
-  const updateChildReference = useCallback((index: number, updatedPlacement: ChildReference) => {
-    setFormData(prev => ({
-      ...prev,
-      childReferences: prev.childReferences.map((placement, i) => 
-        i === index ? updatedPlacement : placement
-      )
-    }));
-  }, []);
+  const updateChildReference = useCallback(
+    (index: number, updatedPlacement: ChildReference) => {
+      setFormData((prev) => ({
+        ...prev,
+        childReferences: prev.childReferences.map((placement, i) =>
+          i === index ? updatedPlacement : placement
+        ),
+      }));
+    },
+    []
+  );
 
   const handleWorkflowChange = useCallback((workflow: Workflow) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      fulfillmentWorkflow: workflow
+      fulfillmentWorkflow: workflow,
     }));
   }, []);
 
@@ -325,21 +385,27 @@ export const useCreateItemForm = (editItem?: Child | Template | Parent, isEditMo
     setFormData(initializeFormData());
   }, [isEditMode, editItem]);
 
-  const hasValidImage = isEditMode && editItem?.metadata?.image 
-    ? true 
-    : formData.metadata.image !== null;
+  const hasValidImage =
+    isEditMode && editItem?.metadata?.image
+      ? true
+      : formData.metadata.image !== null;
 
   const isItemImmutable = isEditMode && (editItem as Child)?.isImmutable;
-  
-  const hasValidMetadata = isItemImmutable 
-    ? true 
-    : formData.metadata.title.trim() && formData.metadata.description.trim() && hasValidImage;
 
-  const isFormValid = (formData.availability === 1 || formData.digitalPrice.trim()) && 
-                    (formData.availability === 0 || formData.physicalPrice.trim()) && 
-                    (formData.availability === 0 ? true : formData.maxPhysicalEditions.trim()) &&
-                    formData.version.trim() &&
-                    hasValidMetadata;
+  const hasValidMetadata = isItemImmutable
+    ? true
+    : formData.metadata.title.trim() &&
+      formData.metadata.description.trim() &&
+      hasValidImage;
+
+  const isFormValid =
+    (formData.availability === 1 || formData.digitalPrice.trim()) &&
+    (formData.availability === 0 || formData.physicalPrice.trim()) &&
+    (formData.availability === 0
+      ? true
+      : formData.maxPhysicalEditions.trim()) &&
+    formData.version.trim() &&
+    hasValidMetadata;
 
   return {
     formData,

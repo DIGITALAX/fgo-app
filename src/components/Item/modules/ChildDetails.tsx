@@ -140,7 +140,7 @@ export const ChildDetails = ({
         standaloneAllowed:
           formData.standaloneAllowed !== undefined
             ? formData.standaloneAllowed
-            : child.standaloneAllowed === "true",
+            : child.standaloneAllowed === true,
         childUri,
         updateReason: "Updated via FGO interface",
         authorizedMarkets:

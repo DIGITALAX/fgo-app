@@ -172,7 +172,7 @@ export const useTemplateActions = (
           standaloneAllowed:
             formData.standaloneAllowed !== undefined
               ? formData.standaloneAllowed
-              : template.standaloneAllowed === "true",
+              : template.standaloneAllowed === true,
           childUri: templateUri,
           updateReason: "Updated via FGO interface",
           authorizedMarkets:

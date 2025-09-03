@@ -244,7 +244,7 @@ export interface Child {
   physicalMarketsOpenToAll: boolean;
   digitalReferencesOpenToAll: boolean;
   physicalReferencesOpenToAll: boolean;
-  standaloneAllowed: string;
+  standaloneAllowed: boolean;
   authorizedMarkets: MarketContract[];
   createdAt: string;
   updatedAt: string;

@@ -3,22 +3,33 @@ import { useItemPricing } from "../hooks/useItemPricing";
 import { ItemPricingProps } from "../types";
 
 export const ItemPricing = ({ item }: ItemPricingProps) => {
-  const { formattedDigitalPrice, formattedPhysicalPrice, statusLabel } =
-    useItemPricing(item);
+  const {
+    formattedDigitalPrice,
+    formattedPhysicalPrice,
+    statusLabel,
+    getAvailabilityType,
+    formatEditionLimit,
+  } = useItemPricing(item);
+
+  const { showDigital, showPhysical } = getAvailabilityType();
 
   return (
     <div className="border border-white rounded-sm p-6 space-y-4">
       <h3 className="text-lg font-herm text-white mb-4">Pricing & Supply</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="space-y-2">
-          <span className="text-ama text-sm">Digital Price:</span>
-          <p className="text-white font-herm">{formattedDigitalPrice}</p>
-        </div>
+        {showDigital && (
+          <div className="space-y-2">
+            <span className="text-ama text-sm">Digital Price:</span>
+            <p className="text-white font-herm">{formattedDigitalPrice}</p>
+          </div>
+        )}
 
-        <div className="space-y-2">
-          <span className="text-ama text-sm">Physical Price:</span>
-          <p className="text-white font-herm">{formattedPhysicalPrice}</p>
-        </div>
+        {showPhysical && (
+          <div className="space-y-2">
+            <span className="text-ama text-sm">Physical Price:</span>
+            <p className="text-white font-herm">{formattedPhysicalPrice}</p>
+          </div>
+        )}
 
         {"designId" in item ? (
           <>
@@ -27,29 +38,41 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
               <p className="text-white font-herm">{item.totalPurchases}</p>
             </div>
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Max Digital:</span>
-              <p className="text-white font-herm">{item.maxDigitalEditions}</p>
-            </div>
+            {showDigital && (
+              <>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">Max Digital:</span>
+                  <p className="text-white font-herm">
+                    {formatEditionLimit(item.maxDigitalEditions)}
+                  </p>
+                </div>
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Max Physical:</span>
-              <p className="text-white font-herm">{item.maxPhysicalEditions}</p>
-            </div>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">Current Digital:</span>
+                  <p className="text-white font-herm">
+                    {item.currentDigitalEditions}
+                  </p>
+                </div>
+              </>
+            )}
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Current Digital:</span>
-              <p className="text-white font-herm">
-                {item.currentDigitalEditions}
-              </p>
-            </div>
+            {showPhysical && (
+              <>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">Max Physical:</span>
+                  <p className="text-white font-herm">
+                    {formatEditionLimit(item.maxPhysicalEditions)}
+                  </p>
+                </div>
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Current Physical:</span>
-              <p className="text-white font-herm">
-                {item.currentPhysicalEditions}
-              </p>
-            </div>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">Current Physical:</span>
+                  <p className="text-white font-herm">
+                    {item.currentPhysicalEditions}
+                  </p>
+                </div>
+              </>
+            )}
           </>
         ) : (
           <>
@@ -58,17 +81,25 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
               <p className="text-white font-herm">{item.supplyCount}</p>
             </div>
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Max Physical:</span>
-              <p className="text-white font-herm">{item.maxPhysicalEditions}</p>
-            </div>
+            {showPhysical && (
+              <>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">Max Physical:</span>
+                  <p className="text-white font-herm">
+                    {formatEditionLimit(item.maxPhysicalEditions)}
+                  </p>
+                </div>
 
-            <div className="space-y-2">
-              <span className="text-ama text-sm">Physical Fulfillments:</span>
-              <p className="text-white font-herm">
-                {item.currentPhysicalEditions}
-              </p>
-            </div>
+                <div className="space-y-2">
+                  <span className="text-ama text-sm">
+                    Physical Fulfillments:
+                  </span>
+                  <p className="text-white font-herm">
+                    {item.currentPhysicalEditions}
+                  </p>
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <span className="text-ama text-sm">Usage Count:</span>
@@ -95,33 +126,37 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
         {"designId" in item ? (
           <>
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  item.digitalMarketsOpenToAll === "true"
-                    ? "bg-green-500"
-                    : "bg-gray-500"
-                }`}
-              ></div>
-              <span className="text-ama">
-                Digital Markets Open:{" "}
-                {item.digitalMarketsOpenToAll === "true" ? "Yes" : "No"}
-              </span>
-            </div>
+            {showDigital && (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    item.digitalMarketsOpenToAll === true
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                ></div>
+                <span className="text-ama">
+                  Digital Markets Open:{" "}
+                  {item.digitalMarketsOpenToAll === true ? "Yes" : "No"}
+                </span>
+              </div>
+            )}
 
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  item.physicalMarketsOpenToAll === "true"
-                    ? "bg-green-500"
-                    : "bg-gray-500"
-                }`}
-              ></div>
-              <span className="text-ama">
-                Physical Markets Open:{" "}
-                {item.physicalMarketsOpenToAll === "true" ? "Yes" : "No"}
-              </span>
-            </div>
+            {showPhysical && (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    item.physicalMarketsOpenToAll === true
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                ></div>
+                <span className="text-ama">
+                  Physical Markets Open:{" "}
+                  {item.physicalMarketsOpenToAll === true ? "Yes" : "No"}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <div
@@ -149,38 +184,46 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  item.digitalMarketsOpenToAll ? "bg-green-500" : "bg-gray-500"
-                }`}
-              ></div>
-              <span className="text-ama">
-                Digital Open: {item.digitalMarketsOpenToAll ? "Yes" : "No"}
-              </span>
-            </div>
+            {showDigital && (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    item.digitalMarketsOpenToAll
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                ></div>
+                <span className="text-ama">
+                  Digital Markets Open: {item.digitalMarketsOpenToAll ? "Yes" : "No"}
+                </span>
+              </div>
+            )}
+
+            {showPhysical && (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    item.physicalMarketsOpenToAll
+                      ? "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                ></div>
+                <span className="text-ama">
+                  Physical Markets Open: {item.physicalMarketsOpenToAll ? "Yes" : "No"}
+                </span>
+              </div>
+            )}
 
             <div className="flex items-center gap-2">
               <div
                 className={`w-3 h-3 rounded-full ${
-                  item.physicalMarketsOpenToAll ? "bg-green-500" : "bg-gray-500"
-                }`}
-              ></div>
-              <span className="text-ama">
-                Physical Open: {item.physicalMarketsOpenToAll ? "Yes" : "No"}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  item.standaloneAllowed === "true"
+                  item.standaloneAllowed === true
                     ? "bg-green-500"
                     : "bg-gray-500"
                 }`}
               ></div>
               <span className="text-ama">
-                Standalone: {item.standaloneAllowed === "true" ? "Yes" : "No"}
+                Standalone: {item.standaloneAllowed === true ? "Yes" : "No"}
               </span>
             </div>
           </>

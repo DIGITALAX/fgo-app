@@ -447,8 +447,8 @@ export interface Parent {
   physicalPrice: string;
   printType: string;
   availability: string;
-  digitalMarketsOpenToAll: string;
-  physicalMarketsOpenToAll: string;
+  digitalMarketsOpenToAll: boolean;
+  physicalMarketsOpenToAll: boolean;
   authorizedMarkets: MarketContract[];
   status: string;
   infraCurrency: string;
