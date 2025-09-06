@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 
 const PARENTS = `
 query($parentContract: String!) {
-  parents(where: {parentContract: $parentContract}) {
+  parents(where: {parentContract: $parentContract}, orderBy: blockTimestamp, orderDirection: desc) {
     designId
     parentContract
     designerProfile {
@@ -51,7 +51,7 @@ export const getParents = async (parentContract: string): Promise<any> => {
 
 const CHILDREN = `
 query($childContract: String!) {
-  childs(where: {childContract: $childContract}) {
+  childs(where: {childContract: $childContract}, orderBy: blockTimestamp, orderDirection: desc) {
     createdAt
     uri
     status
@@ -105,7 +105,7 @@ export const getChildren = async (childContract: string): Promise<any> => {
 
 const TEMPLATES = `
 query($templateContract: String!) {
-  templates(where: {templateContract: $templateContract}) {
+  templates(where: {templateContract: $templateContract}, orderBy: blockTimestamp, orderDirection: desc) {
     createdAt
     uri
     templateId
@@ -158,7 +158,7 @@ export const getTemplates = async (templateContract: string): Promise<any> => {
 
 const PARENT = `
 query($designId: Int!, $parentContract: String!) {
-  parents(where: {designId: $designId, parentContract: $parentContract}) {
+  parents(where: {designId: $designId, parentContract: $parentContract}, orderBy: blockTimestamp, orderDirection: desc) {
     infraId
     designId
     parentContract
@@ -340,7 +340,7 @@ export const getParent = async (
 
 const TEMPLATE = `
 query($templateId: Int!, $templateContract: String!) {
-  templates(where: {templateId: $templateId, templateContract: $templateContract}) {
+  templates(where: {templateId: $templateId, templateContract: $templateContract}, orderBy: blockTimestamp, orderDirection: desc) {
     templateId
     templateContract
     supplier 
@@ -530,7 +530,7 @@ export const getTemplate = async (
 
 const CHILD = `
 query($childId: Int!, $childContract: String!) {
-  childs(where: {childId: $childId, childContract: $childContract}) {
+  childs(where: {childId: $childId, childContract: $childContract}, orderBy: blockTimestamp, orderDirection: desc) {
     childId
     childContract
     supplier 

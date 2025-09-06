@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 
 const ALL_MARKETS = `
 query {
-  marketContracts {
+  marketContracts(orderBy: blockTimestamp, orderDirection: desc) {
     contractAddress
     isActive
     title
@@ -22,7 +22,7 @@ query {
 
 const ALL_MARKETS_WITH_SEARCH = `
 query($first: Int!, $skip: Int!, $searchText: String!) {
-  marketContracts(first: $first, skip: $skip, where: {
+  marketContracts(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
     or: [
       { marketMetadata_: { title_contains_nocase: $searchText } },
       { marketMetadata_: { description_contains_nocase: $searchText } } ]
@@ -75,7 +75,7 @@ export const getAllMarkets = async (
 
 const ALL_TEMPLATES = `
 query {
-  templates {
+  templates(orderBy: blockTimestamp, orderDirection: desc) {
     uri
     metadata {
       title
@@ -91,7 +91,7 @@ query {
 
 const ALL_TEMPLATES_WITH_SEARCH = `
 query($first: Int!, $skip: Int!, $searchText: String!) {
-  templates(first: $first, skip: $skip, where: {
+  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
     or: [
       { metadata_: { title_contains_nocase: $searchText } },
       { metadata_: { description_contains_nocase: $searchText } } ]
@@ -143,7 +143,7 @@ export const getAllTemplates = async (
 
 const ALL_PARENTS = `
 query {
-  parents {
+  parents(orderBy: blockTimestamp, orderDirection: desc) {
     uri
     metadata {
       title
@@ -159,7 +159,7 @@ query {
 
 const ALL_PARENTS_WITH_SEARCH = `
 query($first: Int!, $skip: Int!, $searchText: String!) {
-  parents(first: $first, skip: $skip, where: {
+  parents(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
     or: [
       { metadata_: { title_contains_nocase: $searchText } },
       { metadata_: { description_contains_nocase: $searchText } } ]

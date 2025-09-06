@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 
 const GET_DESIGNER_CONTRACTS = `
 query($designer: String!) {
-  designers(where: {designer: $designer}) {
+  designers(where: {designer: $designer}, orderBy: blockTimestamp, orderDirection: desc) {
     parentContracts {
       id
       infraId
@@ -54,7 +54,7 @@ export const getDesignerContracts = async (designer: string): Promise<any> => {
 
 const GET_PARENT_CONTRACTS = `
 query($infraId: String!) {
-  parentContracts(where: { infraId: $infraId }) {
+  parentContracts(where: { infraId: $infraId }, orderBy: blockTimestamp, orderDirection: desc) {
       id
       infraId
       deployer
@@ -103,7 +103,7 @@ export const getParentContracts = async (infraId: string): Promise<any> => {
 
 const GET_CHILD_CONTRACTS = `
 query($infraId: String!) {
-  childContracts(where: {infraId: $infraId}) {
+  childContracts(where: {infraId: $infraId}, orderBy: blockTimestamp, orderDirection: desc) {
       id
       deployer
       contractAddress
@@ -145,7 +145,7 @@ export const getChildContracts = async (infraId: string): Promise<any> => {
 
 const GET_TEMPLATE_CONTRACTS = `
 query($infraId: String!) {
-  templateContracts(where: {infraId: $infraId}) {   
+  templateContracts(where: {infraId: $infraId}, orderBy: blockTimestamp, orderDirection: desc) {   
       id
       deployer
       contractAddress

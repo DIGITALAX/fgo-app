@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 
 const ALL_CHILDREN = `
 query($first: Int!, $skip: Int!) {
-  childs(first: $first, skip: $skip) {
+  childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc) {
     createdAt
     uri
     status
@@ -27,7 +27,7 @@ query($first: Int!, $skip: Int!) {
       image
     }
   }
-  templates(first: $first, skip: $skip) {
+  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc) {
     createdAt
     uri
     templateId
@@ -56,7 +56,7 @@ query($first: Int!, $skip: Int!) {
 
 const ALL_CHILDREN_WITH_SEARCH = `
 query($first: Int!, $skip: Int!, $searchText: String!) {
-  childs(first: $first, skip: $skip, where: {
+  childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
     or: [
       { metadata_: { title_contains_nocase: $searchText } },
       { metadata_: { description_contains_nocase: $searchText } }
@@ -85,7 +85,7 @@ query($first: Int!, $skip: Int!, $searchText: String!) {
       image
     }
   }
-  templates(first: $first, skip: $skip, where: {
+  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
     or: [
       { metadata_: {title_contains_nocase: $searchText} }
     ]
