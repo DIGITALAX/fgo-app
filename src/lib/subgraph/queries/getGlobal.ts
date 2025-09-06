@@ -58,12 +58,8 @@ const ALL_CHILDREN_WITH_SEARCH = `
 query($first: Int!, $skip: Int!, $searchText: String!) {
   childs(first: $first, skip: $skip, where: {
     or: [
-      { title_contains_nocase: $searchText },
       { metadata_: { title_contains_nocase: $searchText } },
-      { metadata_: { description_contains_nocase: $searchText } },
-      { metadata_: { tags_contains_nocase: $searchText } },
-      { supplierProfile_: { metadata_: { title_contains_nocase: $searchText } } },
-      { supplierProfile_: { metadata_: { description_contains_nocase: $searchText } } }
+      { metadata_: { description_contains_nocase: $searchText } }
     ]
   }) {
     createdAt
@@ -91,9 +87,7 @@ query($first: Int!, $skip: Int!, $searchText: String!) {
   }
   templates(first: $first, skip: $skip, where: {
     or: [
-      { title_contains_nocase: $searchText },
-      { supplierProfile_: { metadata_: { title_contains_nocase: $searchText } } },
-      { supplierProfile_: { metadata_: { description_contains_nocase: $searchText } } }
+      { metadata_: {title_contains_nocase: $searchText} }
     ]
   }) {
     createdAt
@@ -127,29 +121,39 @@ export const getAllChildren = async (
   skip: number,
   searchText?: string
 ): Promise<any> => {
-  const useSearchQuery = searchText && searchText.trim().length > 0;
-  const query = useSearchQuery ? ALL_CHILDREN_WITH_SEARCH : ALL_CHILDREN;
-  const variables = useSearchQuery 
-    ? { first, skip, searchText: searchText.trim() }
-    : { first, skip };
+  try {
+    const useSearchQuery = searchText && searchText.trim().length > 0;
+    const query = useSearchQuery ? ALL_CHILDREN_WITH_SEARCH : ALL_CHILDREN;
+    const variables = useSearchQuery 
+      ? { first, skip, searchText: searchText.trim() }
+      : { first, skip };
 
-  const queryPromise = graphFGOClient.query({
-    query: gql(query),
-    variables,
-    fetchPolicy: "no-cache",
-    errorPolicy: "all",
-  });
 
-  const timeoutPromise = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ timedOut: true });
-    }, 60000);
-  });
+    const queryPromise = graphFGOClient.query({
+      query: gql(query),
+      variables,
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
+    });
 
-  const result: any = await Promise.race([queryPromise, timeoutPromise]);
-  if (result.timedOut) {
-    return;
-  } else {
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ timedOut: true });
+      }, 60000);
+    });
+
+    const result: any = await Promise.race([queryPromise, timeoutPromise]);
+    
+    if (result.timedOut) {
+      return;
+    }
+    
+    if (result.errors) {
+      console.error('GraphQL errors:', result.errors);
+    }
+    
     return result;
+  } catch (error) {
+    throw error;
   }
 };
