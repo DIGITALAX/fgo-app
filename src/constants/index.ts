@@ -50,6 +50,7 @@ export const ROUTES = {
 export const NAV_ITEMS = [
   { label: "Library", href: ROUTES.HOME },
   { label: "Account", href: ROUTES.ACCOUNT },
+    { label: "Standard", href: "http://cc0web3fashion.com/dhawu" },
 ] as const;
 
 export const PARENT_TYPE_LABELS = {

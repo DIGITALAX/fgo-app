@@ -1,8 +1,7 @@
 import { useMemo } from "react";
+import { getCurrentNetwork } from "@/constants";
 import { Child, Template } from "../types";
 import { Parent } from "@/components/Account/types";
-
-const BLOCK_EXPLORER_BASE_URL = "https://polygonscan.com/tx/";
 
 export const useItemBlockchainInfo = (item: Child | Template | Parent) => {
   const formattedCreatedDate: string = useMemo(() => {
@@ -20,7 +19,8 @@ export const useItemBlockchainInfo = (item: Child | Template | Parent) => {
 
   const explorerUrl: string | null = useMemo(() => {
     if (!item.transactionHash) return null;
-    return `${BLOCK_EXPLORER_BASE_URL}${item.transactionHash}`;
+    const network = getCurrentNetwork();
+    return `${network.blockExplorer}/tx/${item.transactionHash}`;
   }, [item.transactionHash]);
 
   return {
