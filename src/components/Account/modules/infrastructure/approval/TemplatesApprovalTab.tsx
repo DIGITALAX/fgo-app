@@ -7,6 +7,7 @@ import { MarketsApprovalTabProps } from "@/components/Account/types";
 export const TemplatesApprovalTab = ({
   itemData,
   itemType,
+    dict
 }: MarketsApprovalTabProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -20,13 +21,13 @@ export const TemplatesApprovalTab = ({
     revokeTemplate,
     approving,
     revoking,
-  } = useTemplatesApproval(itemData, itemType, searchQuery);
+  } = useTemplatesApproval(itemData, itemType, searchQuery, dict);
 
   if (error) {
     return (
       <div className="p-6 text-center">
         <p className="text-fresa font-herm text-sm">
-          Error loading templates: {error}
+          {dict?.errorLoadingTemplates}: {error}
         </p>
       </div>
     );
@@ -37,7 +38,7 @@ export const TemplatesApprovalTab = ({
       <div className="p-6 flex items-center justify-center">
         <div className="flex items-center gap-2 text-white text-sm font-herm">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-          <span>Loading templates...</span>
+          <span>{dict?.loadingTemplates}</span>
         </div>
       </div>
     );
@@ -46,16 +47,16 @@ export const TemplatesApprovalTab = ({
   return (
     <div className="h-full flex flex-col p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-herm text-lg">Available Templates</h3>
+        <h3 className="text-white font-herm text-lg">{dict?.availableTemplates}</h3>
         <div className="text-white/60 font-herm text-sm">
-          {templates.length} template{templates.length !== 1 ? "s" : ""}
+          {templates.length} {templates.length !== 1 ? dict?.templates : dict?.template}
         </div>
       </div>
 
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Search by title or description..."
+          placeholder={dict?.searchByTitleDescription}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white font-herm text-sm placeholder:text-white/40 focus:outline-none focus:border-ama"
@@ -69,7 +70,7 @@ export const TemplatesApprovalTab = ({
           hasMore={hasMore}
           loader={
             <div className="text-center py-4 text-white/60 font-herm text-sm">
-              Loading more templates...
+              {dict?.loadingMoreTemplates}
             </div>
           }
           height="100%"
@@ -97,6 +98,7 @@ export const TemplatesApprovalTab = ({
                     approving === template.templateContract ||
                     revoking === template.templateContract
                   }
+                  dict={dict}
                 />
               );
             })}

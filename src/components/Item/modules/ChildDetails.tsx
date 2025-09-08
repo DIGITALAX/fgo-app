@@ -18,6 +18,7 @@ import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 export const ChildDetails = ({
   contractAddress,
   childId,
+  dict,
 }: ChildDetailsProps) => {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -28,18 +29,26 @@ export const ChildDetails = ({
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
 
-  const { child, isLoading, error } = useChildDetails(contractAddress, childId);
+  const { child, isLoading, error } = useChildDetails(
+    contractAddress,
+    childId,
+    dict
+  );
 
   if (isLoading) {
-    return <div>Loading child...</div>;
+    return <div>{dict?.loadingChild}</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        {dict?.error}: {error}
+      </div>
+    );
   }
 
   if (!child) {
-    return <div>Child not found</div>;
+    return <div>{dict?.childNotFound}</div>;
   }
 
   const isSupplier =
@@ -49,14 +58,12 @@ export const ChildDetails = ({
 
   const handleDeleteChild = async () => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
     if (!canDelete) {
-      context?.showError(
-        "Cannot delete child with usage count or supply count greater than 0"
-      );
+      context?.showError(dict?.cannotDeleteChildUsageCount);
       return;
     }
 
@@ -71,10 +78,10 @@ export const ChildDetails = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context?.showSuccess("Child deleted successfully!", hash);
+      context?.showSuccess(dict?.childDeletedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete child";
+        error instanceof Error ? error.message : dict?.failedToDeleteChild;
       context?.showError(errorMessage);
     } finally {
       setDeleting(false);
@@ -161,11 +168,11 @@ export const ChildDetails = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Child updated successfully!", hash);
+      context.showSuccess(dict?.childUpdatedSuccessfully, hash);
       setIsEditModalOpen(false);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to update child";
+        error instanceof Error ? error.message : dict?.failedToUpdateChild;
       context.showError(errorMessage);
     } finally {
       setUpdating(false);
@@ -180,7 +187,7 @@ export const ChildDetails = ({
             onClick={() => setIsEditModalOpen(true)}
             className="px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Edit Child
+            {dict?.editChild}
           </button>
           <button
             onClick={handleDeleteChild}
@@ -188,28 +195,24 @@ export const ChildDetails = ({
             className={`px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black ${
               (!canDelete || deleting) && "cursor-default opacity-70"
             }`}
-            title={
-              !canDelete
-                ? "Cannot delete: Child has usage or supply count > 0"
-                : ""
-            }
+            title={!canDelete ? dict?.cannotDeleteChildUsageCount : ""}
           >
-            {deleting ? "Deleting..." : "Delete Child"}
+            {deleting ? dict?.deleting : dict?.deleteChild}
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}
             className="px-2 py-1 font-herm bg-ama hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Approvals
+            {dict?.approvals}
           </button>
         </div>
       )}
-      <ItemHeader item={child} isTemplate={false} />
-      <ItemPricing item={child} />
-      <ItemMetadata item={child} />
-      <ItemRequests item={child} />
-      <ItemAuthorized item={child} />
-      <ItemBlockchainInfo item={child} />
+      <ItemHeader item={child} isTemplate={false} dict={dict} />
+      <ItemPricing item={child} dict={dict} />
+      <ItemMetadata item={child} dict={dict} />
+      <ItemRequests item={child} dict={dict} />
+      <ItemAuthorized item={child} dict={dict} />
+      <ItemBlockchainInfo item={child} dict={dict} />
 
       <CreateItemModal
         isOpen={isEditModalOpen}
@@ -224,18 +227,18 @@ export const ChildDetails = ({
         }}
         loading={updating}
         mode="child"
-        infraId=""
+        infraId={child.infraId}
+        dict={dict}
         isEditMode={true}
         editItem={child}
       />
 
       <ManualApprovalModal
+        dict={dict}
         isOpen={isApprovalModalOpen}
         onClose={() => setIsApprovalModalOpen(false)}
         itemType="child"
         itemData={child}
-        contractAddress={contractAddress}
-        itemId={childId.toString()}
       />
     </div>
   );

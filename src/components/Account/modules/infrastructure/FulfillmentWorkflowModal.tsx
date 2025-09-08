@@ -14,6 +14,7 @@ export const FulfillmentWorkflowModal = ({
   availability,
   currentWorkflow,
   infraId,
+  dict,
 }: FulfillmentWorkflowModalProps) => {
   const [validating, setValidating] = useState(false);
   const cancelledRef = useRef<boolean>(false);
@@ -175,7 +176,7 @@ export const FulfillmentWorkflowModal = ({
               {digitalSteps.length === 0 ? (
                 <div className="bg-black rounded-sm p-6 border border-white text-center">
                   <p className="text-ama text-sm font-herm">
-                    No digital steps configured. Click "Add Step" to start.
+                    {dict?.noDigitalStepsConfigured}
                   </p>
                 </div>
               ) : (
@@ -235,7 +236,7 @@ export const FulfillmentWorkflowModal = ({
                             }
                             rows={3}
                             className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                            placeholder="Describe what needs to be done for this step..."
+                            placeholder={dict?.stepInstructionsPlaceholder}
                           />
                         </div>
 
@@ -348,7 +349,7 @@ export const FulfillmentWorkflowModal = ({
               {physicalSteps.length === 0 ? (
                 <div className="bg-black rounded-sm p-6 border border-white text-center">
                   <p className="text-ama text-sm font-herm">
-                    No physical steps configured. Click "Add Step" to start.
+                    {dict?.noPhysicalStepsConfigured}
                   </p>
                 </div>
               ) : (
@@ -408,7 +409,7 @@ export const FulfillmentWorkflowModal = ({
                             }
                             rows={3}
                             className="w-full px-3 py-2 bg-black border border-white rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none"
-                            placeholder="Describe what needs to be done for this step..."
+                            placeholder={dict?.stepInstructionsPlaceholder}
                           />
                         </div>
 
@@ -525,7 +526,7 @@ export const FulfillmentWorkflowModal = ({
                   Validating...
                 </>
               ) : (
-                "Save Workflow"
+                dict?.saveWorkflow
               )}
             </button>
           </div>

@@ -15,6 +15,7 @@ import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useAccessControls = ({
   infrastructure,
+  dict,
 }: UseAccessControlsProps) => {
   const [adminAddress, setAdminAddress] = useState<string>("");
   const [designerAddress, setDesignerAddress] = useState<string>("");
@@ -63,7 +64,7 @@ export const useAccessControls = ({
 
         await publicClient.waitForTransactionReceipt({ hash });
 
-        context.showSuccess("Role updated successfully!", hash);
+        context.showSuccess(dict?.roleUpdatedSuccessfully, hash);
         setLoading(null);
         setAdminAddress("");
         setDesignerAddress("");
@@ -131,10 +132,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Designer gating toggled successfully!", hash);
+      context.showSuccess(dict?.designerGatingToggledSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to toggle designer gating");
+      context.showError(dict?.failedToToggleDesignerGating);
       setLoading(null);
     }
   }, [
@@ -160,10 +161,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Supplier gating toggled successfully!", hash);
+      context.showSuccess(dict?.supplierGatingToggledSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to toggle supplier gating");
+      context.showError(dict?.failedToToggleSupplierGating);
       setLoading(null);
     }
   }, [
@@ -189,11 +190,11 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Payment token updated successfully!", hash);
+      context.showSuccess(dict?.paymentTokenUpdatedSuccessfully, hash);
       setLoading(null);
       setNewPaymentToken("");
     } catch (error) {
-      context.showError("Failed to update payment token");
+      context.showError(dict?.failedToUpdatePaymentToken);
       setLoading(null);
     }
   }, [
@@ -220,10 +221,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Payment token locked successfully!", hash);
+      context.showSuccess(dict?.paymentTokenLockedSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to lock payment token");
+      context.showError(dict?.failedToLockPaymentToken);
       setLoading(null);
     }
   }, [
@@ -249,10 +250,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Admin control revoked successfully!", hash);
+      context.showSuccess(dict?.adminControlRevokedSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to revoke admin control");
+      context.showError(dict?.failedToRevokeAdminControl);
       setLoading(null);
     }
   }, [
@@ -296,13 +297,13 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Infrastructure URI updated successfully!", hash);
+      context.showSuccess(dict?.infrastructureUriUpdatedSuccessfully, hash);
       setLoading(null);
       setUpdateTitle(infrastructure.metadata?.title || "");
       setUpdateDescription(infrastructure.metadata?.description || "");
       setUpdateImage(null);
     } catch (error) {
-      context.showError("Failed to update infrastructure URI");
+      context.showError(dict?.failedToUpdateInfrastructureUri);
       setLoading(null);
     }
   }, [
@@ -335,10 +336,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Infrastructure deactivated successfully!", hash);
+      context.showSuccess(dict?.infrastructureDeactivatedSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to deactivate infrastructure");
+      context.showError(dict?.failedToDeactivateInfrastructure);
       setLoading(null);
     }
   }, [
@@ -366,10 +367,10 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Infrastructure reactivated successfully!", hash);
+      context.showSuccess(dict?.infrastructureReactivatedSuccessfully, hash);
       setLoading(null);
     } catch (error) {
-      context.showError("Failed to reactivate infrastructure");
+      context.showError(dict?.failedToReactivateInfrastructure);
       setLoading(null);
     }
   }, [
@@ -397,11 +398,11 @@ export const useAccessControls = ({
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Super Admin transferred successfully!", hash);
+      context.showSuccess(dict?.superAdminTransferredSuccessfully, hash);
       setLoading(null);
       setNewSuperAdmin("");
     } catch (error) {
-      context.showError("Failed to transfer Super Admin");
+      context.showError(dict?.failedToTransferSuperAdmin);
       setLoading(null);
     }
   }, [

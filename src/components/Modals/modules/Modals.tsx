@@ -5,15 +5,15 @@ import { Success } from "./Success";
 import { Error } from "./Error";
 import { AppContext } from "@/lib/providers/Providers";
 
-export const Modals = () => {
+export const Modals = ({ dict }: { dict: any }) => {
   const context = useContext(AppContext);
 
   if (!context) return null;
 
   return (
     <>
-      {context.successData && <Success />}
-      {context.errorData && <Error />}
+      {context.successData && <Success dict={dict} />}
+      {context.errorData && <Error dict={dict} />}
     </>
   );
 };

@@ -2,14 +2,14 @@ import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { useItemPricing } from "../hooks/useItemPricing";
 import { ItemPricingProps } from "../types";
 
-export const ItemPricing = ({ item }: ItemPricingProps) => {
+export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
   const {
     formattedDigitalPrice,
     formattedPhysicalPrice,
     statusLabel,
     getAvailabilityType,
     formatEditionLimit,
-  } = useItemPricing(item);
+  } = useItemPricing(item, dict);
 
   const { showDigital, showPhysical } = getAvailabilityType();
 
@@ -117,7 +117,7 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
           <span className="text-ama text-sm">Availability:</span>
           <p className="text-white font-herm">
             {"designId" in item
-              ? getAvailabilityLabel(item.availability)
+              ? getAvailabilityLabel(item.availability, dict)
               : item.availability}
           </p>
         </div>
@@ -194,7 +194,8 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
                   }`}
                 ></div>
                 <span className="text-ama">
-                  Digital Markets Open: {item.digitalMarketsOpenToAll ? "Yes" : "No"}
+                  Digital Markets Open:{" "}
+                  {item.digitalMarketsOpenToAll ? "Yes" : "No"}
                 </span>
               </div>
             )}
@@ -209,7 +210,8 @@ export const ItemPricing = ({ item }: ItemPricingProps) => {
                   }`}
                 ></div>
                 <span className="text-ama">
-                  Physical Markets Open: {item.physicalMarketsOpenToAll ? "Yes" : "No"}
+                  Physical Markets Open:{" "}
+                  {item.physicalMarketsOpenToAll ? "Yes" : "No"}
                 </span>
               </div>
             )}

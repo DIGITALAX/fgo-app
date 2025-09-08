@@ -1,16 +1,29 @@
-export const getAvailabilityLabel = (availability: number | string): string => {
+export const getAvailabilityLabel = (availability: number | string, dict: any): string => {
   const availabilityNum =
     typeof availability === "string" ? parseInt(availability) : availability;
 
+  if (!dict) {
+    switch (availabilityNum) {
+      case 0:
+        return "Digital Only";
+      case 1:
+        return "Physical Only";
+      case 2:
+        return "Digital + Physical";
+      default:
+        return "Available";
+    }
+  }
+
   switch (availabilityNum) {
     case 0:
-      return "Digital Only";
+      return dict?.digitalOnly;
     case 1:
-      return "Physical Only";
+      return dict?.physicalOnly;
     case 2:
-      return "Digital + Physical";
+      return dict?.digitalPhysical;
     default:
-      return "Available";
+      return dict?.available;
   }
 };
 

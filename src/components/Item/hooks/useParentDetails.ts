@@ -3,7 +3,7 @@ import { getParent } from "@/lib/subgraph/queries/getItems";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Parent } from "@/components/Account/types";
 
-export const useParentDetails = (contractAddress: string, designId: string | number) => {
+export const useParentDetails = (contractAddress: string, designId: string | number, dict: any) => {
   const [parent, setParent] = useState<Parent | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,10 +70,10 @@ export const useParentDetails = (contractAddress: string, designId: string | num
         });
       } else {
         setParent(null);
-        setError("Parent not found");
+        setError(dict?.parentNotFound);
       }
     } catch (err) {
-      setError("Failed to load parent details");
+      setError(dict?.failedToLoadParentDetails);
       setParent(null);
     } finally {
       setIsLoading(false);

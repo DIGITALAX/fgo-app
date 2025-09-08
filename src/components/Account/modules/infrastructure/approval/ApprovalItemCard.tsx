@@ -1,5 +1,4 @@
-import { ApprovalItemCardProps, ExtendedApprovalItemCardProps } from "../../../types";
-import { MarketContract, Parent } from "../../../types";
+import { ApprovalItemCardProps, MarketContract, Parent } from "../../../types";
 import { Template } from "@/components/Item/types";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import Image from "next/image";
@@ -13,14 +12,15 @@ export const ApprovalItemCard = ({
   onRevoke,
   itemType,
   loading = false,
-}: ExtendedApprovalItemCardProps) => {
+  dict,
+}: ApprovalItemCardProps) => {
   const getItemData = () => {
     switch (itemType) {
       case "market":
         const market = item as MarketContract;
         return {
-          title: market.marketMetadata?.title || market.title || "Unnamed Market",
-          description: market.marketMetadata?.description || "No description available",
+          title: market.marketMetadata?.title || market.title || dict?.unnamedMarket,
+          description: market.marketMetadata?.description || dict?.noDescription,
           image: market.marketMetadata?.image || "",
           symbol: market.symbol,
           address: market.contractAddress,
@@ -28,8 +28,8 @@ export const ApprovalItemCard = ({
       case "parent":
         const parent = item as Parent;
         return {
-          title: parent.metadata?.title || parent.title || "Unnamed Parent",
-          description: parent.metadata?.description || "No description available",
+          title: parent.metadata?.title || parent.title || dict?.unnamedParent,
+          description: parent.metadata?.description || dict?.noDescription,
           image: parent.metadata?.image || "",
           symbol: parent.symbol,
           address: parent.parentContract,
@@ -37,16 +37,16 @@ export const ApprovalItemCard = ({
       case "template":
         const template = item as Template;
         return {
-          title: template.metadata?.title || "Unnamed Template",
-          description: template.metadata?.description || "No description available",
+          title: template.metadata?.title || dict?.unnamedTemplate,
+          description: template.metadata?.description || dict?.noDescription,
           image: template.metadata?.image || "",
           symbol: template.symbol || "",
           address: template.templateContract,
         };
       default:
         return {
-          title: "Unknown Item",
-          description: "No description available",
+          title: dict?.unknownItem,
+          description: dict?.noDescription,
           image: "",
           symbol: "",
           address: "",
@@ -91,7 +91,7 @@ export const ApprovalItemCard = ({
           </h4>
           {isApproved && (
             <div className="bg-ama/20 border border-ama px-2 py-1 rounded text-xs font-herm text-ama whitespace-nowrap">
-              Approved
+              {dict?.approved}
             </div>
           )}
         </div>
@@ -102,13 +102,13 @@ export const ApprovalItemCard = ({
 
         <div className="space-y-1 text-xs font-herm">
           <div className="flex justify-between text-white/60">
-            <span>Symbol:</span>
+            <span>{dict?.symbol}:</span>
             <span className="font-mono text-ama">{itemData.symbol}</span>
           </div>
           <div className="flex justify-between text-white/60">
-            <span>Status:</span>
+            <span>{dict?.status}:</span>
             <span className={`font-mono ${isActive ? "text-ama" : "text-fresa"}`}>
-              {isActive ? "Active" : "Inactive"}
+              {isActive ? dict?.active : dict?.inactive}
             </span>
           </div>
         </div>
@@ -116,7 +116,7 @@ export const ApprovalItemCard = ({
         <div className="pt-2">
           {!isActive ? (
             <div className="text-center py-2 text-white/40 font-herm text-xs">
-              Inactive - Cannot approve
+              {dict?.inactiveCannotApprove}
             </div>
           ) : isApproved ? (
             <button
@@ -124,7 +124,7 @@ export const ApprovalItemCard = ({
               disabled={loading}
               className="w-full px-3 py-2 bg-fresa hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed text-white font-herm text-xs rounded-sm transition-opacity"
             >
-              {loading ? "Revoking..." : "Revoke Approval"}
+              {loading ? dict?.revoking : dict?.revokeApproval}
             </button>
           ) : (
             <button
@@ -132,7 +132,7 @@ export const ApprovalItemCard = ({
               disabled={loading}
               className="w-full px-3 py-2 bg-ama hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed text-black font-herm text-xs rounded-sm transition-opacity"
             >
-              {loading ? "Approving..." : "Approve"}
+              {loading ? dict?.approving : dict?.approve}
             </button>
           )}
         </div>

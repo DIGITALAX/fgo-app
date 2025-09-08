@@ -4,6 +4,7 @@ import { useAccessControls } from "../../hooks/useAccessControls";
 export const AccessControlsTab = ({
   infrastructure,
   isOwner,
+  dict,
 }: AccessControlsTabProps) => {
   const {
     adminAddress,
@@ -41,15 +42,15 @@ export const AccessControlsTab = ({
     handleDeactivateInfrastructure,
     handleReactivateInfrastructure,
     handleTransferSuperAdmin,
-  } = useAccessControls({ infrastructure });
+  } = useAccessControls({ infrastructure, dict });
 
   if (!isOwner) {
     return (
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Access Controls</h3>
-        <p className="text-ama font-herm">
-          You must be the Super Admin to manage access controls.
-        </p>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.accessControls}
+        </h3>
+        <p className="text-ama font-herm">{dict?.onlySuperAdminAccess}</p>
       </div>
     );
   }
@@ -59,22 +60,24 @@ export const AccessControlsTab = ({
       {infrastructure.isActive == false && (
         <div className="bg-black border border-ama p-4 rounded-sm">
           <p className="text-ama text-sm font-herm">
-             Infrastructure is inactive. All admin functions are disabled until reactivated.
+            {dict?.infrastructureInactiveNotice}
           </p>
         </div>
       )}
 
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Role Management</h3>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.roleManagement}
+        </h3>
 
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Admin Management</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.adminManagement}</h4>
           <div className="flex gap-3 mb-2">
             <input
               type="text"
               value={adminAddress}
               onChange={(e) => setAdminAddress(e.target.value)}
-              placeholder="Enter admin address"
+              placeholder={dict?.enterAdminAddress}
               className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
             />
             <button
@@ -89,7 +92,7 @@ export const AccessControlsTab = ({
               {loading === "addAdmin" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Add Admin
+              {dict?.addAdmin}
             </button>
             <button
               onClick={handleRemoveAdmin}
@@ -103,19 +106,21 @@ export const AccessControlsTab = ({
               {loading === "removeAdmin" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
-              Remove Admin
+              {dict?.removeAdmin}
             </button>
           </div>
         </div>
 
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Designer Management</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.designerManagement}
+          </h4>
           <div className="flex gap-3 mb-2">
             <input
               type="text"
               value={designerAddress}
               onChange={(e) => setDesignerAddress(e.target.value)}
-              placeholder="Enter designer address"
+              placeholder={dict?.enterDesignerAddress}
               className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
             />
             <button
@@ -130,7 +135,7 @@ export const AccessControlsTab = ({
               {loading === "addDesigner" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Add Designer
+              {dict?.addDesigner}
             </button>
             <button
               onClick={handleRemoveDesigner}
@@ -144,19 +149,21 @@ export const AccessControlsTab = ({
               {loading === "removeDesigner" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
-              Remove Designer
+              {dict?.removeDesigner}
             </button>
           </div>
         </div>
 
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Supplier Management</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.supplierManagement}
+          </h4>
           <div className="flex gap-3 mb-2">
             <input
               type="text"
               value={supplierAddress}
               onChange={(e) => setSupplierAddress(e.target.value)}
-              placeholder="Enter supplier address"
+              placeholder={dict?.enterSupplierAddress}
               className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
             />
             <button
@@ -171,7 +178,7 @@ export const AccessControlsTab = ({
               {loading === "addSupplier" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Add Supplier
+              {dict?.addSupplier}
             </button>
             <button
               onClick={handleRemoveSupplier}
@@ -185,19 +192,21 @@ export const AccessControlsTab = ({
               {loading === "removeSupplier" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
-              Remove Supplier
+              {dict?.removeSupplier}
             </button>
           </div>
         </div>
 
         <div>
-          <h4 className="text-ama font-herm mb-3">Fulfiller Management</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.fulfillerManagement}
+          </h4>
           <div className="flex gap-3 mb-2">
             <input
               type="text"
               value={fulfillerAddress}
               onChange={(e) => setFulfillerAddress(e.target.value)}
-              placeholder="Enter fulfiller address"
+              placeholder={dict?.enterFulfillerAddress}
               className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
             />
             <button
@@ -212,7 +221,7 @@ export const AccessControlsTab = ({
               {loading === "addFulfiller" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Add Fulfiller
+              {dict?.addFulfiller}
             </button>
             <button
               onClick={handleRemoveFulfiller}
@@ -226,19 +235,21 @@ export const AccessControlsTab = ({
               {loading === "removeFulfiller" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
-              Remove Fulfiller
+              {dict?.removeFulfiller}
             </button>
           </div>
         </div>
       </div>
 
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Gating Controls</h3>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.gatingControls}
+        </h3>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-ama font-herm">Designer Gating</span>
+              <span className="text-ama font-herm">{dict?.designerGating}</span>
               <span
                 className={`px-2 py-1 rounded-sm text-xs font-herm ${
                   infrastructure.isDesignerGated === true ||
@@ -249,8 +260,8 @@ export const AccessControlsTab = ({
               >
                 {infrastructure.isDesignerGated === true ||
                 infrastructure.isDesignerGated == null
-                  ? "Gating Applied"
-                  : "Gating Disabled"}
+                  ? dict?.gatingApplied
+                  : dict?.gatingDisabled}
               </span>
             </div>
             <button
@@ -265,15 +276,15 @@ export const AccessControlsTab = ({
               )}
               {infrastructure.isDesignerGated === true ||
               infrastructure.isDesignerGated == null
-                ? "Disable"
-                : "Enable"}{" "}
-              Designer Gating
+                ? dict?.disable
+                : dict?.enable}{" "}
+              {dict?.designerGating}
             </button>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-ama font-herm">Supplier Gating</span>
+              <span className="text-ama font-herm">{dict?.supplierGating}</span>
               <span
                 className={`px-2 py-1 rounded-sm text-xs font-herm ${
                   infrastructure.isSupplierGated === true ||
@@ -284,8 +295,8 @@ export const AccessControlsTab = ({
               >
                 {infrastructure.isSupplierGated === true ||
                 infrastructure.isSupplierGated == null
-                  ? "Gating Applied"
-                  : "Gating Disabled"}
+                  ? dict?.gatingApplied
+                  : dict?.gatingDisabled}
               </span>
             </div>
             <button
@@ -300,20 +311,24 @@ export const AccessControlsTab = ({
               )}
               {infrastructure.isSupplierGated === true ||
               infrastructure.isSupplierGated == null
-                ? "Disable"
-                : "Enable"}{" "}
-              Supplier Gating
+                ? dict?.disable
+                : dict?.enable}{" "}
+              {dict?.supplierGating}
             </button>
           </div>
         </div>
       </div>
 
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Payment Token Management</h3>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.paymentTokenManagement}
+        </h3>
 
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-ama font-herm">Current Payment Token</span>
+            <span className="text-ama font-herm">
+              {dict?.currentPaymentToken}
+            </span>
             <span
               className={`px-2 py-1 rounded-sm text-xs font-herm ${
                 infrastructure.isPaymentTokenLocked
@@ -321,7 +336,9 @@ export const AccessControlsTab = ({
                   : "bg-mar text-black"
               }`}
             >
-              {infrastructure.isPaymentTokenLocked ? "Locked" : "Unlocked"}
+              {infrastructure.isPaymentTokenLocked
+                ? dict?.locked
+                : dict?.unlocked}
             </span>
           </div>
           <p className="text-white font-mono text-sm break-all">
@@ -336,7 +353,7 @@ export const AccessControlsTab = ({
                 type="text"
                 value={newPaymentToken}
                 onChange={(e) => setNewPaymentToken(e.target.value)}
-                placeholder="Enter new payment token address"
+                placeholder={dict?.enterNewPaymentTokenAddress}
                 className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
               />
               <button
@@ -348,7 +365,7 @@ export const AccessControlsTab = ({
                 }
                 className="px-4 py-2 bg-mar hover:bg-ama disabled:bg-white disabled:text-black text-black text-sm font-herm rounded-sm transition-colors"
               >
-                Update Token
+                {dict?.updateToken}
               </button>
             </div>
           </div>
@@ -360,25 +377,29 @@ export const AccessControlsTab = ({
             disabled={infrastructure.isActive == false || loading !== null}
             className="w-full px-4 py-2 bg-ama hover:opacity-70 disabled:bg-white disabled:text-black text-black text-sm font-herm rounded-sm transition-colors"
           >
-            Lock Payment Token (Permanent)
+            {dict?.lockPaymentTokenPermanent}
           </button>
         )}
       </div>
 
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Infrastructure Management</h3>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.infrastructureManagement}
+        </h3>
 
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Update Infrastructure URI</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.updateInfrastructureUri}
+          </h4>
           <div className="mb-4">
             <p className="text-xs text-ama mb-3 font-herm">
-              Current URI: {infrastructure.uri}
+              {dict?.currentUri}: {infrastructure.uri}
             </p>
 
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-herm text-ama mb-1">
-                  Title
+                  {dict?.title}
                 </label>
                 <input
                   type="text"
@@ -386,13 +407,13 @@ export const AccessControlsTab = ({
                   onChange={(e) => setUpdateTitle(e.target.value)}
                   disabled={infrastructure.isActive == false}
                   className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama disabled:bg-black disabled:text-ama font-herm"
-                  placeholder="Enter infrastructure title"
+                  placeholder={dict?.enterInfrastructureTitle}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-herm text-ama mb-1">
-                  Description
+                  {dict?.description}
                 </label>
                 <textarea
                   value={updateDescription}
@@ -400,17 +421,18 @@ export const AccessControlsTab = ({
                   disabled={infrastructure.isActive == false}
                   rows={2}
                   className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama disabled:bg-black disabled:text-ama resize-none font-herm"
-                  placeholder="Enter infrastructure description"
+                  placeholder={dict?.enterInfrastructureDescription}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-herm text-ama mb-1">
-                  Image (optional)
+                  {dict?.imageOptional}
                 </label>
                 {infrastructure.metadata?.image && (
                   <div className="mb-2 text-xs text-white/60 font-herm">
-                    Current: {infrastructure.metadata.image.split('/').pop()}
+                    {dict?.current}:{" "}
+                    {infrastructure.metadata.image.split("/").pop()}
                   </div>
                 )}
                 <input
@@ -437,12 +459,14 @@ export const AccessControlsTab = ({
             {loading === "updateURI" && (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
             )}
-            Update Infrastructure URI
+            {dict?.updateInfrastructureURI}
           </button>
         </div>
 
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Infrastructure Status</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.infrastructureStatus}
+          </h4>
           <div className="grid gap-3 md:grid-cols-2">
             <button
               onClick={handleDeactivateInfrastructure}
@@ -454,7 +478,7 @@ export const AccessControlsTab = ({
               {loading === "deactivate" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Deactivate Infrastructure
+              {dict?.deactivateInfrastructure}
             </button>
             <button
               onClick={handleReactivateInfrastructure}
@@ -464,16 +488,18 @@ export const AccessControlsTab = ({
               {loading === "reactivate" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
               )}
-              Reactivate Infrastructure
+              {dict?.reactivateInfrastructure}
             </button>
           </div>
         </div>
 
         <div>
-          <h4 className="text-ama font-herm mb-3">Transfer Super Admin</h4>
+          <h4 className="text-ama font-herm mb-3">
+            {dict?.transferSuperAdmin}
+          </h4>
           <div className="bg-black border border-ama rounded-sm p-4 mb-3">
             <p className="text-ama text-sm font-herm">
-               Warning: This will transfer Super Admin rights to another address. You will no longer be the Super Admin.
+              {dict?.transferSuperAdminWarning}
             </p>
           </div>
           <div className="flex gap-3">
@@ -481,7 +507,7 @@ export const AccessControlsTab = ({
               type="text"
               value={newSuperAdmin}
               onChange={(e) => setNewSuperAdmin(e.target.value)}
-              placeholder="Enter new Super Admin address"
+              placeholder={dict?.enterNewSuperAdminAddress}
               className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
             />
             <button
@@ -496,18 +522,22 @@ export const AccessControlsTab = ({
               {loading === "transferSuperAdmin" && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
-              Transfer
+              {dict?.transfer}
             </button>
           </div>
         </div>
       </div>
 
       <div className="w-full bg-black border border-white p-4 rounded-sm">
-        <h3 className="text-lg font-herm text-white mb-4">Critical Actions</h3>
+        <h3 className="text-lg font-herm text-white mb-4">
+          {dict?.criticalActions}
+        </h3>
 
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-ama font-herm">Admin Control Status</span>
+            <span className="text-ama font-herm">
+              {dict?.adminControlStatus}
+            </span>
             <span
               className={`px-2 py-1 rounded-sm text-xs font-herm ${
                 infrastructure.adminControlRevoked
@@ -515,7 +545,9 @@ export const AccessControlsTab = ({
                   : "bg-mar text-black"
               }`}
             >
-              {infrastructure.adminControlRevoked ? "Revoked" : "Active"}
+              {infrastructure.adminControlRevoked
+                ? dict?.revoked
+                : dict?.active}
             </span>
           </div>
         </div>
@@ -523,14 +555,14 @@ export const AccessControlsTab = ({
         {!infrastructure.adminControlRevoked && (
           <div className="bg-black border border-fresa rounded-sm p-4">
             <p className="text-fresa text-sm mb-3 font-herm">
-               Warning: This action is permanent and cannot be undone. You will lose all administrative control over this infrastructure.
+              {dict?.revokeAdminWarning}
             </p>
             <button
               onClick={handleRevokeAdminControl}
               disabled={infrastructure.isActive == false || loading !== null}
               className="w-full px-4 py-2 bg-fresa hover:bg-ama disabled:bg-white disabled:text-black text-white text-sm font-herm rounded-sm transition-colors"
             >
-              Revoke Admin Control (Permanent)
+              {dict?.revokeAdminControlPermanent}
             </button>
           </div>
         )}

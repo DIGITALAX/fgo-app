@@ -3,7 +3,7 @@ import { getParents } from "@/lib/subgraph/queries/getItems";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Parent } from "../../../types";
 
-export const useParentItems = (parentContract: string) => {
+export const useParentItems = (parentContract: string, dict: any) => {
   const [parentItems, setParentItems] = useState<Parent[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export const useParentItems = (parentContract: string) => {
         setParentItems([]);
       }
     } catch (err) {
-      setError("Failed to load parent items");
+      setError(dict?.failedToLoadParentItems);
       setParentItems([]);
     } finally {
       setLoading(false);

@@ -9,6 +9,7 @@ import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useDeployTemplate = (
   infrastructure: Infrastructure,
+  dict: any,
   onSuccess?: () => void
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -49,11 +50,11 @@ export const useDeployTemplate = (
   const deployTemplateContract = useCallback(
     async (formData: DeployTemplateFormData) => {
       if (!walletClient || !publicClient || !context) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       if (!infrastructure.isActive) {
-        throw new Error("Infrastructure is not active");
+        throw new Error(dict?.infrastructureIsNotActive);
       }
 
       setLoading(true);
@@ -104,7 +105,7 @@ export const useDeployTemplate = (
           const errorMessage =
             err instanceof Error
               ? err.message
-              : "Failed to deploy template contract";
+              : dict?.failedToDeployTemplateContract;
           context.showError(errorMessage);
           throw err;
         }

@@ -8,15 +8,13 @@ import {
 export interface MarketContractDetailViewProps {
   marketContract: MarketContract;
   onBack: () => void;
+  dict: any;
 }
 
 export interface MarketsApprovalTabProps {
   itemData: Child | Template | Parent;
   itemType: "child" | "template" | "parent";
-}
-
-export interface ExtendedApprovalItemCardProps extends ApprovalItemCardProps {
-  loading?: boolean;
+  dict: any;
 }
 
 export type AccountTab =
@@ -38,12 +36,12 @@ export interface AccountState {
   selectedLanguage: string;
 }
 
-export type Language = "en" | "es" | "fr";
+export type Language = "en" | "es" | "pt";
 
 export const LANGUAGES = {
   en: "English",
   es: "Español",
-  fr: "Français",
+  pt: "Português",
 } as const;
 
 export type InfrastructureDetailTab =
@@ -58,11 +56,13 @@ export interface InfrastructureDetailProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
   onBack: () => void;
+  dict: any;
 }
 
 export interface InfrastructureDetailTabsProps {
   activeTab: InfrastructureDetailTab;
   onTabChange: (tab: InfrastructureDetailTab) => void;
+  dict: any;
 }
 
 export interface InfrastructureMetadata {
@@ -80,6 +80,7 @@ export interface ChildContractDetailViewProps {
   childContract: ChildContract;
   infrastructure: Infrastructure | { infraId: string };
   onBack: () => void;
+  dict: any;
 }
 
 export interface TemplateContract {
@@ -106,6 +107,7 @@ export interface MetadataFormData {
   tags: string[];
   loras: string[];
   attachments: File[];
+  customFields: Record<string, string>;
 }
 
 export interface MetadataFormProps {
@@ -116,18 +118,22 @@ export interface MetadataFormProps {
   onFileChange: (field: string, files: FileList | null) => void;
   onTagsChange: (tags: string[]) => void;
   onLorasChange: (loras: string[]) => void;
+  onCustomFieldsChange: (customFields: Record<string, string>) => void;
   loading?: boolean;
   existingImageUrl?: string;
   existingAttachments?: Array<{ uri?: string; type?: string }>;
+  dict: any;
 }
 
 export interface AccessControlsTabProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
+  dict: any;
 }
 
 export interface UseAccessControlsProps {
   infrastructure: Infrastructure;
+  dict: any;
 }
 
 export interface DeployParentFormData {
@@ -198,6 +204,7 @@ export interface CreateItemFormData {
     tags: string[];
     loras: string[];
     attachments: File[];
+    customFields: Record<string, string>;
   };
   fulfillmentWorkflow?: Workflow;
 }
@@ -208,6 +215,7 @@ export interface DeployParentModalProps {
   onSubmit: (data: DeployParentFormData) => void;
   onCancel: () => void;
   loading: boolean;
+  dict: any;
 }
 
 export interface DeployChildModalProps {
@@ -216,6 +224,7 @@ export interface DeployChildModalProps {
   onSubmit: (data: DeployChildFormData) => void;
   onCancel: () => void;
   loading: boolean;
+  dict: any;
 }
 
 export interface DeployTemplateFormData {
@@ -231,6 +240,7 @@ export interface DeployTemplateModalProps {
   onSubmit: (data: DeployTemplateFormData) => void;
   onCancel: () => void;
   loading: boolean;
+  dict: any;
 }
 
 export type CreateItemMode = "child" | "template" | "parent";
@@ -244,6 +254,7 @@ export interface CreateItemModalProps {
   infraId: string;
   isEditMode?: boolean;
   editItem?: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ChildSelectionModalProps {
@@ -252,31 +263,37 @@ export interface ChildSelectionModalProps {
   onSelect: (placement: ChildReference) => void;
   onCancel?: () => void;
   selectedIds?: string[];
+  dict: any;
   editingPlacement?: ChildReference;
 }
 
 export interface DetailsTabProps {
   infrastructure: Infrastructure;
+  dict: any;
 }
 
 export interface ChildrenTabProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
+  dict: any;
 }
 
 export interface MarketsTabProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
+  dict: any;
 }
 
 export interface ParentsTabProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
+  dict: any;
 }
 
 export interface TemplatesTabProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
+  dict: any;
 }
 
 export interface Infrastructure {
@@ -308,6 +325,7 @@ export interface InfrastructureCardProps {
   infrastructure: Infrastructure;
   isOwner: boolean;
   onClick: (infrastructure: Infrastructure, isOwner: boolean) => void;
+  dict: any;
 }
 
 export interface CreateInfrastructureFormData {
@@ -323,6 +341,8 @@ export interface CreateInfrastructureModalProps {
   onSubmit: (data: CreateInfrastructureFormData) => void;
   onCancel: () => void;
   loading: boolean;
+  paymentTokens: PaymentToken[];
+  dict: any;
 }
 
 export interface PaymentToken {
@@ -331,14 +351,10 @@ export interface PaymentToken {
   symbol: string;
 }
 
-export interface CreateInfrastructureModalPropsExtended
-  extends CreateInfrastructureModalProps {
-  paymentTokens: PaymentToken[];
-}
-
 export interface ParentItemCardProps {
   parent: Parent;
   onClick?: (parent: Parent) => void;
+  dict: any;
 }
 
 export interface DeployMarketModalProps {
@@ -347,6 +363,7 @@ export interface DeployMarketModalProps {
   onSubmit: (data: DeployMarketFormData) => void;
   onCancel: () => void;
   loading: boolean;
+  dict: any;
 }
 
 export interface ParentContractMetadata {
@@ -422,16 +439,19 @@ export interface ContractCardProps {
     | ((marketContract: MarketContract) => void)
     | ((childContract: ChildContract) => void)
     | ((templateContract: TemplateContract) => void);
+  dict: any;
 }
 
 export interface ParentContractDetailViewProps {
   parentContract: ParentContract;
   onBack: () => void;
+  dict: any;
 }
 
 export interface TemplateContractDetailViewProps {
   templateContract: TemplateContract;
   onBack: () => void;
+  dict: any;
 }
 
 export interface Parent {
@@ -489,6 +509,7 @@ export interface ParentMetadata {
   loras: string[];
   workflow: string;
   version: string;
+  customFields?: Record<string, string>;
 }
 
 export interface ProfileManagerProps {
@@ -496,6 +517,7 @@ export interface ProfileManagerProps {
   onClose: () => void;
   contract: string;
   infraId: string;
+  dict: any;
   walletAddress: string;
   profileType: "Designer" | "Supplier" | "Fulfiller";
   userAddress?: string;
@@ -515,6 +537,7 @@ export interface UseProfileManagerProps {
   infraId: string;
   walletAddress: string;
   profileType: "Designer" | "Supplier" | "Fulfiller";
+  dict: any;
 }
 
 export interface Designer {
@@ -597,6 +620,7 @@ export interface FulfillmentWorkflowModalProps {
   availability: number;
   currentWorkflow?: Workflow;
   infraId: string;
+  dict: any;
 }
 
 export type ApprovalTab = "markets" | "parents" | "templates";
@@ -606,15 +630,16 @@ export interface ManualApprovalModalProps {
   onClose: () => void;
   itemType: "child" | "template" | "parent";
   itemData: Child | Template | Parent;
-  contractAddress: string;
-  itemId: string;
+  dict: any;
 }
 
 export interface ApprovalItemCardProps {
   item: MarketContract | Parent | Template;
   isApproved: boolean;
+  loading?: boolean;
   isActive: boolean;
   onApprove: () => void;
   onRevoke: () => void;
   itemType: "market" | "parent" | "template";
+  dict: any;
 }

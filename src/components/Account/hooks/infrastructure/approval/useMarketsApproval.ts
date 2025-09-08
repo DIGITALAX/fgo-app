@@ -8,7 +8,8 @@ import { ABIS } from "@/abis";
 export const useMarketsApproval = (
   itemData: any,
   itemType: "child" | "template" | "parent",
-  searchQuery: string
+  searchQuery: string,
+  dict: any
 ) => {
   const [markets, setMarkets] = useState<MarketContract[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export const useMarketsApproval = (
         setHasMore(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load markets");
+      setError(err instanceof Error ? err.message : dict?.failedToLoadMarkets);
       if (!isLoadMore) {
         setMarkets([]);
       }
@@ -89,13 +90,13 @@ export const useMarketsApproval = (
           itemId: itemData.designId,
         };
       default:
-        throw new Error("Invalid item type");
+        throw new Error(dict?.item);
     }
   };
 
   const approveMarket = async (marketAddress: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -133,14 +134,14 @@ export const useMarketsApproval = (
           break;
 
         default:
-          throw new Error("Invalid item type");
+          throw new Error(dict?.item);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Market approved successfully!", hash);
+      context.showSuccess(dict?.marketApprovedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to approve market";
+        error instanceof Error ? error.message : dict?.failedToApproveMarket;
       context.showError(errorMessage);
     } finally {
       setApproving(null);
@@ -149,7 +150,7 @@ export const useMarketsApproval = (
 
   const revokeMarket = async (marketAddress: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -187,16 +188,16 @@ export const useMarketsApproval = (
           break;
 
         default:
-          throw new Error("Invalid item type");
+          throw new Error(dict?.item);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Market approval revoked successfully!", hash);
+      context.showSuccess(dict?.marketApprovalRevokedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to revoke market approval";
+          : dict?.failedToRevokeMarketApproval;
       context.showError(errorMessage);
     } finally {
       setRevoking(null);

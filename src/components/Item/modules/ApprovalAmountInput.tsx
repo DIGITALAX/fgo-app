@@ -8,7 +8,8 @@ export const ApprovalAmountInput = ({
   onReject,
   loading,
   rejecting,
-  isSupplier
+  isSupplier,
+  dict
 }: ApprovalAmountInputProps) => {
   const [approvalAmount, setApprovalAmount] = useState(requestedAmount);
 
@@ -26,7 +27,7 @@ export const ApprovalAmountInput = ({
 
   return (
     <div className="flex items-center gap-2 bg-black border border-white rounded-sm p-2">
-      <label className="text-xs font-herm text-ama">Amount:</label>
+      <label className="text-xs font-herm text-ama">{dict?.amount}:</label>
       <input
         type="text"
         value={approvalAmount}
@@ -43,7 +44,7 @@ export const ApprovalAmountInput = ({
         {loading ? (
           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
         ) : (
-          "Approve"
+          dict?.approve
         )}
       </button>
       <button
@@ -54,7 +55,7 @@ export const ApprovalAmountInput = ({
         {rejecting ? (
           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
         ) : (
-          "Reject"
+          dict?.reject
         )}
       </button>
     </div>

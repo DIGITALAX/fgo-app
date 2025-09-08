@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getContractsByDesigner } from "@/lib/subgraph/queries/getContracts";
 import { ParentContract } from "../../types";
 
-export const useParentContractsByDesigner = (walletAddress: string) => {
+export const useParentContractsByDesigner = (walletAddress: string, dict: any) => {
   const [parentContracts, setParentContracts] = useState<ParentContract[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export const useParentContractsByDesigner = (walletAddress: string) => {
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch parent contracts";
+        err instanceof Error ? err.message : dict?.failedToFetchParentContracts;
       setError(errorMessage);
       setParentContracts([]);
     } finally {

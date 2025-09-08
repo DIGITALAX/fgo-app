@@ -5,7 +5,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import {  ChildReferencesProps } from "../types";
 import Image from "next/image";
 
-export const ChildReferences = ({ childData }: ChildReferencesProps) => {
+export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
   const router = useRouter();
   const [childMetadata, setChildMetadata] = useState<
     Record<string, { title: string; image: string }>
@@ -57,7 +57,7 @@ export const ChildReferences = ({ childData }: ChildReferencesProps) => {
   return (
     <div className="bg-black border border-white rounded-sm p-6">
       <h3 className="text-lg font-semibold text-white mb-4">
-        Child References
+        {dict?.childReferences}
       </h3>
 
       <div className="space-y-4">
@@ -83,7 +83,7 @@ export const ChildReferences = ({ childData }: ChildReferencesProps) => {
                       sizes="128px"
                       alt={
                         metadata.title ||
-                        `${isTemplate ? "Template" : "Child"} ${child.childId}`
+                        `${isTemplate ? dict?.template : dict?.child} ${child.childId}`
                       }
                       className="object-contain"
                     />
@@ -94,38 +94,38 @@ export const ChildReferences = ({ childData }: ChildReferencesProps) => {
                   <div className="flex items-center gap-3">
                     <h4 className="text-white font-medium">
                       {metadata?.title ||
-                        `${isTemplate ? "Template" : "Child"} ${child.childId}`}
+                        `${isTemplate ? dict?.template : dict?.child} ${child.childId}`}
                     </h4>
                     <span className="px-2 py-1 bg-azul text-white text-xs rounded-sm">
-                      {isTemplate ? "Template" : "Child"}
+                      {isTemplate ? dict?.template : dict?.child}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-ama">ID:</span>
+                      <span className="text-ama">{dict?.id}:</span>
                       <p className="text-white">{child.childId}</p>
                     </div>
                     <div>
-                      <span className="text-ama">Amount:</span>
+                      <span className="text-ama">{dict?.amount}:</span>
                       <p className="text-white">{child.amount}</p>
                     </div>
                     <div>
-                      <span className="text-ama">Contract:</span>
+                      <span className="text-ama">{dict?.contract}:</span>
                       <p className="text-white font-mono text-xs truncate">
                         {child.childContract}
                       </p>
                     </div>
                     {child.placementURI && (
                       <div>
-                        <span className="text-ama">Placement URI:</span>
+                        <span className="text-ama">{dict?.placementURI}:</span>
                         <p
                           className="text-white font-mono text-xs break-all cursor-pointer hover:text-ama transition-colors"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigator.clipboard.writeText(child.placementURI);
                           }}
-                          title="Click to copy"
+                          title={dict?.clickToCopy}
                         >
                           {child.placementURI}
                         </p>
@@ -142,7 +142,7 @@ export const ChildReferences = ({ childData }: ChildReferencesProps) => {
       {loading && (
         <div className="flex items-center justify-center py-4">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-azul"></div>
-          <span className="ml-2 text-azul">Loading metadata...</span>
+          <span className="ml-2 text-azul">{dict?.loadingMetadata}</span>
         </div>
       )}
     </div>

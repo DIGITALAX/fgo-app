@@ -54,80 +54,118 @@ query($first: Int!, $skip: Int!) {
 }
 `;
 
-const ALL_CHILDREN_WITH_SEARCH = `
-query($first: Int!, $skip: Int!, $searchText: String!) {
-  childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
-    or: [
-      { metadata_: { title_contains_nocase: $searchText } },
-      { metadata_: { description_contains_nocase: $searchText } }
-    ]
-  }) {
-    createdAt
-    uri
-    childId
-    childContract
-    status
-    physicalPrice
-    digitalPrice
-    supplyCount
-    infraCurrency
-    supplier
-    scm
-    availability
-    supplierProfile {
-      uri 
-      metadata {
-        title
+
+const buildAdvancedQuery = (filters: any) => {
+  const { searchText, orderBy, orderDirection, supplierAddress, availability, scm, minDigitalPrice, maxDigitalPrice, minPhysicalPrice, maxPhysicalPrice } = filters;
+  
+  let whereClause = "";
+  const conditions = [];
+
+  if (searchText && searchText.trim()) {
+    conditions.push(`
+      or: [
+        { metadata_: { title_contains_nocase: "${searchText.trim()}" } },
+        { metadata_: { description_contains_nocase: "${searchText.trim()}" } }
+      ]
+    `);
+  }
+
+  if (supplierAddress && supplierAddress.trim()) {
+    conditions.push(`supplier: "${supplierAddress.trim()}"`);
+  }
+
+  if (availability !== null && availability !== undefined) {
+    conditions.push(`availability: ${availability}`);
+  }
+
+  if (scm && scm.trim()) {
+    conditions.push(`scm_contains_nocase: "${scm.trim()}"`);
+  }
+
+  if (minDigitalPrice && minDigitalPrice.trim()) {
+    conditions.push(`digitalPrice_gte: "${minDigitalPrice.trim()}"`);
+  }
+
+  if (maxDigitalPrice && maxDigitalPrice.trim()) {
+    conditions.push(`digitalPrice_lte: "${maxDigitalPrice.trim()}"`);
+  }
+
+  if (minPhysicalPrice && minPhysicalPrice.trim()) {
+    conditions.push(`physicalPrice_gte: "${minPhysicalPrice.trim()}"`);
+  }
+
+  if (maxPhysicalPrice && maxPhysicalPrice.trim()) {
+    conditions.push(`physicalPrice_lte: "${maxPhysicalPrice.trim()}"`);
+  }
+
+  if (conditions.length > 0) {
+    whereClause = `where: { ${conditions.join(", ")} }`;
+  }
+
+  const orderClause = `orderBy: ${orderBy}, orderDirection: ${orderDirection}`;
+
+  return `
+    query($first: Int!, $skip: Int!) {
+      childs(first: $first, skip: $skip, ${orderClause}${whereClause ? `, ${whereClause}` : ''}) {
+        createdAt
+        uri
+        childId
+        childContract
+        status
+        physicalPrice
+        digitalPrice
+        supplyCount
+        infraCurrency
+        supplier
+        scm
+        availability
+        supplierProfile {
+          uri 
+          metadata {
+            title
+          }
+        }
+        metadata {
+          title
+          image
+        }
+      }
+      templates(first: $first, skip: $skip, ${orderClause}${whereClause ? `, ${whereClause}` : ''}) {
+        createdAt
+        uri
+        templateId
+        templateContract
+        infraCurrency
+        status
+        supplier
+        scm
+        physicalPrice
+        availability
+        digitalPrice
+        supplyCount
+        supplierProfile {
+          uri 
+          metadata {
+            title
+          }
+        }
+        metadata {
+          title
+          image
+        }
       }
     }
-    metadata {
-      title
-      image
-    }
-  }
-  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {
-    or: [
-      { metadata_: {title_contains_nocase: $searchText} }
-    ]
-  }) {
-    createdAt
-    uri
-    templateId
-    templateContract
-    infraCurrency
-    status
-    supplier
-    scm
-    physicalPrice
-    availability
-    digitalPrice
-    supplyCount
-    supplierProfile {
-      uri 
-      metadata {
-        title
-      }
-    }
-    metadata {
-      title
-      image
-     }
-  }
-}
-`;
+  `;
+};
 
 export const getAllChildren = async (
   first: number,
   skip: number,
-  searchText?: string
+  filters?: any
 ): Promise<any> => {
   try {
-    const useSearchQuery = searchText && searchText.trim().length > 0;
-    const query = useSearchQuery ? ALL_CHILDREN_WITH_SEARCH : ALL_CHILDREN;
-    const variables = useSearchQuery 
-      ? { first, skip, searchText: searchText.trim() }
-      : { first, skip };
-
+    const query = filters ? buildAdvancedQuery(filters) : ALL_CHILDREN;
+    const variables = { first, skip };
 
     const queryPromise = graphFGOClient.query({
       query: gql(query),
@@ -149,7 +187,7 @@ export const getAllChildren = async (
     }
     
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
+      console.error(result.errors);
     }
     
     return result;

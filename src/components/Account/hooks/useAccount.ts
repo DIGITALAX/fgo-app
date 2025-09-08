@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback } from "react";
 import { useWalletConnection } from "@/components/Library/hooks/useWalletConnection";
 import { AccountTab } from "../types";

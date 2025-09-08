@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ContractCardProps } from "../../types";
 import { INFURA_GATEWAY } from "@/constants";
 
-export const ContractCard = ({ contract, onClick }: ContractCardProps) => {
+export const ContractCard = ({ contract, onClick, dict }: ContractCardProps) => {
   const handleClick = () => {
     if (onClick) {
       onClick(contract as any);
@@ -12,10 +12,10 @@ export const ContractCard = ({ contract, onClick }: ContractCardProps) => {
   const isMarketContract = "marketURI" in contract;
   const isChildContract = "childType" in contract;
   const displayTitle = isMarketContract
-    ? contract.marketMetadata?.title || contract.title || "Unnamed Market"
+    ? contract.marketMetadata?.title || contract.title || dict?.unnamedMarket
     : isChildContract
-    ? contract.title || "Unnamed Child"
-    : contract.parentMetadata?.title || contract.title || "Unnamed Parent";
+    ? contract.title || dict?.unnamedChild
+    : contract.parentMetadata?.title || contract.title || dict?.unnamedParent;
   const displayImage = isMarketContract
     ? contract.marketMetadata?.image || ""
     : isChildContract
@@ -58,14 +58,14 @@ export const ContractCard = ({ contract, onClick }: ContractCardProps) => {
         <div className="text-xs text-white space-y-1">
           {!isMarketContract && (
             <div className="flex justify-between">
-              <span>SCM:</span>
+              <span>{dict?.scm}:</span>
               <span className="font-mono text-ama">{contract.scm}</span>
             </div>
           )}
 
           {isChildContract && (
             <div className="flex justify-between">
-              <span>Type:</span>
+              <span>{dict?.type}:</span>
               <span className="font-mono text-ama">
                 {contract.childType}
               </span>
@@ -73,12 +73,12 @@ export const ContractCard = ({ contract, onClick }: ContractCardProps) => {
           )}
 
           <div className="flex justify-between">
-            <span>Symbol:</span>
+            <span>{dict?.symbol}:</span>
             <span className="font-mono text-ama">{contract.symbol}</span>
           </div>
 
           <div className="flex justify-between">
-            <span>Address:</span>
+            <span>{dict?.address}:</span>
             <span className="font-mono text-ama truncate max-w-20">
               {contract.contractAddress}
             </span>

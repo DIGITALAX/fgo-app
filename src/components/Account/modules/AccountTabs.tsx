@@ -1,12 +1,12 @@
 import { AccountTabsProps, AccountTab } from "../types";
 
-export const AccountTabs = ({ activeTab, onTabChange }: AccountTabsProps) => {
+export const AccountTabs = ({ activeTab, onTabChange, dict }: AccountTabsProps & { dict: any }) => {
   const tabs: { id: AccountTab; label: string }[] = [
-    { id: "infrastructure", label: "Infrastructure" },
-    { id: "designer", label: "Designer" },
-    { id: "supplier", label: "Supplier" },
-    { id: "fulfiller", label: "Fulfiller" },
-    { id: "settings", label: "Settings" },
+    { id: "infrastructure", label: dict?.infrastructure || "Infrastructure" },
+    { id: "designer", label: dict?.designer || "Designer" },
+    { id: "supplier", label: dict?.supplier || "Supplier" },
+    { id: "fulfiller", label: dict?.fulfiller || "Fulfiller" },
+    { id: "settings", label: dict?.settings || "Settings" },
   ];
 
   return (

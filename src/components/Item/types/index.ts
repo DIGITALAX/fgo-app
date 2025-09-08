@@ -3,49 +3,60 @@ import { MarketContract, Parent } from "@/components/Account/types";
 export interface TemplateDetailsProps {
   contractAddress: string;
   templateId: number;
+  dict: any;
 }
 
 export interface ChildDetailsProps {
   contractAddress: string;
   childId: number;
+  dict: any;
 }
 
 export interface ParentDetailsProps {
   contractAddress: string;
   designId: number;
+  dict: any;
 }
 
 export interface ItemHeaderProps {
   item: Child | Template | Parent;
   isTemplate: boolean;
+  dict: any;
 }
 
 export interface ItemPricingProps {
   item: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ItemMetadataProps {
   item: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ItemBlockchainInfoProps {
   item: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ItemRequestsProps {
   item: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ItemAuthorizedProps {
   item: Child | Template | Parent;
+  dict: any;
 }
 
 export interface ItemWorkflowProps {
   item: Parent;
+  dict: any;
 }
 
 export interface ParentChildReferencesProps {
   parent: Parent;
+  dict: any;
 }
 
 export enum Status {
@@ -60,6 +71,7 @@ export interface Template {
   supplier: string;
   supplierProfile: Supplier;
   childType: string;
+  infraId: string;
   scm: string;
   title: string;
   symbol: string;
@@ -137,6 +149,7 @@ export interface ApprovalAmountInputProps {
   loading: boolean;
   rejecting: boolean;
   isSupplier: boolean;
+  dict: any;
 }
 
 export interface ParentRequests {
@@ -221,6 +234,7 @@ export interface Child {
   childId: string;
   childContract: string;
   supplier: string;
+  infraId: string;
   supplierProfile: Supplier;
   childType: string;
   scm: string;
@@ -271,6 +285,7 @@ export interface ChildMetadata {
   loras: string[];
   workflow: string;
   version: string;
+  customFields?: Record<string, string>;
 }
 
 export interface PlacementData {
@@ -280,4 +295,5 @@ export interface PlacementData {
 
 export interface ChildReferencesProps {
   childData: any[];
+  dict: any;
 }

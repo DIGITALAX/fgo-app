@@ -10,6 +10,7 @@ import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useDeployMarket = (
   infrastructure: Infrastructure,
+  dict: any,
   onSuccess?: () => void
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -50,11 +51,11 @@ export const useDeployMarket = (
   const deployMarketContract = useCallback(
     async (formData: DeployMarketFormData) => {
       if (!walletClient || !publicClient || !context) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       if (!infrastructure.isActive) {
-        throw new Error("Infrastructure is not active");
+        throw new Error(dict?.infrastructureIsNotActive);
       }
 
       setLoading(true);
@@ -124,7 +125,7 @@ export const useDeployMarket = (
           const errorMessage =
             err instanceof Error
               ? err.message
-              : "Failed to deploy market contract";
+              : dict?.failedToDeployMarketContract;
           context.showError(errorMessage);
           throw err;
         }

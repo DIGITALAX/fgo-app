@@ -9,16 +9,23 @@ import { useTemplateContracts } from "@/components/Account/hooks/infrastructure/
 export const TemplatesTab = ({
   infrastructure,
   isOwner,
+  dict,
 }: TemplatesTabProps) => {
   const {
     templateContracts,
     loading: contractsLoading,
     error: contractsError,
     refetch,
-  } = useTemplateContracts(infrastructure.infraId);
+  } = useTemplateContracts(infrastructure.infraId, dict);
 
-  const { isModalOpen, loading, openModal, closeModal, handleSubmit, cancelOperation } =
-    useDeployTemplate(infrastructure, refetch);
+  const {
+    isModalOpen,
+    loading,
+    openModal,
+    closeModal,
+    handleSubmit,
+    cancelOperation,
+  } = useDeployTemplate(infrastructure, refetch);
 
   const { selectedTemplateContract, selectTemplateContract, clearSelection } =
     useTemplatesNavigation();
@@ -28,6 +35,7 @@ export const TemplatesTab = ({
       <TemplateContractDetailView
         templateContract={selectedTemplateContract}
         onBack={clearSelection}
+        dict={dict}
       />
     );
   }
@@ -57,7 +65,7 @@ export const TemplatesTab = ({
 
       {contractsError && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-          <p className="text-red-400 text-sm">❌ {contractsError}</p>
+          <p className="text-red-400 text-sm">{contractsError}</p>
           <button
             onClick={refetch}
             className="mt-2 text-red-400 hover:text-red-300 text-xs underline"
@@ -81,6 +89,7 @@ export const TemplatesTab = ({
               key={templateContract.id}
               contract={templateContract}
               onClick={selectTemplateContract}
+              dict={dict}
             />
           ))}
         </div>
@@ -98,6 +107,7 @@ export const TemplatesTab = ({
         isOpen={isModalOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
+        dict={dict}
         onCancel={cancelOperation}
         loading={loading}
       />

@@ -1,6 +1,6 @@
 import { ItemWorkflowProps } from "../types";
 
-export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
+export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
   const workflow = (item as any).workflow;
 
   if (
@@ -13,14 +13,14 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
   return (
     <div className="bg-black rounded-sm border border-white p-4">
       <h3 className="text-base font-herm text-white mb-4">
-        Fulfillment Workflow
+        {dict?.fulfillmentWorkflow}
       </h3>
 
       <div className="space-y-6">
         {workflow.digitalSteps?.length > 0 && (
           <div>
             <h4 className="text-sm font-herm text-ama mb-3">
-              Digital Steps ({workflow.digitalSteps.length})
+              {dict?.digitalSteps} ({workflow.digitalSteps.length})
             </h4>
             <div className="space-y-3">
               {workflow.digitalSteps.map((step: any, index: number) => (
@@ -30,14 +30,14 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-herm text-ama">
-                      Step {index + 1}
+                      {dict?.step} {index + 1}
                     </span>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div>
                       <span className="text-ama font-herm">
-                        Primary Performer:{" "}
+                        {dict?.primaryPerformer}:{" "}
                       </span>
                       <div className="text-white font-herm">
                         <div className="font-mono text-xs">
@@ -50,7 +50,7 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                     {step.instructions && (
                       <div>
                         <span className="text-ama font-herm">
-                          Instructions:{" "}
+                          {dict?.instructions}:{" "}
                         </span>
                         <span className="text-white font-herm">
                           {step.instructions}
@@ -61,7 +61,7 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                     {step.subPerformers?.length > 0 && (
                       <div>
                         <span className="text-ama font-herm">
-                          Sub-Performers ({step.subPerformers.length}):{" "}
+                          {dict?.subPerformers} ({step.subPerformers.length}):{" "}
                         </span>
                         <div className="mt-2 space-y-1">
                           {step.subPerformers.map(
@@ -92,7 +92,7 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
         {workflow.physicalSteps?.length > 0 && (
           <div>
             <h4 className="text-sm font-herm text-ama mb-3">
-              Physical Steps ({workflow.physicalSteps.length})
+              {dict?.physicalSteps} ({workflow.physicalSteps.length})
             </h4>
             <div className="space-y-3">
               {workflow.physicalSteps.map((step: any, index: number) => (
@@ -102,14 +102,14 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-herm text-ama">
-                      Step {index + 1}
+                      {dict?.step} {index + 1}
                     </span>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div>
                       <span className="text-ama font-herm">
-                        Primary Performer:{" "}
+                        {dict?.primaryPerformer}:{" "}
                       </span>
                       <div className="text-white font-herm">
                         <div className="font-mono text-xs">
@@ -122,7 +122,7 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                     {step.instructions && (
                       <div>
                         <span className="text-ama font-herm">
-                          Instructions:{" "}
+                          {dict?.instructions}:{" "}
                         </span>
                         <span className="text-white font-herm">
                           {step.instructions}
@@ -133,7 +133,7 @@ export const ItemWorkflow = ({ item }: ItemWorkflowProps) => {
                     {step.subPerformers?.length > 0 && (
                       <div>
                         <span className="text-ama font-herm">
-                          Sub-Performers ({step.subPerformers.length}):{" "}
+                          {dict?.subPerformers} ({step.subPerformers.length}):{" "}
                         </span>
                         <div className="mt-2 space-y-1">
                           {step.subPerformers.map(

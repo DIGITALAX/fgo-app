@@ -7,6 +7,7 @@ import { MarketsApprovalTabProps } from "@/components/Account/types";
 export const MarketsApprovalTab = ({
   itemData,
   itemType,
+  dict
 }: MarketsApprovalTabProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -20,13 +21,13 @@ export const MarketsApprovalTab = ({
     revokeMarket,
     approving,
     revoking,
-  } = useMarketsApproval(itemData, itemType, searchQuery);
+  } = useMarketsApproval(itemData, itemType, searchQuery, dict);
 
   if (error) {
     return (
       <div className="p-6 text-center">
         <p className="text-fresa font-herm text-sm">
-          Error loading markets: {error}
+          {dict?.errorLoadingMarkets}: {error}
         </p>
       </div>
     );
@@ -37,7 +38,7 @@ export const MarketsApprovalTab = ({
       <div className="p-6 flex items-center justify-center">
         <div className="flex items-center gap-2 text-white text-sm font-herm">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-          <span>Loading markets...</span>
+          <span>{dict?.loadingMarkets}</span>
         </div>
       </div>
     );
@@ -46,16 +47,16 @@ export const MarketsApprovalTab = ({
   return (
     <div className="h-full flex flex-col p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-herm text-lg">Available Markets</h3>
+        <h3 className="text-white font-herm text-lg">{dict?.availableMarkets}</h3>
         <div className="text-white/60 font-herm text-sm">
-          {markets.length} market{markets.length !== 1 ? "s" : ""}
+          {markets.length} {markets.length !== 1 ? dict?.markets : dict?.market}
         </div>
       </div>
 
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Search by title, description, or link..."
+          placeholder={dict?.searchByTitleDescriptionLink}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white font-herm text-sm placeholder:text-white/40 focus:outline-none focus:border-ama"
@@ -69,7 +70,7 @@ export const MarketsApprovalTab = ({
           hasMore={hasMore}
           loader={
             <div className="text-center py-4 text-white/60 font-herm text-sm">
-              Loading more markets...
+              {dict?.loadingMoreMarkets}
             </div>
           }
           height="100%"
@@ -97,6 +98,7 @@ export const MarketsApprovalTab = ({
                     approving === market.contractAddress ||
                     revoking === market.contractAddress
                   }
+                  dict={dict}
                 />
               );
             })}

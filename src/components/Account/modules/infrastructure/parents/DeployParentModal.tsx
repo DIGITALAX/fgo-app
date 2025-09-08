@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDeployParentForm } from "@/components/Account/hooks/infrastructure/parents/useDeployParentForm";
 import { DeployParentModalProps } from "../../../types";
 
-export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading }: DeployParentModalProps) => {
+export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading, dict }: DeployParentModalProps) => {
   const {
     formData,
     fileInputRef,
@@ -39,7 +39,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-herm text-white">
-              Deploy Parent Contract
+              {dict?.deployParentContract}
             </h2>
             <button
               onClick={handleClose}
@@ -53,7 +53,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                Contract Name *
+                {dict?.contractName} *
               </label>
               <input
                 type="text"
@@ -61,7 +61,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 value={formData.name}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Enter contract name"
+                placeholder={dict?.enterContractName}
                 disabled={loading}
                 required
               />
@@ -69,7 +69,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
 
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                Symbol *
+                {dict?.symbol} *
               </label>
               <input
                 type="text"
@@ -77,7 +77,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 value={formData.symbol}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="e.g., PRNT"
+                placeholder={dict?.parentSymbolPlaceholder}
                 disabled={loading}
                 required
               />
@@ -85,7 +85,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
 
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                SCM *
+                {dict?.scm} *
               </label>
               <input
                 type="text"
@@ -93,7 +93,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 value={formData.scm}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Enter SCM"
+                placeholder={dict?.enterSCM}
                 disabled={loading}
                 required
               />
@@ -101,7 +101,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
 
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                Title *
+                {dict?.title} *
               </label>
               <input
                 type="text"
@@ -109,7 +109,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 value={formData.title}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Enter parent title"
+                placeholder={dict?.enterParentTitle}
                 disabled={loading}
                 required
               />
@@ -117,7 +117,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
 
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                Description *
+                {dict?.description} *
               </label>
               <textarea
                 name="description"
@@ -125,7 +125,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                placeholder="Enter parent description"
+                placeholder={dict?.enterParentDescription}
                 disabled={loading}
                 required
               />
@@ -133,12 +133,12 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
 
             <div>
               <label className="block text-xs font-herm text-ama mb-2">
-                Image
+                {dict?.image}
               </label>
               <div className="space-y-2">
                 {formData.image && (
                   <div className="text-xs text-white font-herm p-2 bg-black border border-white rounded-sm">
-                    Selected: {formData.image.name}
+                    {dict?.selected}: {formData.image.name}
                   </div>
                 )}
                 <input
@@ -159,7 +159,7 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
                 disabled={false}
               >
-                Cancel
+                {dict?.cancel}
               </button>
               <button
                 type="submit"
@@ -169,10 +169,10 @@ export const DeployParentModal = ({ isOpen, onClose, onSubmit, onCancel, loading
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                    Deploying...
+                    {dict?.deploying}...
                   </>
                 ) : (
-                  "Deploy"
+                  dict?.deploy
                 )}
               </button>
             </div>

@@ -7,6 +7,7 @@ import { useAccount } from "wagmi";
 export const MarketContractDetailView = ({
   marketContract,
   onBack,
+  dict,
 }: MarketContractDetailViewProps) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { address } = useAccount();
@@ -17,7 +18,7 @@ export const MarketContractDetailView = ({
   const displayTitle =
     marketContract.marketMetadata?.title ||
     marketContract.title ||
-    "Unnamed Market";
+    dict?.unnamedMarket;
   const displayDescription = marketContract.marketMetadata?.description || "";
 
   return (
@@ -28,7 +29,7 @@ export const MarketContractDetailView = ({
           className="flex items-center gap-2 text-white hover:text-ama transition-colors font-herm"
         >
           <span className="text-sm">←</span>
-          <span className="text-sm">Back to Market Contracts</span>
+          <span className="text-sm">{dict?.backToMarketContracts}</span>
         </button>
       </div>
 
@@ -38,17 +39,17 @@ export const MarketContractDetailView = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <div>
-              <span className="text-ama font-herm">Contract:</span>
+              <span className="text-ama font-herm">{dict?.contract}:</span>
               <p className="font-mono text-xs text-white break-all">
                 {marketContract.contractAddress}
               </p>
             </div>
             <div>
-              <span className="text-ama font-herm">Symbol:</span>
+              <span className="text-ama font-herm">{dict?.symbol}:</span>
               <p className="text-white font-herm">{marketContract.symbol}</p>
             </div>
             <div>
-              <span className="text-ama font-herm">TX Hash:</span>
+              <span className="text-ama font-herm">{dict?.txHash}:</span>
               <a
                 href={explorerUrl}
                 target="_blank"
@@ -59,7 +60,7 @@ export const MarketContractDetailView = ({
               </a>
             </div>
             <div>
-              <span className="text-ama font-herm">Deployer:</span>
+              <span className="text-ama font-herm">{dict?.deployer}:</span>
               <p className="font-mono text-xs text-white break-all">
                 {marketContract.deployer}
               </p>
@@ -80,18 +81,19 @@ export const MarketContractDetailView = ({
             onClick={() => setIsProfileModalOpen(true)}
             className="px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors text-sm"
           >
-            Fulfiller Profile
+            {dict?.fulfillerProfile}
           </button>
         </div>
       </div>
 
       <div className="bg-black rounded-sm p-4 border border-white">
         <p className="text-ama text-center font-herm text-sm">
-          Market functionality coming soon.
+          {dict?.marketFunctionalityComingSoon}
         </p>
       </div>
 
       <ProfileManager
+        dict={dict}
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         contract={marketContract.fulfillerContract}

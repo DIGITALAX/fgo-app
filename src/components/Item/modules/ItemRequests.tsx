@@ -4,7 +4,7 @@ import { ApprovalAmountInput } from "./ApprovalAmountInput";
 import { ItemRequestsProps } from "../types";
 import { useAccount } from "wagmi";
 
-export const ItemRequests = ({ item }: ItemRequestsProps) => {
+export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
   const { address } = useAccount();
   const {
     handleTemplateClick,
@@ -54,7 +54,12 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
     approveTemplateRequest,
     rejectTemplateRequest,
     loadingStates,
-  } = useApprovalActions(getContractAddress(), getItemId(), getContractType());
+  } = useApprovalActions(
+    getContractAddress(),
+    getItemId(),
+    getContractType(),
+    dict
+  );
 
   const hasRequests =
     processedTemplateRequests.length > 0 ||
@@ -157,198 +162,202 @@ export const ItemRequests = ({ item }: ItemRequestsProps) => {
       )}
 
       {processedTemplateRequests.length > 0 && (
-          <div className="mb-6">
-            <h4 className="text-ama font-herm mb-3">Template Requests</h4>
-            <div className="space-y-3">
-              {processedTemplateRequests.map((request, index: number) => (
-                <div
-                  key={index}
-                  className="bg-black/20 border border-white/30 rounded-sm p-4"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="mb-2">
-                        <button
-                          onClick={() =>
-                            handleTemplateClick(
-                              request.templateContract,
-                              request.templateId
-                            )
-                          }
-                          className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
-                        >
-                          {request.template?.metadata?.image && (
-                            <img
-                              src={getImageUrl(request.template.metadata.image)}
-                              alt=""
-                              className="w-6 h-6 rounded-sm object-cover"
-                            />
-                          )}
-                          {request.template?.metadata?.title || `Template ${request.templateId}`}
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
-                        <div>
-                          <span className="text-ama">Requested:</span>{" "}
-                          <span className="text-white">
-                            {request.requestedAmount}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Approved:</span>{" "}
-                          <span className="text-white">
-                            {request.approvedAmount || "0"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Date:</span>{" "}
-                          <span className="text-white">
-                            {formatTimestamp(request.timestamp)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Status:</span>
-                          <span className="text-white font-herm text-xs ml-1">
-                            {
-                              getStatusInfo(request.isPending, request.approved)
-                                .text
-                            }
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {isOwner && request.isPending && (
-                      <ApprovalAmountInput
-                        isSupplier={isOwner}
-                        requestedAmount={request.requestedAmount}
-                        onApprove={(amount) =>
-                          approveTemplateRequest(
-                            request.templateContract,
-                            request.templateId,
-                            amount
-                          )
-                        }
-                        onReject={() =>
-                          rejectTemplateRequest(
+        <div className="mb-6">
+          <h4 className="text-ama font-herm mb-3">Template Requests</h4>
+          <div className="space-y-3">
+            {processedTemplateRequests.map((request, index: number) => (
+              <div
+                key={index}
+                className="bg-black/20 border border-white/30 rounded-sm p-4"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="mb-2">
+                      <button
+                        onClick={() =>
+                          handleTemplateClick(
                             request.templateContract,
                             request.templateId
                           )
                         }
-                        loading={
-                          loadingStates[
-                            `approve-template-${request.templateContract}-${request.templateId}`
-                          ]
-                        }
-                        rejecting={
-                          loadingStates[
-                            `reject-template-${request.templateContract}-${request.templateId}`
-                          ]
-                        }
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-      {processedParentRequests.length > 0 && (
-          <div>
-            <h4 className="text-ama font-herm mb-3">Parent Requests</h4>
-            <div className="space-y-3">
-              {processedParentRequests.map((request, index: number) => (
-                <div
-                  key={index}
-                  className="bg-black/20 border border-white/30 rounded-sm p-4"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="mb-2">
-                        <button
-                          onClick={() =>
-                            handleParentClick(
-                              request.parentContract,
-                              request.parentId
-                            )
-                          }
-                          className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
-                        >
-                          {request.parent?.metadata?.image && (
-                            <img
-                              src={getImageUrl(request.parent.metadata.image)}
-                              alt=""
-                              className="w-6 h-6 rounded-sm object-cover"
-                            />
-                          )}
-                          {request.parent?.metadata?.title || `Parent ${request.parentId}`}
-                        </button>
+                        className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
+                      >
+                        {request.template?.metadata?.image && (
+                          <img
+                            src={getImageUrl(request.template.metadata.image)}
+                            alt=""
+                            className="w-6 h-6 rounded-sm object-cover"
+                          />
+                        )}
+                        {request.template?.metadata?.title ||
+                          `Template ${request.templateId}`}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
+                      <div>
+                        <span className="text-ama">Requested:</span>{" "}
+                        <span className="text-white">
+                          {request.requestedAmount}
+                        </span>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
-                        <div>
-                          <span className="text-ama">Requested:</span>{" "}
-                          <span className="text-white">
-                            {request.requestedAmount}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Approved:</span>{" "}
-                          <span className="text-white">
-                            {request.approvedAmount || "0"}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Date:</span>{" "}
-                          <span className="text-white">
-                            {formatTimestamp(request.timestamp)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-ama">Status:</span>
-                          <span className="text-white font-herm text-xs ml-1">
-                            {
-                              getStatusInfo(request.isPending, request.approved)
-                                .text
-                            }
-                          </span>
-                        </div>
+                      <div>
+                        <span className="text-ama">Approved:</span>{" "}
+                        <span className="text-white">
+                          {request.approvedAmount || "0"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-ama">Date:</span>{" "}
+                        <span className="text-white">
+                          {formatTimestamp(request.timestamp)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-ama">Status:</span>
+                        <span className="text-white font-herm text-xs ml-1">
+                          {
+                            getStatusInfo(request.isPending, request.approved)
+                              .text
+                          }
+                        </span>
                       </div>
                     </div>
-                    {isOwner && request.isPending && (
-                      <ApprovalAmountInput
-                        isSupplier={isOwner}
-                        requestedAmount={request.requestedAmount}
-                        onApprove={(amount) =>
-                          approveParentRequest(
-                            request.parentContract,
-                            request.parentId,
-                            amount
-                          )
-                        }
-                        onReject={() =>
-                          rejectParentRequest(
+                  </div>
+                  {isOwner && request.isPending && (
+                    <ApprovalAmountInput
+                      isSupplier={isOwner}
+                      dict={dict}
+                      requestedAmount={request.requestedAmount}
+                      onApprove={(amount) =>
+                        approveTemplateRequest(
+                          request.templateContract,
+                          request.templateId,
+                          amount
+                        )
+                      }
+                      onReject={() =>
+                        rejectTemplateRequest(
+                          request.templateContract,
+                          request.templateId
+                        )
+                      }
+                      loading={
+                        loadingStates[
+                          `approve-template-${request.templateContract}-${request.templateId}`
+                        ]
+                      }
+                      rejecting={
+                        loadingStates[
+                          `reject-template-${request.templateContract}-${request.templateId}`
+                        ]
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {processedParentRequests.length > 0 && (
+        <div>
+          <h4 className="text-ama font-herm mb-3">Parent Requests</h4>
+          <div className="space-y-3">
+            {processedParentRequests.map((request, index: number) => (
+              <div
+                key={index}
+                className="bg-black/20 border border-white/30 rounded-sm p-4"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="mb-2">
+                      <button
+                        onClick={() =>
+                          handleParentClick(
                             request.parentContract,
                             request.parentId
                           )
                         }
-                        loading={
-                          loadingStates[
-                            `approve-parent-${request.parentContract}-${request.parentId}`
-                          ]
-                        }
-                        rejecting={
-                          loadingStates[
-                            `reject-parent-${request.parentContract}-${request.parentId}`
-                          ]
-                        }
-                      />
-                    )}
+                        className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
+                      >
+                        {request.parent?.metadata?.image && (
+                          <img
+                            src={getImageUrl(request.parent.metadata.image)}
+                            alt=""
+                            className="w-6 h-6 rounded-sm object-cover"
+                          />
+                        )}
+                        {request.parent?.metadata?.title ||
+                          `Parent ${request.parentId}`}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
+                      <div>
+                        <span className="text-ama">Requested:</span>{" "}
+                        <span className="text-white">
+                          {request.requestedAmount}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-ama">Approved:</span>{" "}
+                        <span className="text-white">
+                          {request.approvedAmount || "0"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-ama">Date:</span>{" "}
+                        <span className="text-white">
+                          {formatTimestamp(request.timestamp)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-ama">Status:</span>
+                        <span className="text-white font-herm text-xs ml-1">
+                          {
+                            getStatusInfo(request.isPending, request.approved)
+                              .text
+                          }
+                        </span>
+                      </div>
+                    </div>
                   </div>
+                  {isOwner && request.isPending && (
+                    <ApprovalAmountInput
+                      isSupplier={isOwner}
+                      dict={dict}
+                      requestedAmount={request.requestedAmount}
+                      onApprove={(amount) =>
+                        approveParentRequest(
+                          request.parentContract,
+                          request.parentId,
+                          amount
+                        )
+                      }
+                      onReject={() =>
+                        rejectParentRequest(
+                          request.parentContract,
+                          request.parentId
+                        )
+                      }
+                      loading={
+                        loadingStates[
+                          `approve-parent-${request.parentContract}-${request.parentId}`
+                        ]
+                      }
+                      rejecting={
+                        loadingStates[
+                          `reject-parent-${request.parentContract}-${request.parentId}`
+                        ]
+                      }
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };

@@ -5,7 +5,15 @@ import { LibraryCard } from "@/components/Library/modules/LibraryCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Child, Template } from "@/components/Item/types";
 
-export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
+export const ChildSelectionModal = ({
+  isOpen,
+  onClose,
+  onSelect,
+  onCancel,
+  selectedIds,
+  dict,
+  editingPlacement,
+}: ChildSelectionModalProps) => {
   const {
     selectedType,
     setSelectedType,
@@ -24,7 +32,15 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
     getFilteredItems,
     getCounts,
     getItemTitle,
-  } = useChildSelectionModal(props);
+  } = useChildSelectionModal({
+    isOpen,
+    onClose,
+    onSelect,
+    onCancel,
+    selectedIds,
+    dict,
+    editingPlacement,
+  });
 
   const {
     items,
@@ -34,12 +50,12 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
     loadMore,
     searchText,
     handleSearch,
-  } = useChildSelection();
+  } = useChildSelection(dict);
 
   const filteredItems = getFilteredItems(items);
   const { childrenCount, templatesCount } = getCounts(items);
 
-  if (!props.isOpen) return null;
+  if (!isOpen) return null;
 
   if (configuring) {
     const itemTitle = getItemTitle(configuring);
@@ -50,12 +66,10 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
           <div className="p-4 border-b border-white">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-herm text-white">
-                Configure Child Placement
+                {dict?.configureChildPlacement}
               </h2>
               <button
-                onClick={
-                  props.editingPlacement ? props.onClose : () => handleSelect(null)
-                }
+                onClick={editingPlacement ? onClose : () => handleSelect(null)}
                 className="text-white hover:text-ama transition-colors font-herm"
               >
                 ✕
@@ -67,7 +81,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
           <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Amount *
+                {dict?.amount} *
               </label>
               <input
                 type="number"
@@ -80,27 +94,27 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Instructions
+                {dict?.instructions}
               </label>
               <textarea
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                placeholder="Add instructions for this child placement..."
+                placeholder={dict?.addInstructionsPlaceholder}
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-herm text-ama">
-                  Custom Fields
+                  {dict?.customFields}
                 </label>
                 <button
                   onClick={addCustomField}
                   className="text-mar hover:text-ama text-sm font-herm"
                 >
-                  Add Field
+                  {dict?.addField}
                 </button>
               </div>
 
@@ -112,7 +126,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                     onChange={(e) =>
                       updateCustomField(field.id, e.target.value, field.value)
                     }
-                    placeholder="Field name"
+                    placeholder={dict?.fieldNamePlaceholder}
                     className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
                   />
                   <input
@@ -121,22 +135,21 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                     onChange={(e) =>
                       updateCustomField(field.id, field.key, e.target.value)
                     }
-                    placeholder="Field value"
+                    placeholder={dict?.fieldValuePlaceholder}
                     className="flex-1 px-3 py-2 bg-black border border-white rounded-sm text-white text-sm focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
                   />
                   <button
                     onClick={() => removeCustomField(field.id)}
                     className="px-3 py-2 text-fresa hover:text-ama text-sm font-herm"
                   >
-                    Remove
+                    {dict?.remove}
                   </button>
                 </div>
               ))}
 
               {customFields.length === 0 && (
                 <p className="text-ama text-sm font-herm">
-                  No custom fields added. Click + Add Field to add key-value
-                  pairs.
+                  {dict?.noCustomFieldsAdded}
                 </p>
               )}
             </div>
@@ -147,13 +160,13 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
               onClick={handleCancel}
               className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
             >
-              Cancel
+              {dict?.cancel}
             </button>
             <button
               onClick={handleConfirmSelection}
               className="flex-1 px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
             >
-              Add Child
+              {dict?.addChild}
             </button>
           </div>
         </div>
@@ -167,10 +180,10 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
         <div className="p-4 border-b border-white flex-shrink-0">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-herm text-white">
-              Select Children for Template
+              {dict?.selectChildrenForTemplate}
             </h2>
             <button
-              onClick={props.onClose}
+              onClick={onClose}
               className="text-white hover:text-ama transition-colors font-herm"
             >
               ✕
@@ -185,7 +198,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                 type="text"
                 value={searchText}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search by title..."
+                placeholder={dict?.searchByTitlePlaceholder}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
               />
             </div>
@@ -198,7 +211,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                     : "text-white hover:text-ama"
                 }`}
               >
-                Children ({childrenCount})
+                {dict?.children} ({childrenCount})
               </button>
               <button
                 onClick={() => setSelectedType("templates")}
@@ -208,7 +221,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
                     : "text-white hover:text-ama"
                 }`}
               >
-                Templates ({templatesCount})
+                {dict?.templates} ({templatesCount})
               </button>
             </div>
           </div>
@@ -226,7 +239,11 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
               dataLength={filteredItems.length}
               next={loadMore}
               hasMore={hasMore}
-              loader={<div className="text-center py-4 text-white/60 font-herm text-sm">Loading more {selectedType}...</div>}
+              loader={
+                <div className="text-center py-4 text-white/60 font-herm text-sm">
+                  {dict?.loadingMore} {selectedType}...
+                </div>
+              }
               height={400}
             >
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-4 pb-4">
@@ -241,6 +258,7 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
 
                   return (
                     <LibraryCard
+                      dict={dict}
                       data={item}
                       key={`${itemId}-${itemContract}-${index}`}
                       onClick={() => handleSelect(item)}
@@ -253,15 +271,15 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
             <div className="bg-black rounded-sm p-4 border border-white flex items-center justify-center">
               <div className="flex items-center gap-2 text-white font-herm">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-                <span>Loading {selectedType}...</span>
+                <span>{dict?.loading} {selectedType}...</span>
               </div>
             </div>
           ) : (
             <div className="bg-black rounded-sm p-4 border border-white">
               <p className="text-ama text-center font-herm text-sm">
                 {searchText
-                  ? `No ${selectedType} found matching "${searchText}"`
-                  : `No ${selectedType} available`}
+                  ? `${dict?.noItemsFoundMatching} "${searchText}"`
+                  : `${dict?.noItemsAvailable} ${selectedType}`}
               </p>
             </div>
           )}
@@ -269,10 +287,10 @@ export const ChildSelectionModal = (props: ChildSelectionModalProps) => {
 
         <div className="p-4 border-t border-white flex-shrink-0">
           <button
-            onClick={props.onClose}
+            onClick={onClose}
             className="w-full px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
           >
-            Close
+            {dict?.close}
           </button>
         </div>
       </div>

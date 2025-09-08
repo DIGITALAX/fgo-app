@@ -2,13 +2,13 @@ import { useContext } from "react";
 import { AppContext } from "@/lib/providers/Providers";
 import { getCurrentNetwork } from "@/constants";
 
-export const Success = () => {
+export const Success = ({ dict }: { dict: any }) => {
   const context = useContext(AppContext);
-  
+
   if (!context?.successData) return null;
 
   const network = getCurrentNetwork();
-  const explorerUrl = context.successData.txHash 
+  const explorerUrl = context.successData.txHash
     ? `${network.blockExplorer}/tx/${context.successData.txHash}`
     : null;
 
@@ -21,7 +21,7 @@ export const Success = () => {
               <div className="w-6 h-6 bg-black border border-mar rounded-full flex items-center justify-center">
                 <span className="text-mar text-sm">✓</span>
               </div>
-              <h2 className="text-lg font-herm text-white">Success</h2>
+              <h2 className="text-lg font-herm text-white">{dict?.success}</h2>
             </div>
             <button
               onClick={context.hideSuccess}
@@ -35,10 +35,10 @@ export const Success = () => {
             <p className="text-white font-herm text-sm leading-relaxed mb-4">
               {context.successData.message}
             </p>
-            
+
             {context.successData.txHash && (
               <div className="bg-black border border-white rounded-sm p-3">
-                <p className="text-sm text-ama font-herm mb-2">Transaction Hash:</p>
+                <p className="text-sm text-ama font-herm mb-2">{dict?.tx}</p>
                 {explorerUrl ? (
                   <a
                     href={explorerUrl}
@@ -62,7 +62,7 @@ export const Success = () => {
               onClick={context.hideSuccess}
               className="px-4 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
             >
-              Close
+              {dict?.close}
             </button>
           </div>
         </div>

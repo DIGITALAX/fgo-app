@@ -6,14 +6,15 @@ import {
 export const InfrastructureDetailTabs = ({
   activeTab,
   onTabChange,
+  dict,
 }: InfrastructureDetailTabsProps) => {
   const tabs: { id: InfrastructureDetailTab; label: string }[] = [
-    { id: "details", label: "Details" },
-    { id: "access_controls", label: "Access Controls" },
-    { id: "parents", label: "Parents" },
-    { id: "children", label: "Children" },
-    { id: "templates", label: "Templates" },
-    { id: "markets", label: "Markets" },
+    { id: "details", label: dict?.details },
+    { id: "access_controls", label: dict?.accessControls },
+    { id: "parents", label: dict?.parents },
+    { id: "children", label: dict?.children },
+    { id: "templates", label: dict?.templates },
+    { id: "markets", label: dict?.markets },
   ];
 
   return (

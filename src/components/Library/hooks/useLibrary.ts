@@ -3,29 +3,53 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { getAllChildren } from "@/lib/subgraph/queries/getGlobal";
 import { Child, Template } from "@/components/Item/types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
+import { LibraryFilters } from "../types";
 
-export const useLibrary = () => {
+export const useLibrary = (dict: any) => {
   const [items, setItems] = useState<(Child | Template)[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [skip, setSkip] = useState<number>(0);
-  const [searchText, setSearchText] = useState<string>("");
+  const [filters, setFilters] = useState<LibraryFilters>({
+    searchText: "",
+    orderBy: "blockTimestamp",
+    orderDirection: "desc",
+    supplierAddress: "",
+    availability: null,
+    scm: "",
+    minDigitalPrice: "",
+    maxDigitalPrice: "",
+    minPhysicalPrice: "",
+    maxPhysicalPrice: "",
+  });
 
   const ITEMS_PER_PAGE = 20;
 
   const fetchItems = useCallback(
-    async (skipCount: number, reset = false, searchQuery?: string) => {
+    async (skipCount: number, reset = false, currentFilters?: LibraryFilters) => {
       try {
         if (reset) {
           setIsLoading(true);
           setError(null);
         }
 
+        const filtersToUse = currentFilters || filters;
+        const hasFilters = filtersToUse.searchText || 
+                          filtersToUse.supplierAddress || 
+                          filtersToUse.availability !== null || 
+                          filtersToUse.scm ||
+                          filtersToUse.minDigitalPrice ||
+                          filtersToUse.maxDigitalPrice ||
+                          filtersToUse.minPhysicalPrice ||
+                          filtersToUse.maxPhysicalPrice ||
+                          filtersToUse.orderBy !== "blockTimestamp" ||
+                          filtersToUse.orderDirection !== "desc";
+
         const result = await getAllChildren(
           ITEMS_PER_PAGE,
           skipCount,
-          searchQuery
+          hasFilters ? filtersToUse : undefined
         );
 
         if (!result?.data) {
@@ -91,7 +115,7 @@ export const useLibrary = () => {
                 version: "",
               },
               status: item.status,
-              availability: getAvailabilityLabel(item.availability || 0),
+              availability: getAvailabilityLabel(item.availability || 0, dict),
               isImmutable: item.isImmutable || false,
               digitalMarketsOpenToAll: item.digitalMarketsOpenToAll || false,
               physicalMarketsOpenToAll: item.physicalMarketsOpenToAll || false,
@@ -126,7 +150,7 @@ export const useLibrary = () => {
           setItems((prev) => [...prev, ...processedItems]);
         }
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Unknown error");
+        setError(error instanceof Error ? error.message : dict?.unknownError);
       } finally {
         setIsLoading(false);
       }
@@ -138,19 +162,30 @@ export const useLibrary = () => {
     if (!isLoading && hasMore) {
       const nextSkip = skip + ITEMS_PER_PAGE;
       setSkip(nextSkip);
-      fetchItems(nextSkip, false, searchText);
+      fetchItems(nextSkip, false, filters);
     }
-  }, [skip, isLoading, hasMore, searchText, fetchItems]);
+  }, [skip, isLoading, hasMore, filters, fetchItems]);
 
-  const handleSearch = useCallback(
-    (query: string) => {
-      setSearchText(query);
-      setSkip(0);
-      setHasMore(true);
-      fetchItems(0, true, query);
+  const handleFiltersChange = useCallback(
+    (newFilters: LibraryFilters) => {
+      setFilters(newFilters);
     },
-    [fetchItems]
+    []
   );
+
+  const handleSearch = useCallback((searchQuery?: string) => {
+    const updatedFilters = searchQuery !== undefined 
+      ? { ...filters, searchText: searchQuery }
+      : filters;
+    
+    if (searchQuery !== undefined) {
+      setFilters(updatedFilters);
+    }
+    
+    setSkip(0);
+    setHasMore(true);
+    fetchItems(0, true, updatedFilters);
+  }, [filters, fetchItems]);
 
   useEffect(() => {
     fetchItems(0, true);
@@ -162,7 +197,8 @@ export const useLibrary = () => {
     hasMore,
     error,
     loadMore,
-    searchText,
+    filters,
+    handleFiltersChange,
     handleSearch,
   };
 };

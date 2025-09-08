@@ -15,13 +15,15 @@ import { useState } from "react";
 export const TemplateDetails = ({
   contractAddress,
   templateId,
+  dict,
 }: TemplateDetailsProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
 
   const { template, isLoading, error } = useTemplateDetails(
     contractAddress,
-    templateId
+    templateId,
+    dict
   );
 
   const {
@@ -34,18 +36,22 @@ export const TemplateDetails = ({
     handleCreateTemplate,
     handleDeleteTemplate,
     handleEditSubmit,
-  } = useTemplateActions(contractAddress, templateId, template);
+  } = useTemplateActions(contractAddress, templateId, template, dict);
 
   if (isLoading) {
-    return <div>Loading template...</div>;
+    return <div>{dict?.loadingTemplate}</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        {dict?.error}: {error}
+      </div>
+    );
   }
 
   if (!template) {
-    return <div>Template not found</div>;
+    return <div>{dict?.templateNotFound}</div>;
   }
 
   return (
@@ -60,14 +66,14 @@ export const TemplateDetails = ({
                 creating && "cursor-not-allowed"
               }`}
             >
-              {creating ? "Creating..." : "Create Template"}
+              {creating ? dict?.creating : dict?.createTemplate}
             </button>
           )}
           <button
             onClick={() => setIsEditModalOpen(true)}
             className="px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Edit Template
+            {dict?.editTemplate}
           </button>
           <button
             onClick={handleDeleteTemplate}
@@ -75,29 +81,25 @@ export const TemplateDetails = ({
             className={`px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black ${
               (!canDelete || deleting) && "cursor-default opacity-70"
             }`}
-            title={
-              !canDelete
-                ? "Cannot delete: Template has usage or supply count > 0"
-                : ""
-            }
+            title={!canDelete ? dict?.cannotDeleteChildUsageCount : ""}
           >
-            {deleting ? "Deleting..." : "Delete Template"}
+            {deleting ? dict?.deleting : dict?.deleteTemplate}
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}
             className="px-2 py-1 font-herm bg-ama hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Approvals
+            {dict?.approvals}
           </button>
         </div>
       )}
-      <ItemHeader item={template} isTemplate={true} />
-      <ItemPricing item={template} />
-      <ItemMetadata item={template} />
-      <ItemRequests item={template} />
-      <ItemAuthorized item={template} />
-      <ChildReferences childData={template.childReferences || []} />
-      <ItemBlockchainInfo item={template} />
+      <ItemHeader item={template} isTemplate={true} dict={dict} />
+      <ItemPricing item={template} dict={dict} />
+      <ItemMetadata item={template} dict={dict} />
+      <ItemRequests item={template} dict={dict} />
+      <ItemAuthorized item={template} dict={dict} />
+      <ChildReferences childData={template.childReferences || []} dict={dict} />
+      <ItemBlockchainInfo item={template} dict={dict} />
 
       <CreateItemModal
         isOpen={isEditModalOpen}
@@ -112,18 +114,18 @@ export const TemplateDetails = ({
         }}
         loading={updating}
         mode="template"
-        infraId=""
+        infraId={template.infraId}
         isEditMode={true}
         editItem={template}
+        dict={dict}
       />
 
       <ManualApprovalModal
+        dict={dict}
         isOpen={isApprovalModalOpen}
         onClose={() => setIsApprovalModalOpen(false)}
         itemType="template"
         itemData={template}
-        contractAddress={contractAddress}
-        itemId={templateId.toString()}
       />
     </div>
   );

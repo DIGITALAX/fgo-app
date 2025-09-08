@@ -1,3 +1,5 @@
+"use client";
+
 import { useAccount } from "../hooks/useAccount";
 import { AccountTabs } from "./AccountTabs";
 import { InfrastructureTab } from "./infrastructure/InfrastructureTab";
@@ -6,7 +8,7 @@ import { SupplierTab } from "./supplier/SupplierTab";
 import { FulfillerTab } from "./fulfiller/FulfillerTab";
 import { SettingsTab } from "./settings/SettingsTab";
 
-export const Account = () => {
+export const Account = ({ dict }: { dict: any }) => {
   const { activeTab, setActiveTab, isConnected } = useAccount();
 
   if (!isConnected) {
@@ -14,12 +16,12 @@ export const Account = () => {
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <h2 className="text-2xl font-herm text-white mb-4">
-            Connect Your Wallet
+            {dict?.connect}
           </h2>
           <p className="text-white/60 font-herm mb-6">
-            Please connect your wallet to access your account
+            {dict?.access}
           </p>
-          <SettingsTab />
+          <SettingsTab dict={dict} />
         </div>
       </div>
     );
@@ -28,23 +30,23 @@ export const Account = () => {
   const renderActiveTab = () => {
     switch (activeTab) {
       case "infrastructure":
-        return <InfrastructureTab />;
+        return <InfrastructureTab dict={dict} />;
       case "designer":
-        return <DesignerTab />;
+        return <DesignerTab dict={dict} />;
       case "supplier":
-        return <SupplierTab />;
+        return <SupplierTab dict={dict} />;
       case "fulfiller":
-        return <FulfillerTab />;
+        return <FulfillerTab dict={dict} />;
       case "settings":
-        return <SettingsTab />;
+        return <SettingsTab dict={dict} />;
       default:
-        return <SettingsTab />;
+        return <SettingsTab dict={dict} />;
     }
   };
 
   return (
     <div className="h-full flex flex-col">
-      <AccountTabs activeTab={activeTab} onTabChange={setActiveTab} />
+      <AccountTabs activeTab={activeTab} onTabChange={setActiveTab} dict={dict} />
       <div className="flex-1 overflow-auto min-h-0">{renderActiveTab()}</div>
     </div>
   );

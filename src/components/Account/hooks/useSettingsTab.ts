@@ -1,20 +1,39 @@
 import { useState, useCallback } from "react";
 import { useWalletConnection } from "@/components/Library/hooks/useWalletConnection";
-import { LANGUAGES, Language } from "../types";
+import { Language } from "../types";
+import { usePathname, useRouter } from "next/navigation";
 
-export const useSettingsTab = () => {
+export const useSettingsTab = (dict: any) => {
   const { isConnected, address } = useWalletConnection();
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
+  const router = useRouter();
+  const path = usePathname();
+  
+  const currentLang = (path.split("/")[1] || "en") as Language;
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentLang);
 
-  const languageOptions = Object.entries(LANGUAGES).map(([code, name]) => ({
-    code: code as Language,
-    name,
-  }));
+  const languageOptions = [
+    { code: "en" as Language, name: dict?.english || "English" },
+    { code: "es" as Language, name: dict?.spanish || "Español" },
+    { code: "pt" as Language, name: dict?.portuguese || "Português" },
+  ];
 
-  const handleLanguageChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = event.target.value as Language;
-    setSelectedLanguage(newLanguage);
-  }, []);
+  const handleLanguageChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const newLanguage = event.target.value as Language;
+      setSelectedLanguage(newLanguage);
+
+      const segments = path.split("/");
+      segments[1] = newLanguage;
+      const newPath = segments.join("/");
+
+      document.cookie = `NEXT_LOCALE=${
+       newLanguage
+      }; path=/; SameSite=Lax`;
+
+      router.push(newPath);
+    },
+    []
+  );
 
   return {
     isConnected,

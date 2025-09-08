@@ -36,7 +36,7 @@ const parsePlacementFromURI = async (
       };
     }
   } catch (error) {
-    console.error("Failed to parse placement URI:", error);
+    console.error(error);
   }
 
   return {
@@ -102,6 +102,7 @@ export const useCreateItemForm = (
             tags: metadata?.tags || [],
             loras: metadata?.loras || [],
             attachments: [],
+            customFields: metadata?.customFields || {},
           },
           fulfillmentWorkflow: undefined,
         };
@@ -158,6 +159,7 @@ export const useCreateItemForm = (
             tags: metadata?.tags || [],
             loras: metadata?.loras || [],
             attachments: [],
+            customFields: metadata?.customFields || {},
           },
           fulfillmentWorkflow: undefined,
         };
@@ -189,6 +191,7 @@ export const useCreateItemForm = (
         tags: [],
         loras: [],
         attachments: [],
+        customFields: {},
       },
       fulfillmentWorkflow: undefined,
     };
@@ -348,6 +351,19 @@ export const useCreateItemForm = (
     }));
   }, []);
 
+  const handleCustomFieldsChange = useCallback(
+    (customFields: Record<string, string>) => {
+      setFormData((prev) => ({
+        ...prev,
+        metadata: {
+          ...prev.metadata,
+          customFields,
+        },
+      }));
+    },
+    []
+  );
+
   const addChildReference = useCallback((placement: ChildReference) => {
     setFormData((prev) => ({
       ...prev,
@@ -414,6 +430,7 @@ export const useCreateItemForm = (
     handleFileChange,
     handleTagsChange,
     handleLorasChange,
+    handleCustomFieldsChange,
     addChildReference,
     removeChildReference,
     updateChildReference,

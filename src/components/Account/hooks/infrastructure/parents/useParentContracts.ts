@@ -4,7 +4,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 import { ParentContract } from "../../../types";
 
-export const useParentContracts = (infraId: string) => {
+export const useParentContracts = (infraId: string, dict: any) => {
   const [parentContracts, setParentContracts] = useState<ParentContract[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export const useParentContracts = (infraId: string) => {
         setParentContracts([]);
       }
     } catch (err) {
-      setError("Failed to load parent contracts");
+      setError(dict?.failedToLoadParentContracts);
       setParentContracts([]);
     } finally {
       setLoading(false);

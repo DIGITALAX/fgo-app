@@ -1,26 +1,28 @@
+"use client";
+
 import { ConnectKitButton } from "connectkit";
 import { useSettingsTab } from "../../hooks/useSettingsTab";
 
-export const SettingsTab = () => {
+export const SettingsTab = ({ dict }: { dict: any }) => {
   const {
     isConnected,
     address,
     selectedLanguage,
     languageOptions,
     handleLanguageChange,
-  } = useSettingsTab();
+  } = useSettingsTab(dict);
 
   return (
     <div className="p-6 space-y-8  mx-auto">
       <div className="border border-white rounded-sm p-6">
-        <h3 className="text-lg font-herm text-white mb-4">Wallet Connection</h3>
+        <h3 className="text-lg font-herm text-white mb-4">{dict?.walletConnection}</h3>
         
         {isConnected ? (
           <div className="space-y-4">
             <div className="p-4 bg-ama/10 border border-ama/30 rounded-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-ama font-herm">Wallet Connected</p>
+                  <p className="text-sm text-ama font-herm">{dict?.walletConnected}</p>
                   <p className="text-xs text-white mt-1 font-herm">
                     {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ""}
                   </p>
@@ -35,7 +37,7 @@ export const SettingsTab = () => {
                   onClick={show}
                   className="w-full px-4 py-3 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
                 >
-                  Disconnect Wallet
+                  {dict?.disconnectWallet}
                 </button>
               )}
             </ConnectKitButton.Custom>
@@ -45,8 +47,8 @@ export const SettingsTab = () => {
             <div className="p-4 bg-black/20 border border-white/30 rounded-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-ama font-herm">No Wallet Connected</p>
-                  <p className="text-xs text-white mt-1">Connect your wallet to access FGO</p>
+                  <p className="text-sm text-ama font-herm">{dict?.noWalletConnected}</p>
+                  <p className="text-xs text-white mt-1">{dict?.connectWalletAccess}</p>
                 </div>
                 <div className="w-2 h-2 bg-white/50 rounded-full"></div>
               </div>
@@ -58,7 +60,7 @@ export const SettingsTab = () => {
                   onClick={show}
                   className="w-full px-4 py-3 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
                 >
-                  Connect Wallet
+                  {dict?.connectWallet}
                 </button>
               )}
             </ConnectKitButton.Custom>
@@ -67,11 +69,11 @@ export const SettingsTab = () => {
       </div>
 
       <div className="border border-white rounded-sm p-6">
-        <h3 className="text-lg font-herm text-white mb-4">Language Settings</h3>
+        <h3 className="text-lg font-herm text-white mb-4">{dict?.languageSettings}</h3>
         
         <div className="space-y-3">
           <label className="block text-sm font-herm text-ama">
-            Choose Language
+            {dict?.chooseLanguage}
           </label>
           <select
             value={selectedLanguage}

@@ -4,7 +4,7 @@ import { ChildContract } from "../../../types";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 
-export const useChildContracts = (infraId: string) => {
+export const useChildContracts = (infraId: string, dict: any) => {
   const [childContracts, setChildContracts] = useState<ChildContract[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export const useChildContracts = (infraId: string) => {
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch child contracts";
+        err instanceof Error ? err.message : dict?.failedToFetchChildContracts;
       setError(errorMessage);
       setChildContracts([]);
     } finally {

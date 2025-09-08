@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 export const ParentContractDetailView = ({
   parentContract,
   onBack,
+  dict,
 }: ParentContractDetailViewProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -26,7 +27,7 @@ export const ParentContractDetailView = ({
   const displayTitle =
     parentContract.parentMetadata?.title ||
     parentContract.title ||
-    "Unnamed Parent";
+    dict?.unnamedParent;
   const displayDescription = parentContract.parentMetadata?.description || "";
 
   const {
@@ -34,13 +35,14 @@ export const ParentContractDetailView = ({
     loading: itemsLoading,
     error: itemsError,
     refetch,
-  } = useParentItems(parentContract.contractAddress);
+  } = useParentItems(parentContract.contractAddress, dict);
 
   const { createParent, loading: createLoading } = useCreateParent(
-    parentContract.contractAddress
+    parentContract.contractAddress,
+    dict
   );
 
-  const { verifyRole } = useRoleVerification();
+  const { verifyRole } = useRoleVerification(dict);
 
   const handleCreateParentClick = async () => {
     const isVerified = await verifyRole(
@@ -73,7 +75,7 @@ export const ParentContractDetailView = ({
           className="flex items-center gap-2 text-white hover:text-ama transition-colors font-herm"
         >
           <span className="text-sm">←</span>
-          <span className="text-sm">Back to Parent Contracts</span>
+          <span className="text-sm">{dict?.backToParentContracts}</span>
         </button>
       </div>
 
@@ -91,21 +93,21 @@ export const ParentContractDetailView = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <div>
-                <span className="text-ama font-herm">Contract:</span>
+                <span className="text-ama font-herm">{dict?.contract}:</span>
                 <p className="font-mono text-xs text-white break-all">
                   {parentContract.contractAddress}
                 </p>
               </div>
               <div>
-                <span className="text-ama font-herm">Symbol:</span>
+                <span className="text-ama font-herm">{dict?.symbol}:</span>
                 <p className="text-white font-herm">{parentContract.symbol}</p>
               </div>
               <div>
-                <span className="text-ama font-herm">SCM:</span>
+                <span className="text-ama font-herm">{dict?.scm}:</span>
                 <p className="text-white font-herm">{parentContract.scm}</p>
               </div>
               <div>
-                <span className="text-ama font-herm">TX Hash:</span>
+                <span className="text-ama font-herm">{dict?.txHash}:</span>
                 <a
                   href={explorerUrl}
                   target="_blank"
@@ -116,7 +118,7 @@ export const ParentContractDetailView = ({
                 </a>
               </div>
               <div>
-                <span className="text-ama font-herm">Deployer:</span>
+                <span className="text-ama font-herm">{dict?.deployer}:</span>
                 <p className="font-mono text-xs text-white break-all">
                   {parentContract.deployer}
                 </p>
@@ -130,14 +132,14 @@ export const ParentContractDetailView = ({
             onClick={handleCreateParentClick}
             className="px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
           >
-            Create Parent
+            {dict?.createParent}
           </button>
 
           <button
             onClick={() => setIsProfileModalOpen(true)}
             className="px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
           >
-            Designer Profile
+            {dict?.designerProfile}
           </button>
         </div>
       </div>
@@ -145,12 +147,14 @@ export const ParentContractDetailView = ({
       <div className="space-y-3">
         {itemsError && (
           <div className="bg-black border border-fresa rounded-sm p-4">
-            <p className="text-fresa text-sm font-herm">Error: {itemsError}</p>
+            <p className="text-fresa text-sm font-herm">
+              {dict?.error}: {itemsError}
+            </p>
             <button
               onClick={refetch}
               className="mt-2 text-fresa hover:text-ama text-xs underline font-herm"
             >
-              Try again
+              {dict?.tryAgain}
             </button>
           </div>
         )}
@@ -159,7 +163,7 @@ export const ParentContractDetailView = ({
           <div className="bg-black rounded-sm p-4 border border-white flex items-center justify-center">
             <div className="flex items-center gap-2 text-white font-herm text-sm">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-              <span>Loading parent items...</span>
+              <span>{dict?.loadingParentItems}</span>
             </div>
           </div>
         ) : parentItems.length > 0 ? (
@@ -169,19 +173,21 @@ export const ParentContractDetailView = ({
                 key={parent.designId}
                 parent={parent}
                 onClick={handleParentClick}
+                dict={dict}
               />
             ))}
           </div>
         ) : (
           <div className="bg-black rounded-sm p-4 border border-white">
             <p className="text-ama text-center font-herm text-sm">
-              No parent items found in this contract.
+              {dict?.noParentItemsFound}
             </p>
           </div>
         )}
       </div>
 
       <CreateItemModal
+        dict={dict}
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateParent}
@@ -191,6 +197,7 @@ export const ParentContractDetailView = ({
       />
 
       <ProfileManager
+        dict={dict}
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         contract={parentContract.designerContract}

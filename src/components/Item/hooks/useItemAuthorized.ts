@@ -47,7 +47,7 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
           setProcessedAuthorizedTemplates(processedTemplates);
         }
       } catch (error) {
-        console.error("Error processing authorized items metadata:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

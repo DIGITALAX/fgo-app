@@ -12,7 +12,7 @@ import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { getInfrastructureStatus } from "@/lib/subgraph/queries/getInfrastructureStatus";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
-export const useChildItems = (contractAddress: string, infrastructureOrInfraId: any) => {
+export const useChildItems = (contractAddress: string, infrastructureOrInfraId: any, dict: any) => {
   const [childItems, setChildItems] = useState<Child[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,9 +72,10 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
                 loras: [],
                 workflow: "",
                 version: "",
+                customFields: {},
               },
               status: item.status,
-              availability: getAvailabilityLabel(item.availability || 0),
+              availability: getAvailabilityLabel(item.availability || 0, dict),
               isImmutable: item.isImmutable || false,
               digitalMarketsOpenToAll: item.digitalMarketsOpenToAll || false,
               physicalMarketsOpenToAll: item.physicalMarketsOpenToAll || false,
@@ -105,7 +106,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch child items";
+        err instanceof Error ? err.message : dict?.failedToFetchChildItems;
       setError(errorMessage);
       setChildItems([]);
     } finally {
@@ -124,7 +125,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
   const createChild = useCallback(
     async (formData: CreateItemFormData, abortController?: AbortController) => {
       if (!walletClient || !publicClient) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       const infraId = typeof infrastructureOrInfraId === 'string' 
@@ -134,14 +135,14 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
       if (infraId) {
         const isActive = await getInfrastructureStatus(convertInfraIdToBytes32(infraId));
         if (!isActive) {
-          throw new Error("Infrastructure is not active");
+          throw new Error(dict?.infrastructureIsNotActive);
         }
       }
 
       setCreateLoading(true);
       try {
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         let attachmentUris: any[] = [];
@@ -157,7 +158,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
         }
 
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         let imageHash = "";
@@ -166,7 +167,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
         }
 
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         const metadata = {
@@ -180,12 +181,13 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
           loras: formData.metadata.loras,
           workflow: formData.metadata.workflow,
           version: formData.version,
+          customFields: formData.metadata.customFields,
         };
 
         const metadataHash = await uploadJSONToIPFS(metadata);
 
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         const createChildParams = {
@@ -222,7 +224,7 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
           authorizedMarkets: formData.authorizedMarkets as any as `0x${string}`[],
         };
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         const hash = await walletClient.writeContract({
@@ -233,17 +235,17 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
         });
 
         if (abortController?.signal.aborted) {
-          throw new Error('Operation cancelled');
+          throw new Error(dict?.operationCancelled);
         }
 
         await publicClient.waitForTransactionReceipt({
           hash,
         });
 
-        context?.showSuccess("Child created successfully!", hash);
+        context?.showSuccess(dict?.childCreatedSuccessfully, hash);
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to create child";
+          err instanceof Error ? err.message : dict?.failedToCreateChild;
         context?.showError(errorMessage);
         throw new Error(errorMessage);
       } finally {

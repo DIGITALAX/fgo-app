@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getContractsBySupplier } from "@/lib/subgraph/queries/getContracts";
 import { ChildContract, TemplateContract } from "../../types";
 
-export const useContractsBySupplier = (walletAddress: string) => {
+export const useContractsBySupplier = (walletAddress: string, dict: any) => {
   const [childContracts, setChildContracts] = useState<ChildContract[]>([]);
   const [templateContracts, setTemplateContracts] = useState<TemplateContract[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -38,7 +38,7 @@ export const useContractsBySupplier = (walletAddress: string) => {
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch supplier contracts";
+        err instanceof Error ? err.message : dict?.failedToFetchSupplierContracts;
       setError(errorMessage);
       setChildContracts([]);
       setTemplateContracts([]);

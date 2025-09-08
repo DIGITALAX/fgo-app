@@ -4,7 +4,7 @@ import { getFGOUser } from "@/lib/subgraph/queries/getFGOUser";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { FGOUser, Infrastructure } from "../../types";
 
-export const useInfrastructure = () => {
+export const useInfrastructure = (dict: any) => {
   const { address, isConnected } = useWalletConnection();
   const [fgoUser, setFgoUser] = useState<FGOUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export const useInfrastructure = () => {
           });
         }
       } catch (err) {
-        setError("Failed to load infrastructure data");
+        setError(dict?.failedToLoadInfrastructureData);
       } finally {
         setLoading(false);
       }

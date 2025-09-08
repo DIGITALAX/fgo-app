@@ -4,7 +4,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Child } from "../types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 
-export const useChildDetails = (contractAddress: string, childId: number) => {
+export const useChildDetails = (contractAddress: string, childId: number, dict: any) => {
   const [child, setChild] = useState<Child | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export const useChildDetails = (contractAddress: string, childId: number) => {
         setError(null);
         const result = await getChild(childId, contractAddress);
         if (!result?.data?.childs || result.data.childs.length === 0) {
-          setError("Child not found");
+          setError(dict?.childNotFound);
           return;
         }
 
@@ -28,6 +28,7 @@ export const useChildDetails = (contractAddress: string, childId: number) => {
           childId: childData.childId,
           childContract: childData.childContract,
           supplier: childData.supplier || "Unknown",
+          infraId: childData.infraId,
           supplierProfile: childData.supplierProfile || {
             uri: "",
             version: "",
@@ -63,7 +64,7 @@ export const useChildDetails = (contractAddress: string, childId: number) => {
             version: "",
           },
           status: childData.status,
-          availability: getAvailabilityLabel(childData.availability || 0),
+          availability: getAvailabilityLabel(childData.availability || 0, dict),
           isImmutable: childData.isImmutable || false,
           digitalMarketsOpenToAll: childData.digitalMarketsOpenToAll || false,
           physicalMarketsOpenToAll: childData.physicalMarketsOpenToAll || false,
@@ -87,7 +88,7 @@ export const useChildDetails = (contractAddress: string, childId: number) => {
           physicalRights: childData.physicalRights || [],
         });
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Unknown error");
+        setError(error instanceof Error ? error.message : dict?.unknownError);
       } finally {
         setIsLoading(false);
       }

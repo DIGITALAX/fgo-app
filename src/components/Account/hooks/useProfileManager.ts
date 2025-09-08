@@ -14,6 +14,7 @@ export const useProfileManager = ({
   infraId,
   walletAddress,
   profileType,
+  dict,
 }: UseProfileManagerProps) => {
   const [formData, setFormData] = useState<ProfileFormData>({
     title: "",
@@ -52,7 +53,7 @@ export const useProfileManager = ({
         
         if (!result?.data?.designers || result.data.designers.length === 0) {
           if (showErrorModal && context) {
-            context.showError("You are not verified as a Designer for this infrastructure. Please contact the infrastructure owner to be added as a Designer.");
+            context.showError(dict?.youAreNotVerifiedAsDesigner);
           }
           return false;
         }
@@ -77,7 +78,7 @@ export const useProfileManager = ({
         
         if (!result?.data?.suppliers || result.data.suppliers.length === 0) {
           if (showErrorModal && context) {
-            context.showError("You are not verified as a Supplier for this infrastructure. Please contact the infrastructure owner to be added as a Supplier.");
+            context.showError(dict?.youAreNotVerifiedAsSupplier);
           }
           return false;
         }
@@ -102,7 +103,7 @@ export const useProfileManager = ({
         
         if (!result?.data?.fulfillers || result.data.fulfillers.length === 0) {
           if (showErrorModal && context) {
-            context.showError("You are not verified as a Fulfiller for this infrastructure. Please contact the infrastructure owner to be added as a Fulfiller.");
+            context.showError(dict?.youAreNotVerifiedAsFulfiller);
           }
           return false;
         }
@@ -123,8 +124,7 @@ export const useProfileManager = ({
       }
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Error checking existing profile";
-      console.error("Error checking existing profile:", error);
+      const errorMessage = error instanceof Error ? error.message : dict?.errorCheckingExistingProfile;
       if (showErrorModal && context) {
         context.showError(errorMessage);
       }

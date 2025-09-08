@@ -8,6 +8,7 @@ export const DeployChildModal = ({
   onSubmit,
   onCancel,
   loading,
+  dict,
 }: DeployChildModalProps) => {
   const {
     formData,
@@ -48,7 +49,7 @@ export const DeployChildModal = ({
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-herm text-white">
-              Deploy Child Contract
+              {dict?.deployChildContract}
             </h2>
             <button
               onClick={handleClose}
@@ -62,7 +63,7 @@ export const DeployChildModal = ({
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Child Type *
+                {dict?.childType} *
               </label>
               <input
                 type="number"
@@ -70,7 +71,7 @@ export const DeployChildModal = ({
                 value={formData.childType}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Child type number"
+                placeholder={dict?.childTypeNumber}
                 min="0"
                 disabled={loading}
                 required
@@ -79,7 +80,7 @@ export const DeployChildModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Name *
+                {dict?.name} *
               </label>
               <input
                 type="text"
@@ -87,7 +88,7 @@ export const DeployChildModal = ({
                 value={formData.name}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Contract name"
+                placeholder={dict?.contractName}
                 disabled={loading}
                 required
               />
@@ -95,7 +96,7 @@ export const DeployChildModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Symbol *
+                {dict?.symbol} *
               </label>
               <input
                 type="text"
@@ -103,7 +104,7 @@ export const DeployChildModal = ({
                 value={formData.symbol}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Contract symbol"
+                placeholder={dict?.contractSymbol}
                 disabled={loading}
                 required
               />
@@ -111,7 +112,7 @@ export const DeployChildModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                SCM *
+                {dict?.scm} *
               </label>
               <input
                 type="text"
@@ -119,7 +120,7 @@ export const DeployChildModal = ({
                 value={formData.scm}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Supply chain module"
+                placeholder={dict?.supplyChainModule}
                 disabled={loading}
                 required
               />
@@ -132,7 +133,7 @@ export const DeployChildModal = ({
                 className="flex-1 px-3 py-2 bg-white/10 hover:opacity-70 text-white font-herm rounded-sm transition-colors"
                 disabled={false}
               >
-                Cancel
+                {dict?.cancel}
               </button>
               <button
                 type="submit"
@@ -142,10 +143,10 @@ export const DeployChildModal = ({
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                    Deploying...
+                    {dict?.deploying}...
                   </>
                 ) : (
-                  "Deploy"
+                  dict?.deploy
                 )}
               </button>
             </div>

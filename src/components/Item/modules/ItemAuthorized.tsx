@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useItemAuthorized } from "../hooks/useItemAuthorized";
 import { Child, ItemAuthorizedProps } from "../types";
 
-export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
+export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
   const {
     handleChildClick,
     handleParentClick,
@@ -22,7 +22,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
   if (loading) {
     return (
       <div className="border border-white rounded-sm p-6">
-        <div className="text-ama font-herm">Loading authorized items...</div>
+        <div className="text-ama font-herm">{dict?.loadingAuthorizedItems}</div>
       </div>
     );
   }
@@ -33,11 +33,11 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
 
   return (
     <div className="border border-white rounded-sm p-6">
-      <h3 className="text-lg font-herm text-white mb-4">Authorized Items</h3>
+      <h3 className="text-lg font-herm text-white mb-4">{dict?.authorizedItems}</h3>
 
       {processedAuthorizedChildren.length > 0 && (
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Authorized Children</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.authorizedChildren}</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {processedAuthorizedChildren.map((child, index: number) => (
               <button
@@ -54,13 +54,13 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
                       fill
                       sizes="300px"
                       src={getImageUrl(child.metadata.image)}
-                      alt={child.metadata?.title || `Child ${child.childId}`}
+                      alt={child.metadata?.title || `${dict?.child} ${child.childId}`}
                       className="object-contain"
                     />
                   </div>
                 )}
                 <div className="text-ama font-herm text-sm underline">
-                  {child.metadata?.title || `Child ${child.childId}`}
+                  {child.metadata?.title || `${dict?.child} ${child.childId}`}
                 </div>
               </button>
             ))}
@@ -70,7 +70,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
 
       {processedAuthorizedParents.length > 0 && (
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Authorized Parents</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.authorizedParents}</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedParents.map((parent, index: number) => (
               <div
@@ -86,7 +86,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
                       src={getImageUrl(parent.metadata.image)}
                       alt={
                         parent.metadata?.title ||
-                        `Parent ${parent.parentId}`
+                        `${dict?.parent} ${parent.parentId}`
                       }
                       className="object-contain"
                     />
@@ -102,7 +102,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
                     }
                     className="text-ama hover:text-ama/80 font-herm text-sm underline mb-2"
                   >
-                    {parent.metadata?.title || `Parent ${parent.parentId}`}
+                    {parent.metadata?.title || `${dict?.parent} ${parent.parentId}`}
                   </button>
                   <p className="text-ama text-xs font-herm break-all">
                     {parent.parentContract}
@@ -116,7 +116,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
 
       {processedAuthorizedTemplates.length > 0 && (
         <div>
-          <h4 className="text-ama font-herm mb-3">Authorized Templates</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.authorizedTemplates}</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedTemplates.map((template, index: number) => (
               <div
@@ -132,7 +132,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
                       src={getImageUrl(template.metadata.image)}
                       alt={
                         template.metadata?.title ||
-                        `Template ${template.templateId}`
+                        `${dict?.template} ${template.templateId}`
                       }
                       className="object-contain"
                     />
@@ -149,7 +149,7 @@ export const ItemAuthorized = ({ item }: ItemAuthorizedProps) => {
                     className="text-ama hover:text-ama/80 font-herm text-sm underline mb-2"
                   >
                     {template.metadata?.title ||
-                      `Template ${template.templateId}`}
+                      `${dict?.template} ${template.templateId}`}
                   </button>
                   <p className="text-ama text-xs font-herm break-all">
                     {template.templateContract}

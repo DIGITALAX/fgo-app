@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useItemHeader } from "../hooks/useItemHeader";
 import { ItemHeaderProps } from "../types";
 
-export const ItemHeader = ({ item, isTemplate }: ItemHeaderProps) => {
+export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
   const { imageUrl, title, supplierTitle, contractAddress, itemId } =
     useItemHeader(item, isTemplate);
 
@@ -14,17 +14,17 @@ export const ItemHeader = ({ item, isTemplate }: ItemHeaderProps) => {
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
           <p className="text-ama text-sm">
-            {"designId" in item ? "Parent" : isTemplate ? "Template" : "Child"}{" "}
-            ID: {itemId}
+            {"designId" in item ? dict?.parent : isTemplate ? dict?.template : dict?.child}{" "}
+            {dict?.id}: {itemId}
           </p>
         </div>
 
           <h3 className="text-lg font-semibold text-white mb-3">
-            Contract Info
+            {dict?.contractInfo}
           </h3>
           <div className="space-y-2 text-sm">
             <div>
-              <span className="text-ama">Contract:</span>
+              <span className="text-ama">{dict?.contract}:</span>
               <p className="text-white font-mono text-xs break-all">
                 {contractAddress}
               </p>
@@ -32,38 +32,38 @@ export const ItemHeader = ({ item, isTemplate }: ItemHeaderProps) => {
             {"designId" in item ? (
               <>
                 <div>
-                  <span className="text-ama">Designer:</span>
+                  <span className="text-ama">{dict?.designer}:</span>
                   <p className="text-white font-mono text-xs break-all">
                     {item.designer}
                   </p>
                 </div>
                 <div>
-                  <span className="text-ama">Designer Name:</span>
+                  <span className="text-ama">{dict?.designerName}:</span>
                   <p className="text-white">{supplierTitle}</p>
                 </div>
                 <div>
-                  <span className="text-ama">SUPPLY CHAIN MARKER:</span>
+                  <span className="text-ama">{dict?.supplyChainMarker}:</span>
                   <p className="text-white">{item.scm}</p>
                 </div>
               </>
             ) : (
               <>
                 <div>
-                  <span className="text-ama">Supplier:</span>
+                  <span className="text-ama">{dict?.supplier}:</span>
                   <p className="text-white font-mono text-xs break-all">
                     {item.supplier}
                   </p>
                 </div>
                 <div>
-                  <span className="text-ama">Supplier Name:</span>
+                  <span className="text-ama">{dict?.supplierName}:</span>
                   <p className="text-white">{supplierTitle}</p>
                 </div>
                 <div>
-                  <span className="text-ama">Child Type:</span>
+                  <span className="text-ama">{dict?.childType}:</span>
                   <p className="text-white">{item.childType}</p>
                 </div>
                 <div>
-                  <span className="text-ama">SCM:</span>
+                  <span className="text-ama">{dict?.scm}:</span>
                   <p className="text-white">{item.scm}</p>
                 </div>
               </>

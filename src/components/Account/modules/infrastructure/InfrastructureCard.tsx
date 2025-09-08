@@ -6,6 +6,7 @@ export const InfrastructureCard = ({
   infrastructure,
   isOwner,
   onClick,
+  dict,
 }: InfrastructureCardProps) => {
   const imageUrl = infrastructure.metadata?.image
     ? getIPFSUrl(infrastructure.metadata.image)
@@ -35,21 +36,21 @@ export const InfrastructureCard = ({
       <div className="border border-white rounded-sm w-full flex flex-row gap-2 justify-between p-2 text-xs uppercase font-break text-ama group-hover:border-fresa transition-colors">
         <div className="relative w-fit h-fit flex">{title}</div>
         {isOwner && (
-          <div className="relative w-fit h-fit flex">Super Admin</div>
+          <div className="relative w-fit h-fit flex">{dict?.superAdmin}</div>
         )}
       </div>
       <div className="space-y-2 border border-white rounded-sm p-2 group-hover:border-fresa transition-colors">
         <div className="flex items-center justify-between">
-          <span className="text-xs truncate">Status</span>
+          <span className="text-xs truncate">{dict?.status}</span>
           <span
             className={`px-2 py-1 rounded bg-ama/20 border border-ama text-xs`}
           >
-            {infrastructure.isActive ? "Active" : "Inactive"}
+            {infrastructure.isActive ? dict?.active : dict?.inactive}
           </span>
         </div>
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
-            <span>Infra ID:</span>
+            <span>{dict?.infraId}:</span>
             <span className="text-ama"> {infrastructure.infraId}</span>
           </div>
         </div>

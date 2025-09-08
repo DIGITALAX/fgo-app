@@ -9,7 +9,7 @@ import { Infrastructure, DeployParentFormData } from "../../../types";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useDeployParent = (
-  infrastructure: Infrastructure,
+  infrastructure: Infrastructure,  dict: any,
   onSuccess?: () => void
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -50,11 +50,11 @@ export const useDeployParent = (
   const deployParentContract = useCallback(
     async (formData: DeployParentFormData) => {
       if (!walletClient || !publicClient || !context) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       if (!infrastructure.isActive) {
-        throw new Error("Infrastructure is not active");
+        throw new Error(dict?.infrastructureIsNotActive);
       }
 
       setLoading(true);
@@ -130,7 +130,7 @@ export const useDeployParent = (
           const errorMessage =
             err instanceof Error
               ? err.message
-              : "Failed to deploy parent contract";
+              : dict?.failedToDeployParentContract;
           context.showError(errorMessage);
           throw err;
         }

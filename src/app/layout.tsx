@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navigation } from "@/components/Navigation";
 import { Providers } from "@/lib/providers/Providers";
 import { LOCALES } from "@/constants";
-import { Container } from "@/components/Layout/modules/SquareContainer";
-import { Modals } from "@/components/Modals/modules/Modals";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fgo.themanufactory.xyz/"),
   title: "Fractional Garment Ownership",
-  description: "",
+  description:
+    "Plug-and-play open manufacturing contract suite for digifizzy fashion.",
   twitter: {
     card: "summary_large_image",
     creator: "@emmajane1313",
     title: "Fractional Garment Ownership",
-    description: "",
+    description:
+      "Plug-and-play open manufacturing contract suite for digifizzy fashion.",
   },
   openGraph: {
     title: "Fractional Garment Ownership",
-    description: "",
+    description:
+      "Plug-and-play open manufacturing contract suite for digifizzy fashion.",
   },
   robots: {
     googleBot: {
@@ -115,12 +115,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex relative w-full flex-col gap-3">
-        <Providers>
-          <Navigation />
-          <Container>{children}</Container>
-          <Modals />
-        </Providers>
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -4,7 +4,7 @@ import { NAV_ITEMS } from "@/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export const Navigation = () => {
+export const Navigation = ({ dict }: { dict: any }) => {
   const pathname = usePathname();
 
   return (
@@ -38,13 +38,13 @@ export const Navigation = () => {
                 >
                   <div className="relative w-fit h-fit flex flex-col items-center justify-start gap-2 sm:gap-0">
                     <div className="relative font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center tracking-widest">
-                      {item.label}
+                      {dict[item.label.toLowerCase()] || item.label}
                     </div>
                     <div
                       className="absolute text-black font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
                       id="title"
                     >
-                      {item.label}
+                      {dict[item.label.toLowerCase()] || item.label}
                     </div>
                   </div>
                 </Link>

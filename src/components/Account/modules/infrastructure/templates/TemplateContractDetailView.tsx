@@ -11,6 +11,7 @@ import { useRoleVerification } from "../../../hooks/useRoleVerification";
 export const TemplateContractDetailView = ({
   templateContract,
   onBack,
+  dict,
 }: TemplateContractDetailViewProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -19,7 +20,7 @@ export const TemplateContractDetailView = ({
   const network = getCurrentNetwork();
   const explorerUrl = `${network.blockExplorer}/tx/${templateContract.transactionHash}`;
 
-  const displayTitle = templateContract.title || "Unnamed Template";
+  const displayTitle = templateContract.title || dict?.unnamedTemplate;
 
   const {
     templateItems,
@@ -28,9 +29,9 @@ export const TemplateContractDetailView = ({
     refetch,
     createTemplate,
     createLoading,
-  } = useTemplateItems(templateContract.contractAddress);
+  } = useTemplateItems(templateContract.contractAddress, dict);
 
-  const { verifyRole } = useRoleVerification();
+  const { verifyRole } = useRoleVerification(dict);
 
   const handleCreateTemplateClick = async () => {
     const isVerified = await verifyRole(
@@ -57,7 +58,7 @@ export const TemplateContractDetailView = ({
           className="flex items-center gap-2 text-white hover:text-ama transition-colors font-herm"
         >
           <span className="text-sm">←</span>
-          <span className="text-sm">Back to Template Contracts</span>
+          <span className="text-sm">{dict?.backToTemplateContracts}</span>
         </button>
       </div>
 
@@ -67,27 +68,27 @@ export const TemplateContractDetailView = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <div>
-              <span className="text-ama font-herm">Contract:</span>
+              <span className="text-ama font-herm">{dict?.contract}:</span>
               <p className="font-mono text-xs text-white break-all">
                 {templateContract.contractAddress}
               </p>
             </div>
             <div>
-              <span className="text-ama font-herm">Symbol:</span>
+              <span className="text-ama font-herm">{dict?.symbol}:</span>
               <p className="text-white font-herm">{templateContract.symbol}</p>
             </div>
             <div>
-              <span className="text-ama font-herm">Type:</span>
+              <span className="text-ama font-herm">{dict?.type}:</span>
               <p className="text-white font-herm">
                 {templateContract.childType}
               </p>
             </div>
             <div>
-              <span className="text-ama font-herm">SCM:</span>
+              <span className="text-ama font-herm">{dict?.scm}:</span>
               <p className="text-white font-herm">{templateContract.scm}</p>
             </div>
             <div>
-              <span className="text-ama font-herm">TX Hash:</span>
+              <span className="text-ama font-herm">{dict?.txHash}:</span>
               <a
                 href={explorerUrl}
                 target="_blank"
@@ -98,7 +99,7 @@ export const TemplateContractDetailView = ({
               </a>
             </div>
             <div>
-              <span className="text-ama font-herm">Deployer:</span>
+              <span className="text-ama font-herm">{dict?.deployer}:</span>
               <p className="font-mono text-xs text-white break-all">
                 {templateContract.deployer}
               </p>
@@ -111,14 +112,14 @@ export const TemplateContractDetailView = ({
             onClick={handleCreateTemplateClick}
             className="px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
           >
-            Create Template
+            {dict?.createTemplate}
           </button>
 
           <button
             onClick={() => setIsProfileModalOpen(true)}
             className="px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
           >
-            Supplier Profile
+            {dict?.supplierProfile}
           </button>
         </div>
       </div>
@@ -126,12 +127,14 @@ export const TemplateContractDetailView = ({
       <div className="space-y-3">
         {itemsError && (
           <div className="bg-black border border-fresa rounded-sm p-4">
-            <p className="text-fresa text-sm font-herm">Error: {itemsError}</p>
+            <p className="text-fresa text-sm font-herm">
+              {dict?.error}: {itemsError}
+            </p>
             <button
               onClick={refetch}
               className="mt-2 text-fresa hover:text-ama text-xs underline font-herm"
             >
-              Try again
+              {dict?.tryAgain}
             </button>
           </div>
         )}
@@ -140,19 +143,23 @@ export const TemplateContractDetailView = ({
           <div className="bg-black rounded-sm p-4 border border-white flex items-center justify-center">
             <div className="flex items-center gap-2 text-white font-herm text-sm">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-              <span>Loading template items...</span>
+              <span>{dict?.loadingTemplateItems}</span>
             </div>
           </div>
         ) : templateItems.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {templateItems.map((template) => (
-              <LibraryCard key={template.templateId} data={template} />
+              <LibraryCard
+                key={template.templateId}
+                data={template}
+                dict={dict}
+              />
             ))}
           </div>
         ) : (
           <div className="bg-black rounded-sm p-4 border border-white">
             <p className="text-ama text-center font-herm text-sm">
-              No template items found in this contract.
+              {dict?.noTemplateItemsFound}
             </p>
           </div>
         )}
@@ -164,10 +171,12 @@ export const TemplateContractDetailView = ({
         onSubmit={handleCreateTemplate}
         loading={createLoading}
         mode="template"
+        dict={dict}
         infraId={templateContract.infraId}
       />
 
       <ProfileManager
+        dict={dict}
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         contract={templateContract.supplierContract}

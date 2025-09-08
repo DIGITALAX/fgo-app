@@ -7,7 +7,8 @@ import { parseEther } from "viem";
 export const useParentActions = (
   contractAddress: string,
   designId: string | number,
-  parent: any
+  parent: any,
+  dict: any
 ) => {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -28,7 +29,7 @@ export const useParentActions = (
 
   const handleCreateParent = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -50,10 +51,10 @@ export const useParentActions = (
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context?.showSuccess("Parent created successfully!", hash);
+      context?.showSuccess(dict?.parentCreatedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to create parent";
+        error instanceof Error ? error.message : dict?.failedToCreateParent;
       context?.showError(errorMessage);
     } finally {
       setCreating(false);
@@ -69,7 +70,7 @@ export const useParentActions = (
 
   const handleDeleteParent = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -91,10 +92,10 @@ export const useParentActions = (
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context?.showSuccess("Parent deleted successfully!", hash);
+      context?.showSuccess(dict?.parentDeletedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete parent";
+        error instanceof Error ? error.message : dict?.failedToDeleteParent;
       context?.showError(errorMessage);
     } finally {
       setDeleting(false);
@@ -137,9 +138,9 @@ export const useParentActions = (
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context.showSuccess("Parent updated successfully!", hash);
+      context.showSuccess(dict?.parentUpdatedSuccessfully, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update parent";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToUpdateParent;
       context.showError(errorMessage);
     } finally {
       setUpdating(false);

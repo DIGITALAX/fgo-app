@@ -6,13 +6,17 @@ export const MetadataForm = ({
   onInputChange, 
   onFileChange, 
   onTagsChange, 
-  onLorasChange, 
+  onLorasChange,
+  onCustomFieldsChange,
   loading = false,
   existingImageUrl,
-  existingAttachments = []
+  existingAttachments = [],
+  dict
 }: MetadataFormProps) => {
   const [currentTag, setCurrentTag] = useState("");
   const [currentLora, setCurrentLora] = useState("");
+  const [newFieldKey, setNewFieldKey] = useState("");
+  const [newFieldValue, setNewFieldValue] = useState("");
 
   const handleTagKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && currentTag.trim()) {
@@ -40,6 +44,24 @@ export const MetadataForm = ({
 
   const removeLora = (loraToRemove: string) => {
     onLorasChange(formData.loras.filter(lora => lora !== loraToRemove));
+  };
+
+  const handleAddCustomField = () => {
+    if (newFieldKey.trim() && newFieldValue.trim()) {
+      const updatedFields = {
+        ...(formData.customFields || {}),
+        [newFieldKey.trim()]: newFieldValue.trim()
+      };
+      onCustomFieldsChange(updatedFields);
+      setNewFieldKey("");
+      setNewFieldValue("");
+    }
+  };
+
+  const handleRemoveCustomField = (key: string) => {
+    const updatedFields = { ...(formData.customFields || {}) };
+    delete updatedFields[key];
+    onCustomFieldsChange(updatedFields);
   };
 
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +100,7 @@ export const MetadataForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Title *
+            {dict?.title} *
           </label>
           <input
             type="text"
@@ -93,7 +115,7 @@ export const MetadataForm = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            AI Model
+            {dict?.aiModel}
           </label>
           <input
             type="text"
@@ -101,14 +123,14 @@ export const MetadataForm = ({
             value={formData.aiModel}
             onChange={onInputChange}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent"
-            placeholder="e.g., SDXL, Midjourney"
+            placeholder={dict?.aiModelPlaceholder}
             disabled={loading}
           />
         </div>
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Description *
+            {dict?.description} *
           </label>
           <textarea
             name="description"
@@ -123,7 +145,7 @@ export const MetadataForm = ({
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Prompt
+            {dict?.prompt}
           </label>
           <textarea
             name="prompt"
@@ -131,14 +153,14 @@ export const MetadataForm = ({
             onChange={onInputChange}
             rows={3}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent resize-none"
-            placeholder="Describe your AI generation prompt..."
+            placeholder={dict?.promptPlaceholder}
             disabled={loading}
           />
         </div>
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Workflow
+            {dict?.workflow}
           </label>
           <textarea
             name="workflow"
@@ -146,14 +168,14 @@ export const MetadataForm = ({
             onChange={onInputChange}
             rows={4}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent resize-none font-mono text-xs"
-            placeholder="JSON workflow or text description..."
+            placeholder={dict?.workflowPlaceholder}
             disabled={loading}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Main Image {!existingImageUrl && '*'}
+            {dict?.mainImage} {!existingImageUrl && '*'}
           </label>
           {existingImageUrl && !formData.image && (
             <div className="mb-3 p-3 bg-gray-800 border border-gray-600 rounded-lg">
@@ -164,8 +186,8 @@ export const MetadataForm = ({
                   className="w-12 h-12 object-cover rounded border border-gray-500"
                 />
                 <div className="text-sm">
-                  <p className="text-white">Current Image</p>
-                  <p className="text-gray-400 text-xs">Upload a new image to replace</p>
+                  <p className="text-white">{dict?.currentImage}</p>
+                  <p className="text-gray-400 text-xs">{dict?.uploadNewImageReplace}</p>
                 </div>
               </div>
             </div>
@@ -180,7 +202,7 @@ export const MetadataForm = ({
           />
           {formData.image && (
             <div className="mt-2 text-xs text-gray-400">
-              New image selected: {formData.image.name}
+              {dict?.newImageSelected}: {formData.image.name}
             </div>
           )}
         </div>
@@ -188,7 +210,7 @@ export const MetadataForm = ({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-medium text-gray-300">
-              Additional Files
+              {dict?.additionalFiles}
             </label>
             <span className="text-xs text-gray-500">
               {(formData.attachments.length + existingAttachments.length)}/3 files
@@ -197,12 +219,12 @@ export const MetadataForm = ({
           
           {existingAttachments.length > 0 && (
             <div className="mb-3 p-3 bg-gray-800 border border-gray-600 rounded-lg">
-              <p className="text-sm text-white mb-2">Current Attachments:</p>
+              <p className="text-sm text-white mb-2">{dict?.currentAttachments}:</p>
               <div className="space-y-1">
                 {existingAttachments.map((attachment: { uri?: string; type?: string }, index: number) => (
                   <div key={`existing-${index}`} className="flex items-center justify-between text-xs text-gray-400 bg-gray-700 p-2 rounded">
                     <span>{attachment.type || 'attachment'} (existing)</span>
-                    <span className="text-gray-500">Will be kept unless replaced</span>
+                    <span className="text-gray-500">{dict?.willBeKeptUnlessReplaced}</span>
                   </div>
                 ))}
               </div>
@@ -223,12 +245,12 @@ export const MetadataForm = ({
           />
           {(formData.attachments.length + existingAttachments.length) >= 3 && (
             <p className="mt-1 text-xs text-orange-400">
-              Maximum files reached. Remove existing or new files to add more.
+              {dict?.maximumFilesReached}
             </p>
           )}
           {formData.attachments.length > 0 && (
             <div className="mt-2 space-y-1">
-              <p className="text-sm text-white mb-1">New Files:</p>
+              <p className="text-sm text-white mb-1">{dict?.newFiles}:</p>
               {formData.attachments.map((file, index) => (
                 <div key={index} className="flex items-center justify-between text-xs text-gray-400 bg-gray-800 p-2 rounded">
                   <span>{file.name}</span>
@@ -248,7 +270,7 @@ export const MetadataForm = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Tags
+            {dict?.tags}
           </label>
           <input
             type="text"
@@ -256,7 +278,7 @@ export const MetadataForm = ({
             onChange={(e) => setCurrentTag(e.target.value)}
             onKeyDown={handleTagKeyPress}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent"
-            placeholder="Type and press Enter to add tags..."
+            placeholder={dict?.typeEnterAddTags}
             disabled={loading}
           />
           {formData.tags.length > 0 && (
@@ -283,7 +305,7 @@ export const MetadataForm = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            LoRAs
+            {dict?.loras}
           </label>
           <input
             type="text"
@@ -291,7 +313,7 @@ export const MetadataForm = ({
             onChange={(e) => setCurrentLora(e.target.value)}
             onKeyDown={handleLoraKeyPress}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent"
-            placeholder="Type and press Enter to add LoRAs..."
+            placeholder={dict?.typeEnterAddLoras}
             disabled={loading}
           />
           {formData.loras.length > 0 && (
@@ -314,6 +336,65 @@ export const MetadataForm = ({
               ))}
             </div>
           )}
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            {dict?.customFields}
+          </label>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newFieldKey}
+                onChange={(e) => setNewFieldKey(e.target.value)}
+                placeholder={dict?.fieldNamePlaceholder}
+                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent"
+                disabled={loading}
+              />
+              <input
+                type="text"
+                value={newFieldValue}
+                onChange={(e) => setNewFieldValue(e.target.value)}
+                placeholder={dict?.fieldValuePlaceholder}
+                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-azul focus:border-transparent"
+                disabled={loading}
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomField}
+                disabled={loading || !newFieldKey.trim() || !newFieldValue.trim()}
+                className="px-4 py-2 bg-azul hover:bg-azul/80 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+              >
+                {dict?.add}
+              </button>
+            </div>
+            
+            {Object.keys(formData.customFields || {}).length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm text-white">{dict?.customFields}:</p>
+                {Object.entries(formData.customFields || {}).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex items-center justify-between p-3 bg-gray-800 border border-gray-600 rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-white">{key}:</span>
+                      <span className="text-sm text-gray-300 ml-2">{value}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCustomField(key)}
+                      className="text-red-400 hover:text-red-300 ml-2 p-1"
+                      disabled={loading}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

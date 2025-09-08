@@ -4,7 +4,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 import { MarketContract } from "../../../types";
 
-export const useMarketContracts = (infraId: string) => {
+export const useMarketContracts = (infraId: string, dict: any) => {
   const [marketContracts, setMarketContracts] = useState<MarketContract[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export const useMarketContracts = (infraId: string) => {
         setMarketContracts([]);
       }
     } catch (err) {
-      setError("Failed to load market contracts");
+      setError(dict?.failedToLoadMarketContracts);
       setMarketContracts([]);
     } finally {
       setLoading(false);

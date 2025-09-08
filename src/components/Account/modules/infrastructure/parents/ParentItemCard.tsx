@@ -5,7 +5,7 @@ import { formatPrice } from "@/lib/helpers/price";
 import { useEffect, useState } from "react";
 import { getStatusLabel } from "@/lib/helpers/status";
 
-export const ParentItemCard = ({ parent, onClick }: ParentItemCardProps) => {
+export const ParentItemCard = ({ parent, onClick, dict }: ParentItemCardProps) => {
   const [formattedDigitalPrice, setFormattedDigitalPrice] = useState<string>("Free");
   const [formattedPhysicalPrice, setFormattedPhysicalPrice] = useState<string>("Free");
 
@@ -16,7 +16,7 @@ export const ParentItemCard = ({ parent, onClick }: ParentItemCardProps) => {
   };
 
   const displayTitle =
-    parent.metadata?.title || parent.title || "Unnamed Parent";
+    parent.metadata?.title || parent.title || dict?.unnamedParent;
   const displayImage = parent.metadata?.image || "";
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export const ParentItemCard = ({ parent, onClick }: ParentItemCardProps) => {
           #{parent.designId}
         </div>
         <div className="relative w-fit h-fit flex truncate">
-          {getStatusLabel(parent.status)}
+          {getStatusLabel(parent.status, dict)}
         </div>
       </div>
 
@@ -83,14 +83,14 @@ export const ParentItemCard = ({ parent, onClick }: ParentItemCardProps) => {
 
         <div className="space-y-1 text-xs">
           <div className="flex justify-between">
-            <span className="truncate">Purchases:</span>
+            <span className="truncate">{dict?.purchases}:</span>
             <span className="text-ama truncate ml-1">
               {parent.totalPurchases}
             </span>
           </div>
           {Number(parent.digitalPrice) > 0 && (
             <div className="flex justify-between">
-              <span className="truncate">Digital Price:</span>
+              <span className="truncate">{dict?.digitalPrice}:</span>
               <span className="text-ama truncate ml-1">
                 {formattedDigitalPrice}
               </span>
@@ -98,7 +98,7 @@ export const ParentItemCard = ({ parent, onClick }: ParentItemCardProps) => {
           )}
           {Number(parent.physicalPrice) > 0 && (
             <div className="flex justify-between">
-              <span className="truncate">Physical Price:</span>
+              <span className="truncate">{dict?.physicalPrice}:</span>
               <span className="text-ama truncate ml-1">
                 {formattedPhysicalPrice}
               </span>

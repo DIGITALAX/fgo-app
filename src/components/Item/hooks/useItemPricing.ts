@@ -4,7 +4,7 @@ import { getStatusLabel } from "@/lib/helpers/status";
 import { Child, Template } from "../types";
 import { Parent } from "@/components/Account/types";
 
-export const useItemPricing = (item: Child | Template | Parent) => {
+export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
   const [formattedDigitalPrice, setFormattedDigitalPrice] =
     useState<string>("");
   const [formattedPhysicalPrice, setFormattedPhysicalPrice] =
@@ -31,7 +31,7 @@ export const useItemPricing = (item: Child | Template | Parent) => {
     formatPrices();
   }, [item.digitalPrice, item.physicalPrice]);
 
-  const statusLabel = getStatusLabel(item.status);
+  const statusLabel = getStatusLabel(item.status, dict);
 
   const statusColor =
     Number(item.status) === 1

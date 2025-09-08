@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { formatPrice } from "@/lib/helpers/price";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { getStatusLabel } from "@/lib/helpers/status";
 import { truncateAddress } from "@/lib/helpers/address";
 import { Child, Template } from "@/components/Item/types";
 
@@ -110,14 +109,12 @@ export const useLibraryCard = (data: Child | Template) => {
     processData();
   }, [data, isTemplate, itemId]);
 
-  const statusLabel = getStatusLabel(data.status);
   const formattedDate = new Date(
     parseInt(data.createdAt) * 1000
   ).toLocaleDateString();
 
   return {
     detalles,
-    statusLabel,
     formattedDate,
     isTemplate,
     contractAddress,

@@ -9,6 +9,7 @@ import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useDeployChild = (
   infrastructure: Infrastructure,
+  dict: any,
   onSuccess?: () => void
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -49,11 +50,11 @@ export const useDeployChild = (
   const deployChildContract = useCallback(
     async (formData: DeployChildFormData) => {
       if (!walletClient || !publicClient || !context) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       if (!infrastructure.isActive) {
-        throw new Error("Infrastructure is not active");
+        throw new Error(dict?.infrastructureIsNotActive);
       }
 
       setLoading(true);
@@ -104,7 +105,7 @@ export const useDeployChild = (
           const errorMessage =
             err instanceof Error
               ? err.message
-              : "Failed to deploy child contract";
+              : dict?.failedToDeployChildContract;
           context.showError(errorMessage);
           throw err;
         }

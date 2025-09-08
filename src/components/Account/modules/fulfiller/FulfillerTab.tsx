@@ -1,17 +1,19 @@
+"use client";
+
 import { useAccount } from "wagmi";
 import { useFulfillerContracts } from "../../hooks/useFulfillerContracts";
 import { useMarketsNavigation } from "../../hooks/infrastructure/markets/useMarketsNavigation";
 import { ContractCard } from "./../infrastructure/ContractCard";
 import { MarketContractDetailView } from "./../infrastructure/markets/MarketContractDetailView";
 
-export const FulfillerTab = () => {
+export const FulfillerTab = ({ dict }: { dict: any }) => {
   const { address } = useAccount();
   const {
     marketContracts,
     loading: contractsLoading,
     error: contractsError,
     refetch,
-  } = useFulfillerContracts(address || "");
+  } = useFulfillerContracts(address || "", dict);
 
   const { selectedMarketContract, selectMarketContract, clearSelection } =
     useMarketsNavigation();
@@ -21,6 +23,7 @@ export const FulfillerTab = () => {
       <MarketContractDetailView
         marketContract={selectedMarketContract}
         onBack={clearSelection}
+        dict={dict}
       />
     );
   }
@@ -30,26 +33,25 @@ export const FulfillerTab = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-herm text-white mb-1">
-            Fulfiller Dashboard
+            {dict?.fulfillerDashboard}
           </h2>
           <p className="text-white/60 font-herm text-sm">
-            Manage market contracts and fulfill orders
+            {dict?.manageMarketContracts}
           </p>
         </div>
         <div className="text-sm text-white/60 font-herm">
-          {marketContracts.length} contract
-          {marketContracts.length !== 1 ? "s" : ""}
+          {marketContracts.length} {marketContracts.length === 1 ? dict?.contract : dict?.contracts}
         </div>
       </div>
 
       {contractsError && (
         <div className="bg-black border border-fresa rounded-sm p-4">
-          <p className="text-fresa text-sm font-herm">❌ {contractsError}</p>
+          <p className="text-fresa text-sm font-herm"> {contractsError}</p>
           <button
             onClick={refetch}
             className="mt-2 text-fresa hover:text-ama text-xs underline font-herm"
           >
-            Try again
+            {dict?.tryAgain}
           </button>
         </div>
       )}
@@ -58,7 +60,7 @@ export const FulfillerTab = () => {
         <div className="flex items-center justify-center font-herm p-8">
           <div className="flex items-center gap-2 text-white text-xs">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-            <span>Loading market contracts...</span>
+            <span>{dict?.loadingMarketContracts}</span>
           </div>
         </div>
       ) : marketContracts.length > 0 ? (
@@ -68,20 +70,20 @@ export const FulfillerTab = () => {
               key={marketContract.id}
               contract={marketContract}
               onClick={selectMarketContract}
+              dict={dict}
             />
           ))}
         </div>
       ) : (
         <div className="bg-black border border-white rounded-sm p-6 text-center">
           <h3 className="text-lg font-herm text-white mb-2">
-            No Market Contracts Found
+            {dict?.noMarketContractsFound}
           </h3>
           <p className="text-white/60 mb-4 font-herm text-sm">
-            You don't have access to any market contracts yet.
+            {dict?.noMarketContractsAccess}
           </p>
           <p className="text-xs text-white/40 font-herm">
-            Contact an infrastructure owner to get fulfiller access to market
-            contracts.
+            {dict?.contactInfrastructureOwner}
           </p>
         </div>
       )}

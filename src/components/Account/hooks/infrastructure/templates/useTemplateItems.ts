@@ -10,7 +10,7 @@ import { Template } from "@/components/Item/types";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 
-export const useTemplateItems = (contractAddress: string) => {
+export const useTemplateItems = (contractAddress: string, dict: any) => {
   const [templateItems, setTemplateItems] = useState<Template[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,9 +72,11 @@ export const useTemplateItems = (contractAddress: string) => {
                 loras: [],
                 workflow: "",
                 version: "",
+                customFields: {},
               },
+              infraId: item.infraId,
               status: item.status,
-              availability: getAvailabilityLabel(item.availability || 0),
+              availability: getAvailabilityLabel(item.availability || 0, dict),
               isImmutable: item.isImmutable || false,
               digitalMarketsOpenToAll: item.digitalMarketsOpenToAll || false,
               physicalMarketsOpenToAll: item.physicalMarketsOpenToAll || false,
@@ -106,7 +108,7 @@ export const useTemplateItems = (contractAddress: string) => {
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch template items";
+        err instanceof Error ? err.message : dict?.failedToFetchTemplateItems;
       setError(errorMessage);
       setTemplateItems([]);
     } finally {
@@ -125,7 +127,7 @@ export const useTemplateItems = (contractAddress: string) => {
   const createTemplate = useCallback(
     async (formData: CreateItemFormData) => {
       if (!walletClient || !publicClient) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       setCreateLoading(true);
@@ -158,6 +160,7 @@ export const useTemplateItems = (contractAddress: string) => {
           loras: formData.metadata.loras,
           workflow: formData.metadata.workflow,
           version: formData.version,
+          customFields: formData.metadata.customFields,
         };
 
         const metadataHash = await uploadJSONToIPFS(metadata);
@@ -224,10 +227,10 @@ export const useTemplateItems = (contractAddress: string) => {
           hash,
         });
 
-        context?.showSuccess("Template created successfully!", hash);
+        context?.showSuccess(dict?.templateCreatedSuccessfully, hash);
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to create template";
+          err instanceof Error ? err.message : dict?.failedToCreateTemplate;
         context?.showError(errorMessage);
         throw new Error(errorMessage);
       } finally {

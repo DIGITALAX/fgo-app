@@ -1,10 +1,12 @@
+"use client";
+
 import { useInfrastructure } from "../../hooks/infrastructure/useInfrastructure";
 import { InfrastructureCard } from "./InfrastructureCard";
 import { CreateInfrastructureModal } from "./CreateInfrastructureModal";
 import { InfrastructureDetailView } from "./InfrastructureDetailView";
 import { useCreateInfrastructure } from "../../hooks/infrastructure/useCreateInfrastructure";
 
-export const InfrastructureTab = () => {
+export const InfrastructureTab = ({ dict }: { dict: any }) => {
   const {
     fgoUser,
     loading,
@@ -13,7 +15,7 @@ export const InfrastructureTab = () => {
     selectedInfrastructure,
     handleInfrastructureClick,
     handleBackToList,
-  } = useInfrastructure();
+  } = useInfrastructure(dict);
 
   const {
     isModalOpen,
@@ -23,7 +25,7 @@ export const InfrastructureTab = () => {
     closeModal,
     handleSubmit,
     cancelOperation,
-  } = useCreateInfrastructure();
+  } = useCreateInfrastructure(dict);
 
   if (!isConnected) {
     return (
@@ -31,10 +33,10 @@ export const InfrastructureTab = () => {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <h3 className="text-xl font-herm text-white mb-2">
-              Connect Your Wallet
+              {dict?.connectYourWallet}
             </h3>
             <p className="text-white/60 font-herm">
-              Please connect your wallet to view your infrastructure
+              {dict?.connectWalletViewInfrastructure}
             </p>
           </div>
         </div>
@@ -48,6 +50,7 @@ export const InfrastructureTab = () => {
         infrastructure={selectedInfrastructure.infrastructure}
         isOwner={selectedInfrastructure.isOwner}
         onBack={handleBackToList}
+        dict={dict}
       />
     );
   }
@@ -55,12 +58,14 @@ export const InfrastructureTab = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-herm text-white">Infrastructure</h2>
+        <h2 className="text-2xl font-herm text-white">
+          {dict?.infrastructure}
+        </h2>
         <button
           onClick={openModal}
           className="px-4 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
         >
-          Create Infrastructure
+          {dict?.createInfrastructure}
         </button>
       </div>
 
@@ -68,7 +73,9 @@ export const InfrastructureTab = () => {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ama mx-auto mb-4"></div>
-            <p className="text-white/60 font-herm">Loading infrastructure...</p>
+            <p className="text-white/60 font-herm">
+              {dict?.loadingInfrastructure}
+            </p>
           </div>
         </div>
       )}
@@ -84,7 +91,7 @@ export const InfrastructureTab = () => {
           {fgoUser.ownedInfrastructures.length > 0 && (
             <div>
               <h3 className="text-lg font-herm text-ama mb-4">
-                Owned Infrastructure
+                {dict?.ownedInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {fgoUser.ownedInfrastructures.map((infrastructure, index) => (
@@ -93,6 +100,7 @@ export const InfrastructureTab = () => {
                     infrastructure={infrastructure}
                     isOwner={true}
                     onClick={handleInfrastructureClick}
+                    dict={dict}
                   />
                 ))}
               </div>
@@ -102,7 +110,7 @@ export const InfrastructureTab = () => {
           {fgoUser.adminInfrastructures.length > 0 && (
             <div>
               <h3 className="text-lg font-herm text-ama mb-4">
-                Admin Infrastructure
+                {dict?.adminInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {fgoUser.adminInfrastructures.map((infrastructure, index) => (
@@ -111,6 +119,7 @@ export const InfrastructureTab = () => {
                     infrastructure={infrastructure}
                     isOwner={false}
                     onClick={handleInfrastructureClick}
+                    dict={dict}
                   />
                 ))}
               </div>
@@ -126,6 +135,7 @@ export const InfrastructureTab = () => {
         onCancel={cancelOperation}
         loading={createLoading}
         paymentTokens={paymentTokens}
+        dict={dict}
       />
     </div>
   );

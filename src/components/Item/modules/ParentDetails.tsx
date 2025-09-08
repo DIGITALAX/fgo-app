@@ -16,13 +16,15 @@ import { useState } from "react";
 export const ParentDetails = ({
   contractAddress,
   designId,
+  dict,
 }: ParentDetailsProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
 
   const { parent, isLoading, error } = useParentDetails(
     contractAddress,
-    designId
+    designId,
+    dict
   );
 
   const {
@@ -35,18 +37,22 @@ export const ParentDetails = ({
     handleCreateParent,
     handleDeleteParent,
     handleEditSubmit,
-  } = useParentActions(contractAddress, designId, parent);
+  } = useParentActions(contractAddress, designId, parent, dict);
 
   if (isLoading) {
-    return <div>Loading parent...</div>;
+    return <div>{dict?.loadingParent}</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        {dict?.error}: {error}
+      </div>
+    );
   }
 
   if (!parent) {
-    return <div>Parent not found</div>;
+    return <div>{dict?.parentNotFound}</div>;
   }
 
   return (
@@ -61,14 +67,14 @@ export const ParentDetails = ({
                 creating && "cursor-not-allowed"
               }`}
             >
-              {creating ? "Creating..." : "Create Parent"}
+              {creating ? dict?.creating : dict?.createParent}
             </button>
           )}
           <button
             onClick={() => setIsEditModalOpen(true)}
             className="px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Edit Parent
+            {dict?.editParent}
           </button>
           <button
             onClick={handleDeleteParent}
@@ -76,30 +82,29 @@ export const ParentDetails = ({
             className={`px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black ${
               (!canDelete || deleting) && "cursor-default opacity-70"
             }`}
-            title={
-              !canDelete ? "Cannot delete: Parent has total purchases > 0" : ""
-            }
+            title={!canDelete ? dict?.cannotDeleteParentPurchases : ""}
           >
-            {deleting ? "Deleting..." : "Delete Parent"}
+            {deleting ? dict?.deleting : dict?.deleteParent}
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}
             className="px-2 py-1 font-herm bg-ama hover:opacity-70 rounded-sm flex items-center text-xs text-black"
           >
-            Approvals
+            {dict?.approvals}
           </button>
         </div>
       )}
-      <ItemHeader item={parent} isTemplate={false} />
-      <ItemPricing item={parent} />
-      <ItemMetadata item={parent} />
-      <ItemWorkflow item={parent} />
-      <ItemRequests item={parent} />
-      <ItemAuthorized item={parent} />
-      <ChildReferences childData={parent.childReferences || []} />
-      <ItemBlockchainInfo item={parent} />
+      <ItemHeader item={parent} isTemplate={false} dict={dict} />
+      <ItemPricing item={parent} dict={dict} />
+      <ItemMetadata item={parent} dict={dict} />
+      <ItemWorkflow item={parent} dict={dict} />
+      <ItemRequests item={parent} dict={dict} />
+      <ItemAuthorized item={parent} dict={dict} />
+      <ChildReferences childData={parent.childReferences || []} dict={dict} />
+      <ItemBlockchainInfo item={parent} dict={dict} />
 
       <CreateItemModal
+        dict={dict}
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSubmit={async (formData) => {
@@ -112,7 +117,7 @@ export const ParentDetails = ({
         }}
         loading={updating}
         mode="parent"
-        infraId=""
+        infraId={parent.infraId}
         isEditMode={true}
         editItem={parent}
       />
@@ -121,9 +126,8 @@ export const ParentDetails = ({
         isOpen={isApprovalModalOpen}
         onClose={() => setIsApprovalModalOpen(false)}
         itemType="parent"
+        dict={dict}
         itemData={parent}
-        contractAddress={contractAddress}
-        itemId={designId.toString()}
       />
     </div>
   );

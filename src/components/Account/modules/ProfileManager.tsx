@@ -10,8 +10,8 @@ export const ProfileManager = ({
   infraId,
   walletAddress,
   profileType,
+  dict,
 }: ProfileManagerProps) => {
-  
   const {
     formData,
     existingProfile,
@@ -21,12 +21,13 @@ export const ProfileManager = ({
     handleSubmit,
     resetForm,
     checkExistingProfile,
-    cancelOperation
+    cancelOperation,
   } = useProfileManager({
     contract,
     infraId,
     walletAddress,
     profileType,
+    dict,
   });
 
   const handleModalOpen = async () => {
@@ -64,7 +65,9 @@ export const ProfileManager = ({
         <div className="p-3 border-b border-white flex-shrink-0">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-herm text-white">
-              {existingProfile ? `Update ${profileType}` : `Create ${profileType}`}
+              {existingProfile
+                ? `${dict?.update} ${profileType}`
+                : `${dict?.create} ${profileType}`}
             </h2>
             <button
               onClick={handleClose}
@@ -80,7 +83,7 @@ export const ProfileManager = ({
           <form onSubmit={handleFormSubmit} className="p-3 space-y-3">
             <div>
               <label className="block text-xs font-herm text-ama mb-1">
-                Title *
+                {dict?.title} *
               </label>
               <input
                 type="text"
@@ -95,7 +98,7 @@ export const ProfileManager = ({
 
             <div>
               <label className="block text-xs font-herm text-ama mb-1">
-                Description *
+                {dict?.description} *
               </label>
               <textarea
                 name="description"
@@ -110,7 +113,7 @@ export const ProfileManager = ({
 
             <div>
               <label className="block text-xs font-herm text-ama mb-1">
-                Link
+                {dict?.link}
               </label>
               <input
                 type="url"
@@ -118,7 +121,7 @@ export const ProfileManager = ({
                 value={formData.link}
                 onChange={handleInputChange}
                 className="w-full px-2 py-1.5 bg-black/20 border border-white/30 rounded-sm text-white focus:outline-none focus:ring-1 focus:ring-ama focus:border-ama font-herm text-sm"
-                placeholder="https://..."
+                placeholder={dict?.linkPlaceholder}
                 disabled={loading}
               />
             </div>
@@ -127,7 +130,7 @@ export const ProfileManager = ({
               <>
                 <div>
                   <label className="block text-xs font-herm text-ama mb-1">
-                    Base Price *
+                    {dict?.basePrice} *
                   </label>
                   <input
                     type="number"
@@ -137,7 +140,7 @@ export const ProfileManager = ({
                     min="0"
                     step="0.001"
                     className="w-full px-2 py-1.5 bg-black/20 border border-white/30 rounded-sm text-white focus:outline-none focus:ring-1 focus:ring-ama focus:border-ama font-herm text-sm"
-                    placeholder="0.01"
+                    placeholder={dict?.basePricePlaceholder}
                     disabled={loading}
                     required
                   />
@@ -145,7 +148,7 @@ export const ProfileManager = ({
 
                 <div>
                   <label className="block text-xs font-herm text-ama mb-1">
-                    VIG Percentage (0-100) *
+                    {dict?.vigPercentage} *
                   </label>
                   <input
                     type="number"
@@ -156,12 +159,12 @@ export const ProfileManager = ({
                     max="100"
                     step="0.01"
                     className="w-full px-2 py-2 bg-black/20 border border-white/30 rounded-sm text-white focus:outline-none focus:ring-1 focus:ring-ama focus:border-ama font-herm text-sm"
-                    placeholder="5"
+                    placeholder={dict?.vigPercentagePlaceholder}
                     disabled={loading}
                     required
                   />
                   <p className="text-xs text-white/60 mt-1 font-herm">
-                    e.g., 5 = 5%
+                    {dict?.vigPercentageExample}
                   </p>
                 </div>
               </>
@@ -169,18 +172,18 @@ export const ProfileManager = ({
 
             <div>
               <label className="block text-xs font-herm text-ama mb-1">
-                Image *
+                {dict?.image} *
               </label>
               {existingProfile?.metadata?.image && !formData.image && (
                 <div className="mb-2 p-2 bg-black/20 border border-white/30 rounded-sm">
                   <div className="flex items-center gap-2">
-                    <img 
-                      src={getIPFSUrl(existingProfile.metadata.image)} 
-                      alt="Current" 
+                    <img
+                      src={getIPFSUrl(existingProfile.metadata.image)}
+                      alt="Current"
                       className="w-6 h-6 object-cover rounded-sm"
                     />
                     <div className="text-xs">
-                      <p className="text-white font-herm">Current</p>
+                      <p className="text-white font-herm">{dict?.current}</p>
                     </div>
                   </div>
                 </div>
@@ -193,14 +196,18 @@ export const ProfileManager = ({
                 disabled={loading}
                 required={!existingProfile}
               />
-              {formData.image && typeof formData.image === 'object' && formData.image?.name ? (
+              {formData.image &&
+              typeof formData.image === "object" &&
+              formData.image?.name ? (
                 <div className="mt-1 text-xs text-ama font-herm">
-                  New: {formData.image.name}
+                  {dict?.new}: {formData.image.name}
                 </div>
-              ) : existingProfile?.metadata?.image && (
-                <div className="mt-1 text-xs text-white/60 font-herm">
-                  Current: {existingProfile.metadata.image.split('/').pop()}
-                </div>
+              ) : (
+                existingProfile?.metadata?.image && (
+                  <div className="mt-1 text-xs text-white/60 font-herm">
+                    {dict?.current}: {existingProfile.metadata.image.split("/").pop()}
+                  </div>
+                )
               )}
             </div>
           </form>
@@ -214,21 +221,30 @@ export const ProfileManager = ({
               className="flex-1 px-3 py-1.5 bg-white/10 hover:opacity-70 text-white font-herm rounded-sm transition-colors text-xs"
               disabled={false}
             >
-              Cancel
+              {dict?.cancel}
             </button>
             <button
               type="submit"
               onClick={handleFormSubmit}
               className="flex-1 px-3 py-1.5 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 text-xs"
-              disabled={loading || !formData.title.trim() || !formData.description.trim() || (!formData.image && !existingProfile) || (profileType === "Fulfiller" && (!formData.basePrice || !formData.vigBasisPoints))}
+              disabled={
+                loading ||
+                !formData.title.trim() ||
+                !formData.description.trim() ||
+                (!formData.image && !existingProfile) ||
+                (profileType === "Fulfiller" &&
+                  (!formData.basePrice || !formData.vigBasisPoints))
+              }
             >
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                  {existingProfile ? 'Updating...' : 'Creating...'}
+                  {existingProfile ? dict?.updating : dict?.creating}
                 </>
+              ) : existingProfile ? (
+                dict?.update
               ) : (
-                existingProfile ? 'Update' : 'Create'
+                dict?.create
               )}
             </button>
           </div>

@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useCreateInfrastructureForm } from "../../hooks/infrastructure/useCreateInfrastructureForm";
-import { CreateInfrastructureModalPropsExtended } from "../../types";
+import { CreateInfrastructureModalProps } from "../../types";
 
 
 export const CreateInfrastructureModal = ({
@@ -10,7 +9,8 @@ export const CreateInfrastructureModal = ({
   onCancel,
   loading,
   paymentTokens,
-}: CreateInfrastructureModalPropsExtended) => {
+  dict,
+}: CreateInfrastructureModalProps) => {
   const {
     formData,
     showCustomToken,
@@ -51,7 +51,7 @@ export const CreateInfrastructureModal = ({
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-herm text-white">
-              Create Infrastructure
+              {dict?.createInfrastructure}
             </h2>
             <button
               onClick={handleClose}
@@ -65,7 +65,7 @@ export const CreateInfrastructureModal = ({
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Payment Token
+                {dict?.paymentToken}
               </label>
               <select
                 name="paymentToken"
@@ -79,7 +79,7 @@ export const CreateInfrastructureModal = ({
                     {token.name} ({token.symbol})
                   </option>
                 ))}
-                <option value="custom" className="bg-black text-white">Custom ERC20 Token</option>
+                <option value="custom" className="bg-black text-white">{dict?.customERC20Token}</option>
               </select>
               
               {showCustomToken && (
@@ -94,15 +94,15 @@ export const CreateInfrastructureModal = ({
                 />
               )}
               <div className="mt-2 text-xs text-ama font-herm space-y-1">
-                <p>• <span className="font-herm text-white">Private infrastructure:</span> Any ERC20 token is suitable</p>
-                <p>• <span className="font-herm text-white">Cross-designer collaboration:</span> MONA is the default compatible token across markets</p>
-                <p>• You can input any custom ERC20 address above</p>
+                <p>• <span className="font-herm text-white">{dict?.privateInfrastructure}:</span> {dict?.anyERC20TokenSuitable}</p>
+                <p>• <span className="font-herm text-white">{dict?.crossDesignerCollaboration}:</span> {dict?.monaDefaultToken}</p>
+                <p>• {dict?.customERC20AddressInfo}</p>
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Title *
+                {dict?.title} *
               </label>
               <input
                 type="text"
@@ -110,7 +110,7 @@ export const CreateInfrastructureModal = ({
                 value={formData.title}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Infrastructure name"
+                placeholder={dict?.infrastructureName}
                 disabled={loading}
                 required
               />
@@ -118,7 +118,7 @@ export const CreateInfrastructureModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Description *
+                {dict?.description} *
               </label>
               <textarea
                 name="description"
@@ -126,7 +126,7 @@ export const CreateInfrastructureModal = ({
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                placeholder="Describe your infrastructure"
+                placeholder={dict?.describeInfrastructure}
                 disabled={loading}
                 required
               />
@@ -134,7 +134,7 @@ export const CreateInfrastructureModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Image
+                {dict?.image}
               </label>
               <div className="space-y-2">
                 <input
@@ -155,7 +155,7 @@ export const CreateInfrastructureModal = ({
                 className="flex-1 px-3 py-2 bg-white/10 hover:opacity-70 text-white font-herm rounded-sm transition-colors"
                 disabled={false}
               >
-                Cancel
+                {dict?.cancel}
               </button>
               <button
                 type="submit"
@@ -169,10 +169,10 @@ export const CreateInfrastructureModal = ({
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                    Creating...
+                    {dict?.creating}...
                   </>
                 ) : (
-                  "Create"
+                  dict?.create
                 )}
               </button>
             </div>

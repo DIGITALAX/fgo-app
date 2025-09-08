@@ -8,7 +8,8 @@ import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 export const useTemplateActions = (
   contractAddress: string,
   templateId: string | number,
-  template: any
+  template: any,
+  dict: any
 ) => {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -32,7 +33,7 @@ export const useTemplateActions = (
 
   const handleCreateTemplate = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -54,10 +55,10 @@ export const useTemplateActions = (
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context?.showSuccess("Template created successfully!", hash);
+      context?.showSuccess(dict?.templateCreatedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to create template";
+        error instanceof Error ? error.message : dict?.failedToCreateTemplate;
       context?.showError(errorMessage);
     } finally {
       setCreating(false);
@@ -73,7 +74,7 @@ export const useTemplateActions = (
 
   const handleDeleteTemplate = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -95,10 +96,10 @@ export const useTemplateActions = (
 
       await publicClient.waitForTransactionReceipt({ hash });
 
-      context?.showSuccess("Template deleted successfully!", hash);
+      context?.showSuccess(dict?.templateDeletedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete template";
+        error instanceof Error ? error.message : dict?.failedToDeleteTemplate;
       context?.showError(errorMessage);
     } finally {
       setDeleting(false);
@@ -197,10 +198,10 @@ export const useTemplateActions = (
 
         await publicClient.waitForTransactionReceipt({ hash });
 
-        context.showSuccess("Template updated successfully!", hash);
+        context.showSuccess(dict?.templateUpdatedSuccessfully, hash);
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to update template";
+          error instanceof Error ? error.message : dict?.failedToUpdateTemplate;
         context.showError(errorMessage);
       } finally {
         setUpdating(false);

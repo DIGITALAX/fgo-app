@@ -78,6 +78,33 @@ export const ItemMetadata = ({ item }: ItemMetadataProps) => {
         </div>
       </div>
 
+      {item.metadata.customFields && Object.keys(item.metadata.customFields).length > 0 && (
+        <div className="border border-white rounded-sm p-6">
+          <h3 className="text-lg font-herm text-white mb-4">Custom Fields</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Object.entries(item.metadata.customFields).map(([key, value]) => (
+              <div key={key}>
+                <h4 className="text-ama font-herm mb-2">{key}</h4>
+                <p className="text-white text-sm bg-black/20 p-3 rounded-sm border border-white/20 break-all">
+                  {String(value)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {item.uri && (
+        <div className="border border-white rounded-sm p-6">
+          <h3 className="text-lg font-herm text-white mb-4">IPFS Metadata URI</h3>
+          <div className="bg-black/20 border border-white/30 rounded-sm p-4">
+            <p className="text-white text-sm font-mono break-all">
+              {item.uri}
+            </p>
+          </div>
+        </div>
+      )}
+
       {item.metadata.attachments && item.metadata.attachments.length > 0 && (
         <div className="border border-white rounded-sm p-6">
           <h3 className="text-lg font-herm text-white mb-4">Attachments</h3>

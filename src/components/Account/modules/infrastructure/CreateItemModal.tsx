@@ -16,6 +16,7 @@ export const CreateItemModal = ({
   infraId,
   isEditMode = false,
   editItem,
+  dict,
 }: CreateItemModalProps) => {
   const [isChildSelectionOpen, setIsChildSelectionOpen] = useState(false);
   const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false);
@@ -30,6 +31,7 @@ export const CreateItemModal = ({
     handleFileChange,
     handleTagsChange,
     handleLorasChange,
+    handleCustomFieldsChange,
     addChildReference,
     removeChildReference,
     updateChildReference,
@@ -94,9 +96,9 @@ export const CreateItemModal = ({
   };
 
   const availabilityOptions = [
-    { value: 0, label: "Digital Only" },
-    { value: 1, label: "Physical Only" },
-    { value: 2, label: "Digital & Physical" },
+    { value: 0, label: dict?.digitalOnly },
+    { value: 1, label: dict?.physicalOnly },
+    { value: 2, label: dict?.digitalPhysicalBoth },
   ];
 
   return (
@@ -106,19 +108,19 @@ export const CreateItemModal = ({
           <div className="flex items-center justify-between">
             <h2 className="text-base sm:text-lg font-herm text-white">
               {isEditMode
-                ? `Edit ${
+                ? `${dict?.edit} ${
                     mode === "parent"
-                      ? "Parent Design"
+                      ? dict?.parentDesign
                       : mode === "template"
-                      ? "Template Item"
-                      : "Child Item"
+                      ? dict?.templateItem
+                      : dict?.childItem
                   }`
-                : `Create ${
+                : `${dict?.create} ${
                     mode === "parent"
-                      ? "Parent Design"
+                      ? dict?.parentDesign
                       : mode === "template"
-                      ? "Template Item"
-                      : "Child Item"
+                      ? dict?.templateItem
+                      : dict?.childItem
                   }`}
             </h2>
             <button
@@ -136,7 +138,7 @@ export const CreateItemModal = ({
             {!(mode === "parent" && isEditMode) && (
               <div>
                 <h3 className="text-base font-herm text-white mb-3">
-                  Metadata
+                  {dict?.metadata}
                 </h3>
                 {(!isEditMode || !(editItem as Child)?.isImmutable) && (
                   <MetadataForm
@@ -145,6 +147,7 @@ export const CreateItemModal = ({
                     onFileChange={handleFileChange}
                     onTagsChange={handleTagsChange}
                     onLorasChange={handleLorasChange}
+                    onCustomFieldsChange={handleCustomFieldsChange}
                     loading={loading}
                     existingImageUrl={
                       isEditMode && editItem?.metadata?.image
@@ -156,12 +159,13 @@ export const CreateItemModal = ({
                         ? editItem.metadata.attachments
                         : []
                     }
+                    dict={dict}
                   />
                 )}
                 {isEditMode && (editItem as Child)?.isImmutable && (
                   <div className="p-4 bg-black border border-ama rounded-sm">
                     <p className="text-ama text-sm font-herm">
-                      Metadata cannot be modified because this item is immutable
+                      {dict?.metadataCannotModify}
                     </p>
                   </div>
                 )}
@@ -170,7 +174,7 @@ export const CreateItemModal = ({
 
             <div>
               <h3 className="text-base font-herm text-white mb-3">
-                Contract Configuration
+                {dict?.contractConfiguration}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {(mode === "parent" && isEditMode) ||
@@ -182,7 +186,7 @@ export const CreateItemModal = ({
                     formData.availability === 2)) ? (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
-                      Digital Price *
+                      {dict?.digitalPrice} *
                     </label>
                     <input
                       type="text"
@@ -204,7 +208,7 @@ export const CreateItemModal = ({
                     formData.availability === 2)) ? (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
-                      Physical Price *
+                      {dict?.physicalPrice} *
                     </label>
                     <input
                       type="text"
@@ -223,7 +227,7 @@ export const CreateItemModal = ({
                   (!isEditMode || !(editItem as Child)?.isImmutable) && (
                     <div>
                       <label className="block text-sm font-herm text-ama mb-2">
-                        Version *
+                        {dict?.version} *
                       </label>
                       <input
                         type="number"
@@ -246,7 +250,7 @@ export const CreateItemModal = ({
                     formData.availability === 2)) ? (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
-                      Max Physical Editions *
+                      {dict?.maxPhysicalEditions} *
                     </label>
                     <input
                       type="number"
@@ -269,7 +273,7 @@ export const CreateItemModal = ({
                 {mode === "parent" && (formData.availability === 0 || formData.availability === 2) && (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
-                      Max Digital Editions *
+                      {dict?.maxDigitalEditions} *
                     </label>
                     <input
                       type="number"
@@ -288,7 +292,7 @@ export const CreateItemModal = ({
                 {(!isEditMode || (mode !== "parent" && !(editItem as Child)?.isImmutable)) && (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
-                      Availability *
+                      {dict?.availability} *
                     </label>
                     <select
                       name="availability"
@@ -310,7 +314,7 @@ export const CreateItemModal = ({
 
               <div className="mt-6">
                 <div className="space-y-3">
-                  <h4 className="text-sm font-herm text-ama">Settings</h4>
+                  <h4 className="text-sm font-herm text-ama">{dict?.settings}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {mode !== "parent" &&
                       (!isEditMode || !(editItem as Child)?.isImmutable) && (
@@ -324,7 +328,7 @@ export const CreateItemModal = ({
                             disabled={loading}
                           />
                           <span className="ml-2 text-sm text-white font-herm">
-                            Make Immutable
+                            {dict?.makeImmutable}
                           </span>
                         </label>
                       )}
@@ -340,7 +344,7 @@ export const CreateItemModal = ({
                           disabled={loading}
                         />
                         <span className="ml-2 text-sm text-white font-herm">
-                          Any market can list for sale (Digital)
+                          {dict?.anyMarketCanListDigital}
                         </span>
                       </label>
                     )}
@@ -356,7 +360,7 @@ export const CreateItemModal = ({
                           disabled={loading}
                         />
                         <span className="ml-2 text-sm text-white font-herm">
-                          Any market can list for sale (Physical)
+                          {dict?.anyMarketCanListPhysical}
                         </span>
                       </label>
                     )}
@@ -373,7 +377,7 @@ export const CreateItemModal = ({
                             disabled={loading}
                           />
                           <span className="ml-2 text-sm text-white font-herm">
-                            Anyone template or parent can use (Digital)
+                            {dict?.anyoneCanUseDigital}
                           </span>
                         </label>
                       )}
@@ -390,7 +394,7 @@ export const CreateItemModal = ({
                             disabled={loading}
                           />
                           <span className="ml-2 text-sm text-white font-herm">
-                            Anyone template or parent can use (Physical)
+                            {dict?.anyoneCanUsePhysical}
                           </span>
                         </label>
                       )}
@@ -406,7 +410,7 @@ export const CreateItemModal = ({
                             disabled={loading}
                           />
                           <span className="ml-2 text-sm text-white font-herm">
-                            Standalone Allowed
+                            {dict?.standaloneAllowed}
                           </span>
                         </label>
                       )}
@@ -419,13 +423,12 @@ export const CreateItemModal = ({
               (mode === "template" && !isEditMode)) && (
                 <div>
                   <h3 className="text-base font-herm text-white mb-3">
-                    Child Placements
+                    {dict?.childPlacements}
                   </h3>
                   <div className="space-y-4">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <p className="text-sm text-white font-herm">
-                        Add up to 50 children to this{" "}
-                        {mode === "parent" ? "design" : "template"}
+                        {dict?.addChildren} (0-50) {mode === "parent" ? dict?.design : dict?.template}
                       </p>
                       <button
                         type="button"
@@ -435,7 +438,7 @@ export const CreateItemModal = ({
                         }
                         className="px-3 py-2 bg-white hover:opacity-70 disabled:opacity-50 text-black text-sm font-herm rounded-sm transition-colors whitespace-nowrap"
                       >
-                        Add Children ({formData.childReferences.length}/50)
+                        {dict?.addChildren} ({formData.childReferences.length}/50)
                       </button>
                     </div>
 
@@ -490,9 +493,7 @@ export const CreateItemModal = ({
                     ) : (
                       <div className="bg-black rounded-sm p-4 border border-white text-center">
                         <p className="text-ama text-sm font-herm">
-                          No children added yet. Click "Add Children" to start
-                          building your{" "}
-                          {mode === "parent" ? "design" : "template"}.
+                          {dict?.noChildrenAdded} {mode === "parent" ? dict?.design : dict?.template}.
                         </p>
                       </div>
                     )}
@@ -503,7 +504,7 @@ export const CreateItemModal = ({
             {mode === "parent" && !isEditMode && (
               <div>
                 <h3 className="text-base font-herm text-white mb-3">
-                  Fulfillment Workflow (Optional)
+                  {dict?.fulfillmentWorkflow}
                 </h3>
                 <div className="bg-black rounded-sm p-4 border border-white">
                   {formData.fulfillmentWorkflow &&
@@ -515,8 +516,7 @@ export const CreateItemModal = ({
                         formData.fulfillmentWorkflow.digitalSteps.length >
                           0 && (
                           <p>
-                            Digital steps:{" "}
-                            {formData.fulfillmentWorkflow.digitalSteps.length}
+                            {dict?.digitalSteps} {formData.fulfillmentWorkflow.digitalSteps.length}
                           </p>
                         )}
                       {(formData.availability === 1 ||
@@ -524,15 +524,13 @@ export const CreateItemModal = ({
                         formData.fulfillmentWorkflow.physicalSteps.length >
                           0 && (
                           <p>
-                            Physical steps:{" "}
-                            {formData.fulfillmentWorkflow.physicalSteps.length}
+                            {dict?.physicalSteps} {formData.fulfillmentWorkflow.physicalSteps.length}
                           </p>
                         )}
                     </div>
                   ) : (
                     <p className="text-sm text-white font-herm mb-3">
-                      Configure custom fulfillment steps for your design. This
-                      is optional and can be set up later.
+                      {dict?.configureCustomSteps}
                     </p>
                   )}
                   <button
@@ -541,7 +539,7 @@ export const CreateItemModal = ({
                     className="px-3 py-2 bg-white hover:opacity-70 text-black text-sm font-herm rounded-sm transition-colors"
                     disabled={loading}
                   >
-                    Configure Workflow
+                    {dict?.configureWorkflow}
                   </button>
                 </div>
               </div>
@@ -557,7 +555,7 @@ export const CreateItemModal = ({
               className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
               disabled={false}
             >
-              Cancel
+              {dict?.cancel}
             </button>
             <button
               type="submit"
@@ -569,22 +567,22 @@ export const CreateItemModal = ({
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                  {isEditMode ? "Updating..." : "Creating..."}
+                  {isEditMode ? dict?.updating : dict?.creating}
                 </>
               ) : isEditMode ? (
-                `Update ${
+                `${dict?.update} ${
                   mode === "parent"
-                    ? "Parent"
+                    ? dict?.parent
                     : mode === "template"
-                    ? "Template"
-                    : "Child"
+                    ? dict?.template
+                    : dict?.child
                 }`
               ) : mode === "parent" ? (
-                "Create Parent"
+                dict?.createParent
               ) : mode === "template" ? (
-                "Create Template"
+                dict?.createTemplate
               ) : (
-                "Create Child"
+                dict?.createChild
               )}
             </button>
           </div>
@@ -613,6 +611,7 @@ export const CreateItemModal = ({
             ? formData.childReferences[editingPlacementIndex]
             : undefined
         }
+        dict={dict}
       />
 
       <FulfillmentWorkflowModal
@@ -622,6 +621,7 @@ export const CreateItemModal = ({
         availability={formData.availability}
         currentWorkflow={formData.fulfillmentWorkflow}
         infraId={infraId}
+        dict={dict}
       />
     </div>
   );

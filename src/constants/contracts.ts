@@ -31,3 +31,4 @@ export const CONTRACT_FUNCTIONS = {
     DEPLOY_TEMPLATE_CONTRACT: "deployTemplateChildContract",
   },
 } as const;
+

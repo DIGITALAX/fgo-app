@@ -6,7 +6,8 @@ import { getAvailabilityLabel } from "@/lib/helpers/availability";
 
 export const useTemplateDetails = (
   contractAddress: string,
-  templateId: number
+  templateId: number,
+  dict: any
 ) => {
   const [template, setTemplate] = useState<Template | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -20,60 +21,76 @@ export const useTemplateDetails = (
 
         const result = await getTemplate(templateId, contractAddress);
         if (!result?.data?.templates || result.data.templates.length === 0) {
-          setError("Template not found");
+          setError(dict?.templateNotFound);
           return;
         }
 
         const templateData = result.data.templates[0];
-        
+
         if (templateData.childReferences) {
-          templateData.childReferences = templateData.childReferences.map((childRef: any) => ({
-            ...childRef,
-            child: childRef.isTemplate ? childRef.childTemplate : childRef.child,
-            placementURI: childRef.uri
-          }));
+          templateData.childReferences = templateData.childReferences.map(
+            (childRef: any) => ({
+              ...childRef,
+              child: childRef.isTemplate
+                ? childRef.childTemplate
+                : childRef.child,
+              placementURI: childRef.uri,
+            })
+          );
         }
-        
+
         const processedItem = await ensureMetadata(templateData);
 
-        let finalAuthorizedChildren = [...(templateData.authorizedChildren || [])];
+        let finalAuthorizedChildren = [
+          ...(templateData.authorizedChildren || []),
+        ];
         if (Number(templateData.status) === 1 && templateData.childReferences) {
           const childRefsToAdd = await Promise.all(
             templateData.childReferences
               .filter((childRef: any) => {
                 const childKey = `${childRef.childContract}-${childRef.childId}`;
-                return !finalAuthorizedChildren.some((authChild: any) => 
-                  `${authChild.childContract}-${authChild.childId}` === childKey
+                return !finalAuthorizedChildren.some(
+                  (authChild: any) =>
+                    `${authChild.childContract}-${authChild.childId}` ===
+                    childKey
                 );
               })
               .map(async (childRef: any) => {
                 let metadata = { title: "", image: "" };
                 if (childRef.uri) {
                   try {
-                    const childMetadata = await ensureMetadata({ uri: childRef.child.uri });
+                    const childMetadata = await ensureMetadata({
+                      uri: childRef.child.uri,
+                    });
                     metadata = {
-                      title: childMetadata.metadata?.title || `Child ${childRef.childId}`,
-                      image: childMetadata.metadata?.image || ""
+                      title:
+                        childMetadata.metadata?.title ||
+                        `Child ${childRef.childId}`,
+                      image: childMetadata.metadata?.image || "",
                     };
                   } catch (error) {}
                 }
-                
+
                 return {
                   childContract: childRef.childContract,
                   childId: childRef.childId,
                   uri: childRef.uri,
                   placementURI: childRef.uri,
-                  metadata
+                  metadata,
                 };
               })
           );
-          finalAuthorizedChildren = [...finalAuthorizedChildren, ...childRefsToAdd];
+          finalAuthorizedChildren = [
+            ...finalAuthorizedChildren,
+            ...childRefsToAdd,
+          ];
         }
 
         setTemplate({
           templateId: templateData.templateId,
           templateContract: templateData.templateContract,
           supplier: templateData.supplier || "Unknown",
+          infraId: templateData.infraId,
           supplierProfile: templateData.supplierProfile || {
             uri: "",
             version: "",
@@ -109,7 +126,10 @@ export const useTemplateDetails = (
             version: "",
           },
           status: templateData.status,
-          availability: getAvailabilityLabel(templateData.availability || 0),
+          availability: getAvailabilityLabel(
+            templateData.availability || 0,
+            dict
+          ),
           isImmutable: templateData.isImmutable || false,
           digitalMarketsOpenToAll:
             templateData.digitalMarketsOpenToAll || false,
@@ -136,7 +156,7 @@ export const useTemplateDetails = (
           childReferences: templateData.childReferences || [],
         });
       } catch (error) {
-        setError(error instanceof Error ? error.message : "Unknown error");
+        setError(error instanceof Error ? error.message : dict?.unknownError);
       } finally {
         setIsLoading(false);
       }

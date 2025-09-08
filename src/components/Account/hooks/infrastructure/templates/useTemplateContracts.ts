@@ -4,7 +4,7 @@ import { TemplateContract } from "../../../types";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 
-export const useTemplateContracts = (infraId: string) => {
+export const useTemplateContracts = (infraId: string, dict: any) => {
   const [templateContracts, setTemplateContracts] = useState<
     TemplateContract[]
   >([]);
@@ -39,7 +39,7 @@ export const useTemplateContracts = (infraId: string) => {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Failed to fetch template contracts";
+          : dict?.failedToFetchTemplateContracts;
       setError(errorMessage);
       setTemplateContracts([]);
     } finally {

@@ -8,6 +8,7 @@ export const DeployMarketModal = ({
   onSubmit,
   onCancel,
   loading,
+  dict,
 }: DeployMarketModalProps) => {
   const {
     formData,
@@ -45,7 +46,7 @@ export const DeployMarketModal = ({
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-herm text-white">
-              Deploy Market Contract
+              {dict?.deployMarketContract}
             </h2>
             <button
               onClick={handleClose}
@@ -59,7 +60,7 @@ export const DeployMarketModal = ({
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Contract Name *
+                {dict?.contractName} *
               </label>
               <input
                 type="text"
@@ -67,7 +68,7 @@ export const DeployMarketModal = ({
                 value={formData.name}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Enter contract name"
+                placeholder={dict?.enterContractName}
                 disabled={loading}
                 required
               />
@@ -75,7 +76,7 @@ export const DeployMarketModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Symbol *
+                {dict?.symbol} *
               </label>
               <input
                 type="text"
@@ -83,7 +84,7 @@ export const DeployMarketModal = ({
                 value={formData.symbol}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="e.g., MKT"
+                placeholder={dict?.marketSymbolPlaceholder}
                 disabled={loading}
                 required
               />
@@ -91,7 +92,7 @@ export const DeployMarketModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Title *
+                {dict?.title} *
               </label>
               <input
                 type="text"
@@ -99,7 +100,7 @@ export const DeployMarketModal = ({
                 value={formData.title}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder="Enter market title"
+                placeholder={dict?.enterMarketTitle}
                 disabled={loading}
                 required
               />
@@ -107,7 +108,7 @@ export const DeployMarketModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Description *
+                {dict?.description} *
               </label>
               <textarea
                 name="description"
@@ -115,7 +116,7 @@ export const DeployMarketModal = ({
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                placeholder="Enter market description"
+                placeholder={dict?.enterMarketDescription}
                 disabled={loading}
                 required
               />
@@ -123,12 +124,12 @@ export const DeployMarketModal = ({
 
             <div>
               <label className="block text-sm font-herm text-ama mb-2">
-                Image
+                {dict?.image}
               </label>
               <div className="space-y-2">
                 {formData.image && (
                   <div className="text-xs text-white font-herm p-2 bg-black border border-white rounded-sm">
-                    Selected: {formData.image.name}
+                    {dict?.selected}: {formData.image.name}
                   </div>
                 )}
                 <input
@@ -149,7 +150,7 @@ export const DeployMarketModal = ({
                 className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
                 disabled={false}
               >
-                Cancel
+                {dict?.cancel}
               </button>
               <button
                 type="submit"
@@ -159,10 +160,10 @@ export const DeployMarketModal = ({
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                    Deploying...
+                    {dict?.deploying}...
                   </>
                 ) : (
-                  "Deploy"
+                  dict?.deploy
                 )}
               </button>
             </div>

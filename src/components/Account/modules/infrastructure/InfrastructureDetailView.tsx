@@ -15,6 +15,7 @@ export const InfrastructureDetailView = ({
   infrastructure,
   isOwner,
   onBack,
+  dict,
 }: InfrastructureDetailProps) => {
   const [activeTab, setActiveTab] =
     useState<InfrastructureDetailTab>("details");
@@ -22,28 +23,29 @@ export const InfrastructureDetailView = ({
   const renderActiveTab = () => {
     switch (activeTab) {
       case "details":
-        return <DetailsTab infrastructure={infrastructure} />;
+        return <DetailsTab infrastructure={infrastructure} dict={dict} />;
       case "access_controls":
         return (
           <AccessControlsTab
             infrastructure={infrastructure}
             isOwner={isOwner}
+            dict={dict}
           />
         );
       case "parents":
-        return <ParentsTab infrastructure={infrastructure} isOwner={isOwner} />;
+        return <ParentsTab infrastructure={infrastructure} isOwner={isOwner} dict={dict} />;
       case "children":
         return (
-          <ChildrenTab infrastructure={infrastructure} isOwner={isOwner} />
+          <ChildrenTab infrastructure={infrastructure} isOwner={isOwner} dict={dict} />
         );
       case "templates":
         return (
-          <TemplatesTab infrastructure={infrastructure} isOwner={isOwner} />
+          <TemplatesTab infrastructure={infrastructure} isOwner={isOwner} dict={dict} />
         );
       case "markets":
-        return <MarketsTab infrastructure={infrastructure} isOwner={isOwner} />;
+        return <MarketsTab infrastructure={infrastructure} isOwner={isOwner} dict={dict} />;
       default:
-        return <DetailsTab infrastructure={infrastructure} />;
+        return <DetailsTab infrastructure={infrastructure} dict={dict} />;
     }
   };
 
@@ -55,15 +57,15 @@ export const InfrastructureDetailView = ({
           className="flex items-center gap-2 text-white/60 hover:text-ama transition-colors font-herm text-sm"
         >
           <span className="text-base">←</span>
-          <span>Back</span>
+          <span>{dict?.back}</span>
         </button>
         <div className="w-px h-4 bg-white/20"></div>
         <h2 className="text-lg font-herm text-white">
-          {infrastructure.metadata?.title || `Infra ${infrastructure.infraId}`}
+          {infrastructure.metadata?.title || `${dict?.infra} ${infrastructure.infraId}`}
         </h2>
         {isOwner && (
           <span className="px-2 py-0.5 rounded-sm text-xs bg-fresa/20 text-fresa border border-fresa/30 font-herm">
-            Owner
+            {dict?.owner}
           </span>
         )}
       </div>
@@ -71,6 +73,7 @@ export const InfrastructureDetailView = ({
       <InfrastructureDetailTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        dict={dict}
       />
 
       <div className="flex-1">{renderActiveTab()}</div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { ContainerProps } from "../types";
 
 export const Container = ({ children }: ContainerProps) => {

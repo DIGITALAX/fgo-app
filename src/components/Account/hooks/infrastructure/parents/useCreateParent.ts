@@ -6,7 +6,7 @@ import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { CreateItemFormData } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";
 
-export const useCreateParent = (contractAddress: string) => {
+export const useCreateParent = (contractAddress: string, dict: any) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { data: walletClient } = useWalletClient();
@@ -14,7 +14,7 @@ export const useCreateParent = (contractAddress: string) => {
 
   const createParent = async (formData: CreateItemFormData) => {
     if (!walletClient) {
-      setError("Wallet not connected");
+      setError(dict?.walletNotConnected);
       return;
     }
 
@@ -48,6 +48,7 @@ export const useCreateParent = (contractAddress: string) => {
         aiModel: formData.metadata.aiModel,
         loras: formData.metadata.loras,
         workflow: formData.metadata.workflow,
+        customFields: formData.metadata.customFields,
       };
 
       const metadataUri = await uploadJSONToIPFS(metadata);
@@ -93,7 +94,6 @@ export const useCreateParent = (contractAddress: string) => {
         },
       };
 
-
       const hash = await walletClient.writeContract({
         address: contractAddress as `0x${string}`,
         abi: ABIS.FGOParent,
@@ -101,10 +101,10 @@ export const useCreateParent = (contractAddress: string) => {
         args: [createParentParams],
       });
 
-      context?.showSuccess("Parent reserved successfully!", hash);
+      context?.showSuccess(dict?.parentReservedSuccessfully, hash);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to reserve parent";
+        error instanceof Error ? error.message : dict?.failedToReserveParent;
       setError(errorMessage);
       throw error;
     } finally {

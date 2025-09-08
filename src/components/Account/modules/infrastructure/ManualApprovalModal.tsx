@@ -9,22 +9,20 @@ export const ManualApprovalModal = ({
   onClose,
   itemType,
   itemData,
-  contractAddress,
-  itemId,
+  dict,
 }: ManualApprovalModalProps) => {
   const [activeTab, setActiveTab] = useState<ApprovalTab>("markets");
 
   if (!isOpen) return null;
 
   const availableTabs: { id: ApprovalTab; label: string }[] = [
-    { id: "markets", label: "Markets" },
-    ...(itemType !== "parent" 
+    { id: "markets", label: dict?.markets },
+    ...(itemType !== "parent"
       ? [
-          { id: "parents" as ApprovalTab, label: "Parents" },
-          { id: "templates" as ApprovalTab, label: "Templates" }
-        ] 
-      : []
-    ),
+          { id: "parents" as ApprovalTab, label: dict?.parents },
+          { id: "templates" as ApprovalTab, label: dict?.templates },
+        ]
+      : []),
   ];
 
   const renderActiveTab = () => {
@@ -32,6 +30,7 @@ export const ManualApprovalModal = ({
       case "markets":
         return (
           <MarketsApprovalTab
+            dict={dict}
             itemData={itemData}
             itemType={itemType}
           />
@@ -39,6 +38,7 @@ export const ManualApprovalModal = ({
       case "parents":
         return (
           <ParentsApprovalTab
+            dict={dict}
             itemData={itemData}
             itemType={itemType}
           />
@@ -46,6 +46,7 @@ export const ManualApprovalModal = ({
       case "templates":
         return (
           <TemplatesApprovalTab
+            dict={dict}
             itemData={itemData}
             itemType={itemType}
           />
@@ -60,9 +61,7 @@ export const ManualApprovalModal = ({
       <div className="bg-black rounded-sm border border-white max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-4 border-b border-white/20">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-herm text-white">
-              Manual Approvals
-            </h2>
+            <h2 className="text-lg font-herm text-white">Manual Approvals</h2>
             <button
               onClick={onClose}
               className="text-white hover:text-ama transition-colors font-herm"
@@ -88,9 +87,7 @@ export const ManualApprovalModal = ({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          {renderActiveTab()}
-        </div>
+        <div className="flex-1 overflow-y-auto">{renderActiveTab()}</div>
       </div>
     </div>
   );

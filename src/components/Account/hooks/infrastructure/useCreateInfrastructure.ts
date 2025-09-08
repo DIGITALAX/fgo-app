@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useCallback, useContext, useRef } from "react";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
@@ -7,7 +9,7 @@ import { AppContext } from "@/lib/providers/Providers";
 import { CreateInfrastructureFormData, PaymentToken } from "../../types";
 import { ABIS } from "@/abis";
 
-export const useCreateInfrastructure = () => {
+export const useCreateInfrastructure = (dict: any) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const cancelledRef = useRef<boolean>(false);
@@ -44,7 +46,7 @@ export const useCreateInfrastructure = () => {
   const deployInfrastructure = useCallback(
     async (formData: CreateInfrastructureFormData) => {
       if (!walletClient || !publicClient || !context) {
-        throw new Error("Wallet not connected");
+        throw new Error(dict?.walletNotConnected);
       }
 
       setLoading(true);
@@ -101,13 +103,13 @@ export const useCreateInfrastructure = () => {
           return;
         }
 
-        context.showSuccess("Infrastructure deployed successfully!");
+        context.showSuccess(dict?.infrastructureDeployedSuccessfully);
       } catch (err) {
         if (!cancelledRef.current) {
           const errorMessage =
             err instanceof Error
               ? err.message
-              : "Failed to deploy infrastructure";
+              : dict?.failedToDeployInfrastructure;
           context.showError(errorMessage);
           throw err;
         }

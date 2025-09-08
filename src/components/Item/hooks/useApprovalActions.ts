@@ -3,7 +3,7 @@ import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
 
-export const useApprovalActions = (contractAddress: string, itemId: string, contractType: "child" | "template" | "parent") => {
+export const useApprovalActions = (contractAddress: string, itemId: string, contractType: "child" | "template" | "parent", dict: any) => {
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -30,7 +30,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const approveMarketRequest = useCallback(async (marketContract: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -46,9 +46,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Market request approved!", hash);
+      context.showSuccess(dict?.marketRequestApproved, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to approve market request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToApproveMarketRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);
@@ -57,7 +57,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const rejectMarketRequest = useCallback(async (marketContract: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -73,9 +73,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Market request rejected!", hash);
+      context.showSuccess(dict?.marketRequestRejected, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to reject market request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToRejectMarketRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);
@@ -84,7 +84,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const approveParentRequest = useCallback(async (parentContract: string, parentId: string, approvedAmount: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -100,9 +100,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Parent request approved!", hash);
+      context.showSuccess(dict?.parentRequestApproved, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to approve parent request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToApproveParentRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);
@@ -111,7 +111,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const rejectParentRequest = useCallback(async (parentContract: string, parentId: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -127,9 +127,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Parent request rejected!", hash);
+      context.showSuccess(dict?.parentRequestRejected, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to reject parent request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToRejectParentRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);
@@ -138,7 +138,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const approveTemplateRequest = useCallback(async (templateContract: string, templateId: string, approvedAmount: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -154,9 +154,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Template request approved!", hash);
+      context.showSuccess(dict?.templateRequestApproved, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to approve template request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToApproveTemplateRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);
@@ -165,7 +165,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
 
   const rejectTemplateRequest = useCallback(async (templateContract: string, templateId: string) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -181,9 +181,9 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Template request rejected!", hash);
+      context.showSuccess(dict?.templateRequestRejected, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to reject template request";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToRejectTemplateRequest;
       context.showError(errorMessage);
     } finally {
       setLoading(loadingKey, false);

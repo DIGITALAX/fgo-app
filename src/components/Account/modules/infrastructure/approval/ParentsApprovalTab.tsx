@@ -8,6 +8,7 @@ import { Child, Template } from "@/components/Item/types";
 export const ParentsApprovalTab = ({
   itemData,
   itemType,
+  dict
 }: MarketsApprovalTabProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,13 +22,13 @@ export const ParentsApprovalTab = ({
     revokeParent,
     approving,
     revoking,
-  } = useParentsApproval(itemData, itemType, searchQuery);
+  } = useParentsApproval(itemData, itemType, searchQuery, dict);
 
   if (error) {
     return (
       <div className="p-6 text-center">
         <p className="text-fresa font-herm text-sm">
-          Error loading parents: {error}
+          {dict?.errorLoadingParents}: {error}
         </p>
       </div>
     );
@@ -38,7 +39,7 @@ export const ParentsApprovalTab = ({
       <div className="p-6 flex items-center justify-center">
         <div className="flex items-center gap-2 text-white text-sm font-herm">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-          <span>Loading parents...</span>
+          <span>{dict?.loadingParents}</span>
         </div>
       </div>
     );
@@ -47,16 +48,16 @@ export const ParentsApprovalTab = ({
   return (
     <div className="h-full flex flex-col p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-herm text-lg">Available Parents</h3>
+        <h3 className="text-white font-herm text-lg">{dict?.availableParents}</h3>
         <div className="text-white/60 font-herm text-sm">
-          {parents.length} parent{parents.length !== 1 ? "s" : ""}
+          {parents.length} {parents.length !== 1 ? dict?.parents : dict?.parent}
         </div>
       </div>
 
       <div className="relative mb-4">
         <input
           type="text"
-          placeholder="Search by title or description..."
+          placeholder={dict?.searchByTitleDescription}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white font-herm text-sm placeholder:text-white/40 focus:outline-none focus:border-ama"
@@ -70,7 +71,7 @@ export const ParentsApprovalTab = ({
           hasMore={hasMore}
           loader={
             <div className="text-center py-4 text-white/60 font-herm text-sm">
-              Loading more parents...
+              {dict?.loadingMoreParents}
             </div>
           }
           height="100%"
@@ -98,6 +99,7 @@ export const ParentsApprovalTab = ({
                     approving === parent.parentContract ||
                     revoking === parent.parentContract
                   }
+                  dict={dict}
                 />
               );
             })}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { getContractsbyFulfiller } from "@/lib/subgraph/queries/getContracts";
 
-export const useFulfillerContracts = (walletAddress: string) => {
+export const useFulfillerContracts = (walletAddress: string, dict: any) => {
   const [marketContracts, setMarketContracts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export const useFulfillerContracts = (walletAddress: string) => {
         setMarketContracts([]);
       }
     } catch (err) {
-      setError("Failed to load fulfiller contracts");
+      setError(dict?.failedToLoadFulfillerContracts);
       setMarketContracts([]);
     } finally {
       setLoading(false);

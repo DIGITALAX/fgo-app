@@ -7,7 +7,8 @@ import { ABIS } from "@/abis";
 export const useTemplatesApproval = (
   itemData: any,
   itemType: "child" | "template" | "parent",
-  searchQuery: string
+  searchQuery: string,
+  dict: any
 ) => {
   const [templates, setTemplates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,7 @@ export const useTemplatesApproval = (
         setHasMore(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load templates");
+      setError(err instanceof Error ? err.message : dict?.failedToLoadTemplates);
       if (!isLoadMore) {
         setTemplates([]);
       }
@@ -88,13 +89,13 @@ export const useTemplatesApproval = (
           itemId: itemData.designId,
         };
       default:
-        throw new Error("Invalid item type");
+        throw new Error(dict?.item);
     }
   };
 
   const approveTemplate = async (template: any) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -132,13 +133,13 @@ export const useTemplatesApproval = (
           break;
 
         default:
-          throw new Error("Invalid item type");
+          throw new Error(dict?.item);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Template approved successfully!", hash);
+      context.showSuccess(dict?.templateApprovedSuccessfully, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to approve template";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToApproveTemplate;
       context.showError(errorMessage);
     } finally {
       setApproving(null);
@@ -147,7 +148,7 @@ export const useTemplatesApproval = (
 
   const revokeTemplate = async (template: any) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -185,13 +186,13 @@ export const useTemplatesApproval = (
           break;
 
         default:
-          throw new Error("Invalid item type");
+          throw new Error(dict?.item);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Template approval revoked successfully!", hash);
+      context.showSuccess(dict?.templateApprovalRevokedSuccessfully, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to revoke template approval";
+      const errorMessage = error instanceof Error ? error.message : dict?.failedToApproveMarket;
       context.showError(errorMessage);
     } finally {
       setRevoking(null);

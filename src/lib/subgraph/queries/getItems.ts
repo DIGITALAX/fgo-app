@@ -109,6 +109,7 @@ query($templateContract: String!) {
     createdAt
     uri
     templateId
+    infraId
     templateContract
     supplier
     infraCurrency
@@ -372,6 +373,7 @@ query($templateId: Int!, $templateContract: String!) {
     status
     availability
     isImmutable
+    infraId
     digitalMarketsOpenToAll
     physicalMarketsOpenToAll
     digitalReferencesOpenToAll
@@ -532,6 +534,7 @@ const CHILD = `
 query($childId: Int!, $childContract: String!) {
   childs(where: {childId: $childId, childContract: $childContract}, orderBy: blockTimestamp, orderDirection: desc) {
     childId
+    infraId
     childContract
     supplier 
     supplierProfile {

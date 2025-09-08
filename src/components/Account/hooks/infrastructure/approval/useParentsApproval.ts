@@ -7,7 +7,8 @@ import { ABIS } from "@/abis";
 export const useParentsApproval = (
   itemData: any,
   itemType: "child" | "template" | "parent",
-  searchQuery: string
+  searchQuery: string,
+  dict: any
 ) => {
   const [parents, setParents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,44 +22,49 @@ export const useParentsApproval = (
   const publicClient = usePublicClient();
   const context = useContext(AppContext);
 
-  const fetchParents = useCallback(async (skip: number = 0, isLoadMore: boolean = false) => {
-    try {
-      if (!isLoadMore) {
-        setLoading(true);
-        setError(null);
-      } else {
-        setLoadingMore(true);
-      }
-
-      const result = await getAllParents(20, skip, searchQuery || undefined);
-
-      if (result?.data?.parents) {
-        const newParents = result.data.parents;
-        
-        if (isLoadMore) {
-          setParents(prev => [...prev, ...newParents]);
+  const fetchParents = useCallback(
+    async (skip: number = 0, isLoadMore: boolean = false) => {
+      try {
+        if (!isLoadMore) {
+          setLoading(true);
+          setError(null);
         } else {
-          setParents(newParents);
+          setLoadingMore(true);
         }
-        
-        setHasMore(newParents.length === 20);
-      } else {
+
+        const result = await getAllParents(20, skip, searchQuery || undefined);
+
+        if (result?.data?.parents) {
+          const newParents = result.data.parents;
+
+          if (isLoadMore) {
+            setParents((prev) => [...prev, ...newParents]);
+          } else {
+            setParents(newParents);
+          }
+
+          setHasMore(newParents.length === 20);
+        } else {
+          if (!isLoadMore) {
+            setParents([]);
+          }
+          setHasMore(false);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : dict?.failedToLoadParents
+        );
         if (!isLoadMore) {
           setParents([]);
         }
         setHasMore(false);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load parents");
-      if (!isLoadMore) {
-        setParents([]);
-      }
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [searchQuery]);
+    },
+    [searchQuery]
+  );
 
   useEffect(() => {
     fetchParents(0, false);
@@ -88,13 +94,13 @@ export const useParentsApproval = (
           itemId: itemData.designId,
         };
       default:
-        throw new Error("Invalid item type");
+        throw new Error(dict?.item);
     }
   };
 
   const approveParent = async (parent: any) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -109,7 +115,12 @@ export const useParentsApproval = (
             address: contractAddress as `0x${string}`,
             abi: ABIS.FGOChild,
             functionName: "approveParent",
-            args: [BigInt(itemId), BigInt(parent.designId), BigInt("1"), parent.parentContract as `0x${string}`],
+            args: [
+              BigInt(itemId),
+              BigInt(parent.designId),
+              BigInt("1"),
+              parent.parentContract as `0x${string}`,
+            ],
           });
           break;
 
@@ -118,18 +129,24 @@ export const useParentsApproval = (
             address: contractAddress as `0x${string}`,
             abi: ABIS.FGOTemplateChild,
             functionName: "approveParent",
-            args: [BigInt(itemId), BigInt(parent.designId), BigInt("1"), parent.parentContract as `0x${string}`],
+            args: [
+              BigInt(itemId),
+              BigInt(parent.designId),
+              BigInt("1"),
+              parent.parentContract as `0x${string}`,
+            ],
           });
           break;
 
         default:
-          throw new Error("Parents cannot approve other parents");
+          throw new Error(dict?.parentsCannotApproveOtherParents);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Parent approved successfully!", hash);
+      context.showSuccess(dict?.parentApprovedSuccessfully, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to approve parent";
+      const errorMessage =
+        error instanceof Error ? error.message : dict?.failedToApproveParent;
       context.showError(errorMessage);
     } finally {
       setApproving(null);
@@ -138,7 +155,7 @@ export const useParentsApproval = (
 
   const revokeParent = async (parent: any) => {
     if (!walletClient || !publicClient || !context) {
-      context?.showError("Wallet not connected");
+      context?.showError(dict?.walletNotConnected);
       return;
     }
 
@@ -153,7 +170,11 @@ export const useParentsApproval = (
             address: contractAddress as `0x${string}`,
             abi: ABIS.FGOChild,
             functionName: "revokeParent",
-            args: [BigInt(itemId), BigInt(parent.designId), parent.parentContract as `0x${string}`],
+            args: [
+              BigInt(itemId),
+              BigInt(parent.designId),
+              parent.parentContract as `0x${string}`,
+            ],
           });
           break;
 
@@ -162,18 +183,25 @@ export const useParentsApproval = (
             address: contractAddress as `0x${string}`,
             abi: ABIS.FGOTemplateChild,
             functionName: "revokeParent",
-            args: [BigInt(itemId), BigInt(parent.designId), parent.parentContract as `0x${string}`],
+            args: [
+              BigInt(itemId),
+              BigInt(parent.designId),
+              parent.parentContract as `0x${string}`,
+            ],
           });
           break;
 
         default:
-          throw new Error("Parents cannot revoke other parents");
+          throw new Error(dict?.parentsCannotRevokeOtherParents);
       }
 
       await publicClient.waitForTransactionReceipt({ hash });
-      context.showSuccess("Parent approval revoked successfully!", hash);
+      context.showSuccess(dict?.parentApprovalRevokedSuccessfully, hash);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to revoke parent approval";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : dict?.failedToRevokeParentApproval;
       context.showError(errorMessage);
     } finally {
       setRevoking(null);

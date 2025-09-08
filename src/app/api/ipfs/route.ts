@@ -36,8 +36,7 @@ export async function POST(req: Request) {
     });
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Error from IPFS:", errorText);
-      throw new Error("Failed to upload to IPFS");
+      throw new Error(errorText);
     }
     const data = await response.json();
     const cid = data?.Hash;
