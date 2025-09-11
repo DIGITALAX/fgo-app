@@ -34,9 +34,7 @@ export const useParentActions = (
     }
 
     if (!canCreate) {
-      context?.showError(
-        "Cannot create parent: ensure status is reserved and all child references are approved"
-      );
+      context?.showError(dict?.cannotCreateParentStatus);
       return;
     }
 
@@ -75,9 +73,7 @@ export const useParentActions = (
     }
 
     if (!canDelete) {
-      context?.showError(
-        "Cannot delete parent with total purchases greater than 0"
-      );
+      context?.showError(dict?.cannotDeleteParentPurchases);
       return;
     }
 

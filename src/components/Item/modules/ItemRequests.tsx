@@ -72,11 +72,11 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
   return (
     <div className="border border-white rounded-sm p-6">
-      <h3 className="text-lg font-herm text-white mb-4">Requests</h3>
+      <h3 className="text-lg font-herm text-white mb-4">{dict?.requests}</h3>
 
       {item.marketRequests && item.marketRequests.length > 0 && (
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Market Requests</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.marketRequests}</h4>
           <div className="space-y-3">
             {item.marketRequests.map((request, index: number) => (
               <div
@@ -87,24 +87,24 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                   <div className="flex-1">
                     <div className="mb-2">
                       <span className="text-white font-herm text-sm">
-                        Market Contract
+                        {dict?.marketContract}
                       </span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-ama">
                       <div>
-                        <span className="text-ama">Contract:</span>
+                        <span className="text-ama">{dict?.contract}</span>
                         <span className="font-herm text-xs break-all ml-1 text-white">
                           {request.marketContract}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Date:</span>{" "}
+                        <span className="text-ama">{dict?.date}</span>{" "}
                         <span className="text-white">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Status:</span>
+                        <span className="text-ama">{dict?.status}:</span>
                         <span className="text-white font-herm text-xs ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)
@@ -132,7 +132,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                         ] && (
                           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                         )}
-                        Approve
+                        {dict?.approve}
                       </button>
                       <button
                         onClick={() =>
@@ -150,7 +150,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                         ] && (
                           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                         )}
-                        Reject
+                        {dict?.reject}
                       </button>
                     </div>
                   )}
@@ -163,7 +163,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
       {processedTemplateRequests.length > 0 && (
         <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">Template Requests</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.templateRequests}</h4>
           <div className="space-y-3">
             {processedTemplateRequests.map((request, index: number) => (
               <div
@@ -195,25 +195,25 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
                       <div>
-                        <span className="text-ama">Requested:</span>{" "}
+                        <span className="text-ama">{dict?.requested}</span>{" "}
                         <span className="text-white">
                           {request.requestedAmount}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Approved:</span>{" "}
+                        <span className="text-ama">{dict?.approved}:</span>{" "}
                         <span className="text-white">
                           {request.approvedAmount || "0"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Date:</span>{" "}
+                        <span className="text-ama">{dict?.date}</span>{" "}
                         <span className="text-white">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Status:</span>
+                        <span className="text-ama">{dict?.status}:</span>
                         <span className="text-white font-herm text-xs ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)
@@ -262,7 +262,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
       {processedParentRequests.length > 0 && (
         <div>
-          <h4 className="text-ama font-herm mb-3">Parent Requests</h4>
+          <h4 className="text-ama font-herm mb-3">{dict?.parentRequests}</h4>
           <div className="space-y-3">
             {processedParentRequests.map((request, index: number) => (
               <div
@@ -294,25 +294,25 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
                       <div>
-                        <span className="text-ama">Requested:</span>{" "}
+                        <span className="text-ama">{dict?.requested}</span>{" "}
                         <span className="text-white">
                           {request.requestedAmount}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Approved:</span>{" "}
+                        <span className="text-ama">{dict?.approved}:</span>{" "}
                         <span className="text-white">
                           {request.approvedAmount || "0"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Date:</span>{" "}
+                        <span className="text-ama">{dict?.date}</span>{" "}
                         <span className="text-white">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">Status:</span>
+                        <span className="text-ama">{dict?.status}:</span>
                         <span className="text-white font-herm text-xs ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)

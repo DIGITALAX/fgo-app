@@ -31,8 +31,11 @@ const parsePlacementFromURI = async (
         childId: placement.childId,
         childContract: placement.childContract,
         amount: placement.amount,
-        instructions: metadata.instructions || "",
-        customFields: metadata.customFields || {},
+        uri: placement.uri,
+        metadata: {
+          instructions: metadata.instructions || "",
+          customFields: metadata.customFields || {},
+        },
       };
     }
   } catch (error) {
@@ -43,8 +46,8 @@ const parsePlacementFromURI = async (
     childId: placement.childId,
     childContract: placement.childContract,
     amount: placement.amount,
-    instructions: "",
-    customFields: {},
+    uri: "",
+    metadata: { instructions: "", customFields: {} },
   };
 };
 
@@ -84,6 +87,7 @@ export const useCreateItemForm = (
           maxPhysicalEditions: parent.maxPhysicalEditions || "0",
           maxDigitalEditions: parent.maxDigitalEditions || "0",
           availability: parseAvailability(parent.availability),
+          printType: (parent as any).printType || "0",
           isImmutable: false,
           digitalMarketsOpenToAll: parent.digitalMarketsOpenToAll === true,
           physicalMarketsOpenToAll: parent.physicalMarketsOpenToAll === true,
@@ -146,8 +150,11 @@ export const useCreateItemForm = (
                   childId: cp.childId,
                   childContract: cp.childContract,
                   amount: cp.amount,
-                  instructions: "",
-                  customFields: {},
+                  uri: cp.uri,
+                  metadata: {
+                    instructions: "",
+                    customFields: {},
+                  },
                 })) || [],
           metadata: {
             title: metadata?.title || "",
@@ -173,6 +180,7 @@ export const useCreateItemForm = (
       maxPhysicalEditions: "0",
       maxDigitalEditions: "0",
       availability: 0,
+      printType: 0,
       isImmutable: false,
       digitalMarketsOpenToAll: true,
       physicalMarketsOpenToAll: true,

@@ -1,4 +1,8 @@
-import { MarketContract, Parent } from "@/components/Account/types";
+import {
+  ChildReference,
+  MarketContract,
+  Parent,
+} from "@/components/Account/types";
 
 export interface TemplateDetailsProps {
   contractAddress: string;
@@ -95,7 +99,7 @@ export interface Template {
   physicalReferencesOpenToAll: boolean;
   standaloneAllowed: string;
   authorizedMarkets: MarketContract[];
-  childReferences: ChildReferences[];
+  childReferences: ChildReference[];
   createdAt: string;
   updatedAt: string;
   blockNumber: string;
@@ -113,13 +117,6 @@ export interface Template {
 export interface Attachment {
   uri: string;
   type: string;
-}
-
-export interface ChildReferences {
-  childContract: string;
-  childId: string;
-  uri: string;
-  amount: string;
 }
 
 export interface AuthorizedParents {
@@ -294,6 +291,6 @@ export interface PlacementData {
 }
 
 export interface ChildReferencesProps {
-  childData: any[];
+  childData: ChildReference[];
   dict: any;
 }

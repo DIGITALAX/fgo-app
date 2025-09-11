@@ -23,7 +23,6 @@ export const useParentDetails = (contractAddress: string, designId: string | num
           parentData.childReferences = parentData.childReferences.map((childRef: any) => ({
             ...childRef,
             child: childRef.isTemplate ? childRef.childTemplate : childRef.child,
-            placementURI: childRef.uri
           }));
         }
         
@@ -56,7 +55,7 @@ export const useParentDetails = (contractAddress: string, designId: string | num
                   childContract: childRef.childContract,
                   childId: childRef.childId,
                   uri: childRef.uri,
-                  placementURI: childRef.uri,
+                  isTemplate: childRef?.isTemplate,
                   metadata
                 };
               })

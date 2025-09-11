@@ -71,7 +71,7 @@ export const useAccessControls = ({
         setSupplierAddress("");
         setFulfillerAddress("");
       } catch (error) {
-        context.showError(`Failed to ${action} ${role}`);
+        context.showError(dict?.failedToActionRole?.replace('{action}', action).replace('{role}', role) || `Failed to ${action} ${role}`);
         setLoading(null);
       }
     },

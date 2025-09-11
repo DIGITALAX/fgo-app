@@ -12,7 +12,11 @@ import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { getInfrastructureStatus } from "@/lib/subgraph/queries/getInfrastructureStatus";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
-export const useChildItems = (contractAddress: string, infrastructureOrInfraId: any, dict: any) => {
+export const useChildItems = (
+  contractAddress: string,
+  infrastructureOrInfraId: any,
+  dict: any
+) => {
   const [childItems, setChildItems] = useState<Child[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,12 +132,15 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
         throw new Error(dict?.walletNotConnected);
       }
 
-      const infraId = typeof infrastructureOrInfraId === 'string' 
-        ? infrastructureOrInfraId 
-        : infrastructureOrInfraId?.infraId;
-        
+      const infraId =
+        typeof infrastructureOrInfraId === "string"
+          ? infrastructureOrInfraId
+          : infrastructureOrInfraId?.infraId;
+
       if (infraId) {
-        const isActive = await getInfrastructureStatus(convertInfraIdToBytes32(infraId));
+        const isActive = await getInfrastructureStatus(
+          convertInfraIdToBytes32(infraId)
+        );
         if (!isActive) {
           throw new Error(dict?.infrastructureIsNotActive);
         }
@@ -200,7 +207,10 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
               ? parseEther("0")
               : parseEther(formData.physicalPrice || "0"),
           version: BigInt(formData.version || "1"),
-          maxPhysicalEditions: BigInt(formData.maxPhysicalEditions || "0"),
+          maxPhysicalEditions:
+            formData.availability === 0
+              ? BigInt("0")
+              : BigInt(formData.maxPhysicalEditions || "0"),
           availability: formData.availability,
           isImmutable: formData.isImmutable,
           digitalMarketsOpenToAll:
@@ -221,7 +231,8 @@ export const useChildItems = (contractAddress: string, infrastructureOrInfraId: 
               : formData.physicalReferencesOpenToAll,
           standaloneAllowed: formData.standaloneAllowed,
           childUri: `ipfs://${metadataHash}`,
-          authorizedMarkets: formData.authorizedMarkets as any as `0x${string}`[],
+          authorizedMarkets:
+            formData.authorizedMarkets as any as `0x${string}`[],
         };
         if (abortController?.signal.aborted) {
           throw new Error(dict?.operationCancelled);

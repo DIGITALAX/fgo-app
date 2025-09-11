@@ -202,8 +202,8 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
         const placements = await Promise.all(
           formData.childReferences?.map(async (ref) => {
             const placementData = {
-              instructions: ref.instructions || "",
-              customFields: ref.customFields || {},
+              instructions: ref.metadata.instructions || "",
+              customFields: ref.metadata.customFields || {},
             };
             const placementHash = await uploadJSONToIPFS(placementData);
             
@@ -211,7 +211,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
               childId: BigInt(ref.childId),
               amount: BigInt(ref.amount),
               childContract: ref.childContract as `0x${string}`,
-              placementURI: `ipfs://${placementHash}`,
+              uri: `ipfs://${placementHash}`,
             };
           }) || []
         );

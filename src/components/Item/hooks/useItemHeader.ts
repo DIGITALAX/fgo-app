@@ -4,7 +4,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Child, Template } from "../types";
 import { Parent } from "@/components/Account/types";
 
-export const useItemHeader = (item: Child | Template | Parent, isTemplate: boolean) => {
+export const useItemHeader = (item: Child | Template | Parent, isTemplate: boolean, dict: any) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [title, setTitle] = useState<string>("");
   const [supplierTitle, setSupplierTitle] = useState<string>("");
@@ -42,14 +42,14 @@ export const useItemHeader = (item: Child | Template | Parent, isTemplate: boole
           const processedDesigner = await ensureMetadata(parentItem.designerProfile);
           designer = processedDesigner.metadata?.title;
         }
-        setSupplierTitle(designer || "Unknown Designer");
+        setSupplierTitle(designer || dict?.unknownDesigner || "Unknown Designer");
       } else {
         let supplier = (item as Child | Template).supplierProfile?.metadata?.title;
         if (!supplier && (item as Child | Template).supplierProfile?.uri) {
           const processedSupplier = await ensureMetadata((item as Child | Template).supplierProfile);
           supplier = processedSupplier.metadata?.title;
         }
-        setSupplierTitle(supplier || "Unknown Supplier");
+        setSupplierTitle(supplier || dict?.unknownSupplier || "Unknown Supplier");
       }
     };
 

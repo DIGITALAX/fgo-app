@@ -139,10 +139,6 @@ export const ChildDetails = ({
         physicalPrice: parseEther(formData.physicalPrice),
         version: BigInt(formData.version || child.version),
         maxPhysicalEditions: BigInt(formData.maxPhysicalEditions),
-        availability:
-          formData.availability !== undefined
-            ? formData.availability
-            : parseInt(child.availability),
         makeImmutable: !child.isImmutable && formData.isImmutable === true,
         standaloneAllowed:
           formData.standaloneAllowed !== undefined

@@ -17,14 +17,14 @@ export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
         const digital = await formatPrice(item.digitalPrice, currency);
         setFormattedDigitalPrice(digital);
       } else {
-        setFormattedDigitalPrice("Free");
+        setFormattedDigitalPrice(dict?.free || "Free");
       }
 
       if (item.physicalPrice && item.physicalPrice !== "0") {
         const physical = await formatPrice(item.physicalPrice, currency);
         setFormattedPhysicalPrice(physical);
       } else {
-        setFormattedPhysicalPrice("Free");
+        setFormattedPhysicalPrice(dict?.free || "Free");
       }
     };
 
@@ -59,9 +59,9 @@ export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
   }, [item.availability]);
 
   const formatEditionLimit = useCallback((value: string | number) => {
-    if (!value) return "UNLIMITED";
+    if (!value) return dict?.unlimited || "UNLIMITED";
     const numValue = typeof value === 'string' ? parseInt(value, 10) : Number(value);
-    if (isNaN(numValue) || numValue === 0) return "UNLIMITED";
+    if (isNaN(numValue) || numValue === 0) return dict?.unlimited || "UNLIMITED";
     return numValue.toString();
   }, []);
 

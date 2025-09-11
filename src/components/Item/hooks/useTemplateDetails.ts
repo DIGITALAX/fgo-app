@@ -34,7 +34,6 @@ export const useTemplateDetails = (
               child: childRef.isTemplate
                 ? childRef.childTemplate
                 : childRef.child,
-              placementURI: childRef.uri,
             })
           );
         }
@@ -75,7 +74,7 @@ export const useTemplateDetails = (
                   childContract: childRef.childContract,
                   childId: childRef.childId,
                   uri: childRef.uri,
-                  placementURI: childRef.uri,
+                  isTemplate: childRef?.isTemplate,
                   metadata,
                 };
               })

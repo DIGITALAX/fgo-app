@@ -38,9 +38,7 @@ export const useTemplateActions = (
     }
 
     if (!canCreate) {
-      context?.showError(
-        "Cannot create template: ensure status is reserved and all child references are authorized"
-      );
+      context?.showError(dict?.cannotCreateTemplateStatus);
       return;
     }
 
@@ -79,9 +77,7 @@ export const useTemplateActions = (
     }
 
     if (!canDelete) {
-      context?.showError(
-        "Cannot delete template with usage count or supply count greater than 0"
-      );
+      context?.showError(dict?.cannotDeleteTemplateUsageCount);
       return;
     }
 
@@ -165,10 +161,6 @@ export const useTemplateActions = (
           physicalPrice: parseEther(formData.physicalPrice),
           version: BigInt(formData.version || template.version),
           maxPhysicalEditions: BigInt(formData.maxPhysicalEditions),
-          availability:
-            formData.availability !== undefined
-              ? formData.availability
-              : parseInt(template.availability),
           makeImmutable: !template.isImmutable && formData.isImmutable === true,
           standaloneAllowed:
             formData.standaloneAllowed !== undefined

@@ -161,14 +161,6 @@ export interface DeployChildFormData {
 }
 
 export interface ChildReference {
-  childId: string;
-  childContract: string;
-  amount: string;
-  instructions: string;
-  customFields: Record<string, string>;
-}
-
-export interface ChildReference {
   parent?: Parent;
   childContract: string;
   childId: string;
@@ -176,7 +168,11 @@ export interface ChildReference {
   isTemplate?: boolean;
   child?: Child;
   amount: string;
-  uri?: string;
+  uri: string;
+  metadata: {
+    instructions: string;
+    customFields: Record<string, string>;
+  };
 }
 
 export interface CreateItemFormData {
@@ -186,6 +182,7 @@ export interface CreateItemFormData {
   maxPhysicalEditions: string;
   maxDigitalEditions: string;
   availability: number;
+  printType?: string;
   isImmutable: boolean;
   digitalMarketsOpenToAll: boolean;
   physicalMarketsOpenToAll: boolean;

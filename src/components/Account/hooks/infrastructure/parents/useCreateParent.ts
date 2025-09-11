@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useWalletClient } from "wagmi";
+import { usePublicClient, useWalletClient } from "wagmi";
 import { parseEther } from "viem";
 import { ABIS } from "@/abis";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
@@ -10,10 +10,11 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const context = useContext(AppContext);
 
   const createParent = async (formData: CreateItemFormData) => {
-    if (!walletClient) {
+    if (!walletClient || !publicClient) {
       setError(dict?.walletNotConnected);
       return;
     }
@@ -56,8 +57,8 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
       const placements = await Promise.all(
         formData.childReferences?.map(async (ref) => {
           const placementData = {
-            instructions: ref.instructions || "",
-            customFields: ref.customFields || {},
+            instructions: ref.metadata.instructions || "",
+            customFields: ref.metadata.customFields || {},
           };
           const placementHash = await uploadJSONToIPFS(placementData);
 
@@ -65,7 +66,7 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
             childId: BigInt(ref.childId),
             amount: BigInt(ref.amount),
             childContract: ref.childContract as `0x${string}`,
-            placementURI: `ipfs://${placementHash}`,
+            uri: `ipfs://${placementHash}`,
           };
         }) || []
       );
@@ -79,18 +80,24 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
           formData.availability === 0
             ? parseEther("0")
             : parseEther(formData.physicalPrice || "0"),
-        maxDigitalEditions: BigInt("1000"),
-        maxPhysicalEditions: BigInt(formData.maxPhysicalEditions || "0"),
-        printType: 0,
+        maxDigitalEditions:
+          formData.availability === 1
+            ? BigInt("0")
+            : BigInt(formData.maxDigitalEditions || "0"),
+        maxPhysicalEditions:
+          formData.availability === 0
+            ? BigInt("0")
+            : BigInt(formData.maxPhysicalEditions || "0"),
+        printType: Number(formData.printType || "0"),
         availability: formData.availability,
         digitalMarketsOpenToAll: formData.digitalMarketsOpenToAll,
         physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll,
         uri: `ipfs://${metadataUri}`,
         childReferences: placements,
-        authorizedMarkets: [] as `0x${string}`[],
-        workflow: formData.fulfillmentWorkflow || {
-          digitalSteps: [],
-          physicalSteps: [],
+        authorizedMarkets: formData.authorizedMarkets || ([] as `0x${string}`[]),
+        workflow: {
+          digitalSteps: formData.fulfillmentWorkflow?.digitalSteps || [],
+          physicalSteps: formData.fulfillmentWorkflow?.physicalSteps || [],
         },
       };
 
@@ -100,7 +107,7 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
         functionName: "reserveParent",
         args: [createParentParams],
       });
-
+      await publicClient.waitForTransactionReceipt({ hash });
       context?.showSuccess(dict?.parentReservedSuccessfully, hash);
     } catch (error) {
       const errorMessage =

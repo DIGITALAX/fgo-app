@@ -58,7 +58,7 @@ export const FulfillmentWorkflowModal = ({
     
     const validation = validateWorkflowSteps(stepsToValidate);
     if (!validation.isValid) {
-      context?.showError(`Workflow validation failed:\n${validation.errors.join('\n')}`);
+      context?.showError(dict?.workflowValidationFailedErrors?.replace('{errors}', validation.errors.join('\n')) || `Workflow validation failed:\n${validation.errors.join('\n')}`);
       setValidating(false);
       return;
     }
@@ -86,14 +86,14 @@ export const FulfillmentWorkflowModal = ({
   
         if (!result?.data?.fulfillers?.[0]) {
           if (!cancelledRef.current) {
-            context?.showError(`Primary performer ${performer} is not registered as a fulfiller in this infrastructure. Please add them as a fulfiller first.`);
+            context?.showError(dict?.primaryPerformerNotRegistered?.replace('{performer}', performer) || `Primary performer ${performer} is not registered as a fulfiller in this infrastructure. Please add them as a fulfiller first.`);
           }
           setValidating(false);
           return;
         }
       } catch (error) {
         if (!cancelledRef.current) {
-          context?.showError(`Failed to validate fulfiller ${performer}. Please try again.`);
+          context?.showError(dict?.failedToValidateFulfiller?.replace('{performer}', performer) || `Failed to validate fulfiller ${performer}. Please try again.`);
         }
         setValidating(false);
         return;

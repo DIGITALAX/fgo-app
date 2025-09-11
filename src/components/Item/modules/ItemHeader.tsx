@@ -4,7 +4,7 @@ import { ItemHeaderProps } from "../types";
 
 export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
   const { imageUrl, title, supplierTitle, contractAddress, itemId } =
-    useItemHeader(item, isTemplate);
+    useItemHeader(item, isTemplate, dict);
 
   return (
     <div className="flex flex-col gap-8 items-center">

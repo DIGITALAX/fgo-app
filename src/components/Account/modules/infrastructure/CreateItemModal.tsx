@@ -289,7 +289,7 @@ export const CreateItemModal = ({
                   </div>
                 )}
 
-                {(!isEditMode || (mode !== "parent" && !(editItem as Child)?.isImmutable)) && (
+                {!isEditMode && (
                   <div>
                     <label className="block text-sm font-herm text-ama mb-2">
                       {dict?.availability} *
@@ -308,6 +308,25 @@ export const CreateItemModal = ({
                         </option>
                       ))}
                     </select>
+                  </div>
+                )}
+
+                {mode === "parent" && !isEditMode && (
+                  <div>
+                    <label className="block text-sm font-herm text-ama mb-2">
+                      {dict?.printType} *
+                    </label>
+                    <input
+                      type="number"
+                      name="printType"
+                      value={formData.printType || "0"}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
+                      placeholder="0"
+                      min="0"
+                      disabled={loading}
+                      required
+                    />
                   </div>
                 )}
               </div>

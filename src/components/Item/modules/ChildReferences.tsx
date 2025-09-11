@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import {  ChildReferencesProps } from "../types";
+import { ChildReferencesProps } from "../types";
 import Image from "next/image";
 
 export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
@@ -22,7 +22,7 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
       for (const child of childData) {
         const key = `${child.childContract}-${child.childId}`;
         try {
-          if (child?.child.metadata?.title && child?.child.metadata?.image) {
+          if (child?.child?.metadata?.title && child?.child.metadata?.image) {
             metadataMap[key] = {
               title: child?.child.metadata.title,
               image: child?.child.metadata.image,
@@ -64,7 +64,8 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
         {childData.map((child, index) => {
           const key = `${child.childContract}-${child.childId}`;
           const metadata = childMetadata[key];
-          const isTemplate = "isTemplate" in child ? child.isTemplate : false;
+          const isTemplate: boolean =
+            "isTemplate" in child ? (child.isTemplate as boolean) : false;
           return (
             <div
               key={`${key}-${index}`}
@@ -83,7 +84,9 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
                       sizes="128px"
                       alt={
                         metadata.title ||
-                        `${isTemplate ? dict?.template : dict?.child} ${child.childId}`
+                        `${isTemplate ? dict?.template : dict?.child} ${
+                          child.childId
+                        }`
                       }
                       className="object-contain"
                     />
@@ -94,7 +97,9 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
                   <div className="flex items-center gap-3">
                     <h4 className="text-white font-medium">
                       {metadata?.title ||
-                        `${isTemplate ? dict?.template : dict?.child} ${child.childId}`}
+                        `${isTemplate ? dict?.template : dict?.child} ${
+                          child.childId
+                        }`}
                     </h4>
                     <span className="px-2 py-1 bg-azul text-white text-xs rounded-sm">
                       {isTemplate ? dict?.template : dict?.child}
@@ -116,18 +121,18 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
                         {child.childContract}
                       </p>
                     </div>
-                    {child.placementURI && (
+                    {child.uri && (
                       <div>
                         <span className="text-ama">{dict?.placementURI}:</span>
                         <p
                           className="text-white font-mono text-xs break-all cursor-pointer hover:text-ama transition-colors"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigator.clipboard.writeText(child.placementURI);
+                            navigator.clipboard.writeText(child.uri);
                           }}
                           title={dict?.clickToCopy}
                         >
-                          {child.placementURI}
+                          {child.uri}
                         </p>
                       </div>
                     )}

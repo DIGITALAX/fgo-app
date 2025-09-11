@@ -5,7 +5,11 @@ import { AppContext } from "@/lib/providers/Providers";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { ABIS } from "@/abis";
 import { UseProfileManagerProps, ProfileFormData, Designer } from "../types";
-import { getDesigner, getSupplier, getFulfiller } from "@/lib/subgraph/queries/getFGOUser";
+import {
+  getDesigner,
+  getSupplier,
+  getFulfiller,
+} from "@/lib/subgraph/queries/getFGOUser";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 
@@ -38,101 +42,118 @@ export const useProfileManager = ({
     setLoading(false);
   }, []);
 
-  const checkExistingProfile = useCallback(async (showErrorModal = false) => {
-    if (!infraId || !walletAddress) return false;
+  const checkExistingProfile = useCallback(
+    async (showErrorModal = false) => {
+      if (!infraId || !walletAddress) return false;
 
-    try {
-      setCheckingProfile(true);
+      try {
+        setCheckingProfile(true);
 
-      let result;
-      if (profileType === "Designer") {
-        result = await getDesigner(
-          convertInfraIdToBytes32(infraId),
-          walletAddress
-        );
-        
-        if (!result?.data?.designers || result.data.designers.length === 0) {
-          if (showErrorModal && context) {
-            context.showError(dict?.youAreNotVerifiedAsDesigner);
+        let result;
+        if (profileType === "Designer") {
+          result = await getDesigner(
+            convertInfraIdToBytes32(infraId),
+            walletAddress
+          );
+
+          if (!result?.data?.designers || result.data.designers.length === 0) {
+            if (showErrorModal && context) {
+              context.showError(dict?.youAreNotVerifiedAsDesigner);
+            }
+            return false;
           }
-          return false;
-        }
-        
-        if (result.data.designers[0]?.designerId) {
-          const designerWithMetadata = await ensureMetadata(result.data.designers[0]);
-          setExistingProfile(designerWithMetadata);
-          setFormData({
-            title: designerWithMetadata?.metadata?.title || "",
-            description: designerWithMetadata?.metadata?.description || "",
-            link: designerWithMetadata?.metadata?.link || "",
-            image: designerWithMetadata?.metadata?.image || null,
-            basePrice: "",
-            vigBasisPoints: "",
-          });
-        }
-      } else if (profileType === "Supplier") {
-        result = await getSupplier(
-          convertInfraIdToBytes32(infraId),
-          walletAddress
-        );
-        
-        if (!result?.data?.suppliers || result.data.suppliers.length === 0) {
-          if (showErrorModal && context) {
-            context.showError(dict?.youAreNotVerifiedAsSupplier);
+
+          if (result.data.designers[0]?.designerId) {
+            const designerWithMetadata = await ensureMetadata(
+              result.data.designers[0]
+            );
+            setExistingProfile(designerWithMetadata);
+            setFormData({
+              title: designerWithMetadata?.metadata?.title || "",
+              description: designerWithMetadata?.metadata?.description || "",
+              link: designerWithMetadata?.metadata?.link || "",
+              image: designerWithMetadata?.metadata?.image || null,
+              basePrice: "",
+              vigBasisPoints: "",
+            });
           }
-          return false;
-        }
-        
-        if (result.data.suppliers[0]?.supplierId) {
-          const supplierWithMetadata = await ensureMetadata(result.data.suppliers[0]);
-          setExistingProfile(supplierWithMetadata);
-          setFormData({
-            title: supplierWithMetadata?.metadata?.title || "",
-            description: supplierWithMetadata?.metadata?.description || "",
-            link: supplierWithMetadata?.metadata?.link || "",
-            image: supplierWithMetadata?.metadata?.image || null,
-            basePrice: "",
-            vigBasisPoints: "",
-          });
-        }
-      } else if (profileType === "Fulfiller") {
-        result = await getFulfiller(
-          convertInfraIdToBytes32(infraId),
-          walletAddress
-        );
-        
-        if (!result?.data?.fulfillers || result.data.fulfillers.length === 0) {
-          if (showErrorModal && context) {
-            context.showError(dict?.youAreNotVerifiedAsFulfiller);
+        } else if (profileType === "Supplier") {
+          result = await getSupplier(
+            convertInfraIdToBytes32(infraId),
+            walletAddress
+          );
+
+          if (!result?.data?.suppliers || result.data.suppliers.length === 0) {
+            if (showErrorModal && context) {
+              context.showError(dict?.youAreNotVerifiedAsSupplier);
+            }
+            return false;
           }
-          return false;
+
+          if (result.data.suppliers[0]?.supplierId) {
+            const supplierWithMetadata = await ensureMetadata(
+              result.data.suppliers[0]
+            );
+            setExistingProfile(supplierWithMetadata);
+            setFormData({
+              title: supplierWithMetadata?.metadata?.title || "",
+              description: supplierWithMetadata?.metadata?.description || "",
+              link: supplierWithMetadata?.metadata?.link || "",
+              image: supplierWithMetadata?.metadata?.image || null,
+              basePrice: "",
+              vigBasisPoints: "",
+            });
+          }
+        } else if (profileType === "Fulfiller") {
+          result = await getFulfiller(
+            convertInfraIdToBytes32(infraId),
+            walletAddress
+          );
+
+          if (
+            !result?.data?.fulfillers ||
+            result.data.fulfillers.length === 0
+          ) {
+            if (showErrorModal && context) {
+              context.showError(dict?.youAreNotVerifiedAsFulfiller);
+            }
+            return false;
+          }
+
+          if (result.data.fulfillers[0]?.fulfillerId) {
+            const fulfiller = result.data.fulfillers[0];
+            const fulfillerWithMetadata = await ensureMetadata(fulfiller);
+            setExistingProfile(fulfillerWithMetadata);
+            setFormData({
+              title: fulfillerWithMetadata?.metadata?.title || "",
+              description: fulfillerWithMetadata?.metadata?.description || "",
+              link: fulfillerWithMetadata?.metadata?.link || "",
+              image: fulfillerWithMetadata?.metadata?.image || null,
+              basePrice: fulfiller?.basePrice
+                ? (parseFloat(fulfiller.basePrice) / 1e18).toString()
+                : "",
+              vigBasisPoints: fulfiller?.vigBasisPoints
+                ? (parseFloat(fulfiller.vigBasisPoints) / 100).toString()
+                : "",
+            });
+          }
         }
-        
-        if (result.data.fulfillers[0]?.fulfillerId) {
-          const fulfiller = result.data.fulfillers[0];
-          const fulfillerWithMetadata = await ensureMetadata(fulfiller);
-          setExistingProfile(fulfillerWithMetadata);
-          setFormData({
-            title: fulfillerWithMetadata?.metadata?.title || "",
-            description: fulfillerWithMetadata?.metadata?.description || "",
-            link: fulfillerWithMetadata?.metadata?.link || "",
-            image: fulfillerWithMetadata?.metadata?.image || null,
-            basePrice: fulfiller?.basePrice ? (parseFloat(fulfiller.basePrice) / 1e18).toString() : "",
-            vigBasisPoints: fulfiller?.vigBasisPoints ? (parseFloat(fulfiller.vigBasisPoints) / 100).toString() : "",
-          });
+        return true;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : dict?.errorCheckingExistingProfile;
+        if (showErrorModal && context) {
+          context.showError(errorMessage);
         }
+        return false;
+      } finally {
+        setCheckingProfile(false);
       }
-      return true;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : dict?.errorCheckingExistingProfile;
-      if (showErrorModal && context) {
-        context.showError(errorMessage);
-      }
-      return false;
-    } finally {
-      setCheckingProfile(false);
-    }
-  }, [infraId, walletAddress, profileType, context]);
+    },
+    [infraId, walletAddress, profileType, context]
+  );
 
   useEffect(() => {
     checkExistingProfile(false);
@@ -160,7 +181,7 @@ export const useProfileManager = ({
 
       setLoading(true);
       cancelledRef.current = false;
-      
+
       try {
         if (cancelledRef.current) {
           setLoading(false);
@@ -203,7 +224,11 @@ export const useProfileManager = ({
         if (profileType === "Designer") {
           abi = ABIS.FGODesigners;
           if (existingProfile) {
-            args = [BigInt(existingProfile.designerId), BigInt(1), newURI];
+            args = [
+              BigInt(existingProfile.designerId),
+              BigInt(Number(existingProfile?.version) + 1),
+              newURI,
+            ];
           } else {
             args = [BigInt(1), newURI];
           }
@@ -212,7 +237,7 @@ export const useProfileManager = ({
           if (existingProfile) {
             args = [
               BigInt((existingProfile as any).supplierId),
-              BigInt(1),
+              BigInt(Number(existingProfile?.version) + 1),
               newURI,
             ];
           } else {
@@ -220,11 +245,13 @@ export const useProfileManager = ({
           }
         } else if (profileType === "Fulfiller") {
           abi = ABIS.FGOFulfillers;
-          const vigBasisPoints = Math.round((parseFloat(submitData.vigBasisPoints || "0") * 100));
+          const vigBasisPoints = Math.round(
+            parseFloat(submitData.vigBasisPoints || "0") * 100
+          );
           if (existingProfile) {
             args = [
               BigInt((existingProfile as any).fulfillerId),
-              BigInt(1),
+              BigInt(Number(existingProfile?.version) + 1),
               parseEther(submitData.basePrice || "0"),
               BigInt(vigBasisPoints),
               newURI,
@@ -242,7 +269,6 @@ export const useProfileManager = ({
         if (!abi) {
           throw new Error(`Invalid profile type: ${profileType}`);
         }
-
 
         const hash = await walletClient.writeContract({
           address: contract as `0x${string}`,
@@ -307,8 +333,14 @@ export const useProfileManager = ({
         description: existingProfile.metadata?.description || "",
         link: existingProfile.metadata?.link || "",
         image: existingProfile.metadata?.image || null,
-        basePrice: profileType === "Fulfiller" && fulfiller?.basePrice ? (parseFloat(fulfiller.basePrice) / 1e18).toString() : "",
-        vigBasisPoints: profileType === "Fulfiller" && fulfiller?.vigBasisPoints ? fulfiller.vigBasisPoints : "",
+        basePrice:
+          profileType === "Fulfiller" && fulfiller?.basePrice
+            ? (parseFloat(fulfiller.basePrice) / 1e18).toString()
+            : "",
+        vigBasisPoints:
+          profileType === "Fulfiller" && fulfiller?.vigBasisPoints
+            ? fulfiller.vigBasisPoints
+            : "",
       });
     } else {
       setFormData({
