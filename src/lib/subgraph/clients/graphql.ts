@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 const fgoLink = new HttpLink({
-  uri: `https://api.studio.thegraph.com/query/109132/fractional-garment-ownership/v0.0.92`,
+  uri: `https://api.studio.thegraph.com/query/109132/fractional-garment-ownership/latest`,
 });
 
 export const graphFGOClient = new ApolloClient({
