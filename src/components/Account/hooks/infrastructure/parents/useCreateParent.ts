@@ -94,7 +94,8 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
         physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll,
         uri: `ipfs://${metadataUri}`,
         childReferences: placements,
-        authorizedMarkets: formData.authorizedMarkets || ([] as `0x${string}`[]),
+        authorizedMarkets:
+          formData.authorizedMarkets || ([] as `0x${string}`[]),
         workflow: {
           digitalSteps: formData.fulfillmentWorkflow?.digitalSteps || [],
           physicalSteps: formData.fulfillmentWorkflow?.physicalSteps || [],

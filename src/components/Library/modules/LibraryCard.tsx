@@ -6,13 +6,8 @@ import Image from "next/image";
 
 export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
   const router = useRouter();
-  const {
-    detalles,
-    formattedDate,
-    isTemplate,
-    contractAddress,
-    itemId,
-  } = useLibraryCard(data);
+  const { detalles, formattedDate, isTemplate, contractAddress, itemId } =
+    useLibraryCard(data);
 
   const statusLabel = getStatusLabel(data.status, dict);
 
@@ -32,7 +27,7 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
       className="group cursor-pointer transition-all duration-300 bg-amber-950/20 border border-amber-800/50 hover:border-amber-600/70 relative overflow-hidden"
     >
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-800/40 via-amber-700/60 to-amber-800/40"></div>
-      
+
       <div className="p-3 space-y-3">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex-1 min-w-0">
@@ -76,34 +71,46 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
         <div className="border-t border-amber-800/50 pt-3">
           <div className="grid grid-cols-2 gap-2 text-xs mb-2">
             <div className="space-y-1">
-              <div className="font-mono uppercase tracking-wide text-amber-600/70">{dict?.supplier}</div>
-              <div className="text-amber-200 text-xs leading-tight truncate">{detalles?.proveedorT}</div>
+              <div className="font-mono uppercase tracking-wide text-amber-600/70">
+                {dict?.supplier}
+              </div>
+              <div className="text-amber-200 text-xs leading-tight truncate">
+                {detalles?.proveedorT}
+              </div>
             </div>
             <div className="space-y-1">
-              <div className="font-mono uppercase tracking-wide text-amber-600/70">{dict?.usage}</div>
+              <div className="font-mono uppercase tracking-wide text-amber-600/70">
+                {dict?.usage}
+              </div>
               <div className="text-amber-100 font-mono">{data.usageCount}</div>
             </div>
           </div>
-          
+
           <div className="border-t border-amber-900/50 pt-2">
             <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <span className="font-mono uppercase text-xs text-amber-600/70">{dict?.digital}</span>
-                <span className="font-mono text-xs text-amber-100 bg-amber-950/50 px-2 py-0.5 border border-amber-800/60">
-                  {detalles?.precioD}
-                </span>
-              </div>
-              {detalles?.precioP && (
+              {data?.availability !== "Physical Only" && (
                 <div className="flex justify-between items-center">
-                  <span className="font-mono uppercase text-xs text-amber-600/70">{dict?.physical}</span>
+                  <span className="font-mono uppercase text-xs text-amber-600/70">
+                    {dict?.digital}
+                  </span>
                   <span className="font-mono text-xs text-amber-100 bg-amber-950/50 px-2 py-0.5 border border-amber-800/60">
-                    {detalles?.precioP}
+                    {detalles?.precioD ? detalles?.precioD : dict?.free}
+                  </span>
+                </div>
+              )}
+              {data?.availability !== "Digital Only" && (
+                <div className="flex justify-between items-center">
+                  <span className="font-mono uppercase text-xs text-amber-600/70">
+                    {dict?.physical}
+                  </span>
+                  <span className="font-mono text-xs text-amber-100 bg-amber-950/50 px-2 py-0.5 border border-amber-800/60">
+                    {detalles?.precioP ? detalles?.precioP : dict?.free}
                   </span>
                 </div>
               )}
             </div>
           </div>
-          
+
           <div className="mt-2 pt-2 border-t border-amber-900/50">
             <div className="text-xs font-mono text-amber-600/70 uppercase tracking-wide">
               {formattedDate}
@@ -111,7 +118,7 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
           </div>
         </div>
       </div>
-      
+
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-800/40 via-amber-700/60 to-amber-800/40"></div>
     </div>
   );
