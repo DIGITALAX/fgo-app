@@ -7,72 +7,79 @@ export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
     useItemHeader(item, isTemplate, dict);
 
   return (
-    <div className="flex flex-col gap-8 items-center">
-    
-
-      <div className="w-full space-y-6">
+    <div className="flex flex-col sm:flex-row justify-between items-start gap-8 justify-center">
+      <div className="w-full space-y-2 sm:order-1 order-2">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
-          <p className="text-ama text-sm">
-            {"designId" in item ? dict?.parent : isTemplate ? dict?.template : dict?.child}{" "}
+          <h1 className="text-3xl font-agency uppercase text-white mb-2">
+            {title}
+          </h1>
+          <p className="text-oro text-sm font-slim">
+            {"designId" in item
+              ? dict?.parent
+              : isTemplate
+              ? dict?.template
+              : dict?.child}{" "}
             {dict?.id}: {itemId}
           </p>
         </div>
-
-          <h3 className="text-lg font-semibold text-white mb-3">
-            {dict?.contractInfo}
-          </h3>
-          <div className="space-y-2 text-sm">
+        <div>
+          <span className="text-amarillo font-agency">{dict?.contract}:</span>
+          <p className="text-white font-slim text-xs break-all">
+            {contractAddress}
+          </p>
+        </div>
+        {"designId" in item ? (
+          <>
             <div>
-              <span className="text-ama">{dict?.contract}:</span>
-              <p className="text-white font-mono text-xs break-all">
-                {contractAddress}
+              <span className="text-amarillo font-agency">
+                {dict?.designer}:
+              </span>
+              <p className="text-white font-slim text-xs break-all">
+                {item.designer}
               </p>
             </div>
-            {"designId" in item ? (
-              <>
-                <div>
-                  <span className="text-ama">{dict?.designer}:</span>
-                  <p className="text-white font-mono text-xs break-all">
-                    {item.designer}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-ama">{dict?.designerName}:</span>
-                  <p className="text-white">{supplierTitle}</p>
-                </div>
-                <div>
-                  <span className="text-ama">{dict?.supplyChainMarker}:</span>
-                  <p className="text-white">{item.scm}</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <span className="text-ama">{dict?.supplier}:</span>
-                  <p className="text-white font-mono text-xs break-all">
-                    {item.supplier}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-ama">{dict?.supplierName}:</span>
-                  <p className="text-white">{supplierTitle}</p>
-                </div>
-                <div>
-                  <span className="text-ama">{dict?.childType}:</span>
-                  <p className="text-white">{item.childType}</p>
-                </div>
-                <div>
-                  <span className="text-ama">{dict?.scm}:</span>
-                  <p className="text-white">{item.scm}</p>
-                </div>
-              </>
-            )}
-          </div>
-     
+            <div>
+              <span className="text-amarillo font-agency">
+                {dict?.designer}:
+              </span>
+              <p className="text-white font-slim text-xs">{supplierTitle}</p>
+            </div>
+            <div>
+              <span className="text-amarillo font-agency">{dict?.scm}:</span>
+              <p className="text-white font-slim text-xs">{item.scm}</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <span className="text-amarillo font-agency">
+                {dict?.supplier}:
+              </span>
+              <p className="text-oro font-slim text-xs break-all">
+                {item.supplier}
+              </p>
+            </div>
+            <div>
+              <span className="text-amarillo font-agency">
+                {dict?.supplierName}:
+              </span>
+              <p className="text-oro font-slim text-xs">{supplierTitle}</p>
+            </div>
+            <div>
+              <span className="text-amarillo font-agency">
+                {dict?.childType}:
+              </span>
+              <p className="text-oro font-slim text-xs">{item.childType}</p>
+            </div>
+            <div>
+              <span className="text-amarillo font-agency">{dict?.scm}:</span>
+              <p className="text-oro font-slim text-xs">{item.scm}</p>
+            </div>
+          </>
+        )}
       </div>
-        {imageUrl && (
-        <div className="aspect-square w-[50%] relative">
+      {imageUrl && (
+        <div className="aspect-square sm:order-2 order-1 w-[50%] relative">
           <Image
             src={imageUrl}
             fill

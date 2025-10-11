@@ -4,6 +4,7 @@ import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { ChildReferencesProps } from "../types";
 import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
   const router = useRouter();
@@ -55,8 +56,8 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
   }
 
   return (
-    <div className="bg-black border border-white rounded-sm p-6">
-      <h3 className="text-lg font-semibold text-white mb-4">
+    <FancyBorder type="diamond" color="oro" className="bg-black p-6 space-y-4">
+      <h3 className="text-lg font-agency uppercase text-white mb-4">
         {dict?.childReferences}
       </h3>
 
@@ -69,7 +70,7 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
           return (
             <div
               key={`${key}-${index}`}
-              className="bg-black border border-ama p-2 cursor-pointer transition-colors"
+              className="bg-black/50 p-4 cursor-pointer transition-colors hover:opacity-70"
               onClick={() =>
                 handleChildClick(child.childContract, child.childId, isTemplate)
               }
@@ -95,37 +96,37 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
 
                 <div className="lg:w-3/4 space-y-3">
                   <div className="flex items-center gap-3">
-                    <h4 className="text-white font-medium">
+                    <h4 className="text-oro font-agency">
                       {metadata?.title ||
                         `${isTemplate ? dict?.template : dict?.child} ${
                           child.childId
                         }`}
                     </h4>
-                    <span className="px-2 py-1 bg-azul text-white text-xs rounded-sm">
+                    <span className="px-2 py-1 bg-oro/10 text-oro text-xs font-slim">
                       {isTemplate ? dict?.template : dict?.child}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                      <span className="text-ama">{dict?.id}:</span>
-                      <p className="text-white">{child.childId}</p>
+                      <span className="text-oro font-agency text-sm">{dict?.id}:</span>
+                      <p className="text-white font-slim text-sm ml-1">{child.childId}</p>
                     </div>
                     <div>
-                      <span className="text-ama">{dict?.amount}:</span>
-                      <p className="text-white">{child.amount}</p>
+                      <span className="text-oro font-agency text-sm">{dict?.amount}:</span>
+                      <p className="text-white font-slim text-sm ml-1">{child.amount}</p>
                     </div>
                     <div>
-                      <span className="text-ama">{dict?.contract}:</span>
-                      <p className="text-white font-mono text-xs truncate">
+                      <span className="text-oro font-agency text-sm">{dict?.contract}:</span>
+                      <p className="text-white font-slim text-xs truncate ml-1">
                         {child.childContract}
                       </p>
                     </div>
                     {child.uri && (
                       <div>
-                        <span className="text-ama">{dict?.placementURI}:</span>
+                        <span className="text-oro font-agency text-sm">{dict?.placementURI}:</span>
                         <p
-                          className="text-white font-mono text-xs break-all cursor-pointer hover:text-ama transition-colors"
+                          className="text-white font-slim text-xs break-all cursor-pointer hover:text-oro transition-colors ml-1"
                           onClick={(e) => {
                             e.stopPropagation();
                             navigator.clipboard.writeText(child.uri);
@@ -146,10 +147,19 @@ export const ChildReferences = ({ childData, dict }: ChildReferencesProps) => {
 
       {loading && (
         <div className="flex items-center justify-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-azul"></div>
-          <span className="ml-2 text-azul">{dict?.loadingMetadata}</span>
+          <div className="relative w-fit animate-spin h-fit flex">
+            <div className="relative w-6 h-6 flex">
+              <Image
+                layout="fill"
+                objectFit="cover"
+                src={"/images/scissors.png"}
+                draggable={false}
+                alt="loader"
+              />
+            </div>
+          </div>
         </div>
       )}
-    </div>
+    </FancyBorder>
   );
 };

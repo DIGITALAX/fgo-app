@@ -490,6 +490,7 @@ export interface Parent {
 }
 
 export interface Workflow {
+  estimatedDeliveryDuration: number;
   digitalSteps: FulfillmentStep[];
   physicalSteps: FulfillmentStep[];
 }

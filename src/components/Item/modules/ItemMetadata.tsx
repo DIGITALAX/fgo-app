@@ -1,5 +1,6 @@
 import { useItemMetadata } from "../hooks/useItemMetadata";
 import { ItemMetadataProps } from "../types";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
   const { attachmentUrls } = useItemMetadata(item);
@@ -9,66 +10,89 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
   }
 
   return (
-    <>
+    <div className="relative w-full flex flex-col gap-2">
       {item.metadata.description && (
-        <div className="border border-white rounded-sm p-6">
-          <h3 className="text-lg font-herm text-white mb-3">{dict?.description}</h3>
-          <p className="text-white leading-relaxed">{item.metadata.description}</p>
-        </div>
+        <FancyBorder
+          type="diamond"
+          color="oro"
+          className="bg-black p-6 space-y-2"
+        >
+          <h3 className="text-lg font-agency uppercase text-white mb-3">
+            {dict?.description}: {item.metadata.description}
+          </h3>
+        </FancyBorder>
       )}
 
-      <div className="border border-white rounded-sm p-6">
-        <h3 className="text-lg font-herm text-white mb-4">{dict?.aiGenerationDetails}</h3>
+      <FancyBorder
+        type="diamond"
+        color="oro"
+        className="bg-black p-6 space-y-4"
+      >
+        <h3 className="text-lg font-agency uppercase text-white mb-4">
+          {dict?.aiGenerationDetails}
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {item.metadata.prompt && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.prompt}</h4>
-              <p className="text-white text-sm bg-black/20 p-3 rounded-sm border border-white/20">
+            <div className="space-y-2">
+              <span className="text-oro font-agency">{dict?.prompt}</span>
+              <p className="text-white font-slim text-sm">
                 {item.metadata.prompt}
               </p>
             </div>
           )}
-          
+
           {item.metadata.aiModel && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.aiModel}</h4>
-              <p className="text-white text-sm">{item.metadata.aiModel}</p>
+            <div className="space-y-2">
+              <span className="text-oro font-agency">{dict?.aiModel}</span>
+              <p className="text-white font-slim text-sm">
+                {item.metadata.aiModel}
+              </p>
             </div>
           )}
-          
+
           {item.metadata.workflow && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.workflow}</h4>
-              <p className="text-white text-sm">{item.metadata.workflow}</p>
+            <div className="space-y-2">
+              <span className="text-oro font-agency">{dict?.workflow}</span>
+              <p className="text-white font-slim text-sm">
+                {item.metadata.workflow}
+              </p>
             </div>
           )}
-          
+
           {item.metadata.version && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.version}</h4>
-              <p className="text-white text-sm">{item.metadata.version}</p>
+            <div className="space-y-2">
+              <span className="text-oro font-agency">{dict?.version}</span>
+              <p className="text-white font-slim text-sm">
+                {item.metadata.version}
+              </p>
             </div>
           )}
-          
+
           {item.metadata.loras && item.metadata.loras.length > 0 && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.loras}</h4>
-              <div className="space-y-1">
+            <div className="space-y-3">
+              <span className="text-oro font-agency">{dict?.loras}</span>
+              <div className="flex flex-wrap gap-1">
                 {item.metadata.loras.map((lora: string, index: number) => (
-                  <span key={index} className="inline-block bg-ama/20 text-ama px-2 py-1 rounded-sm text-xs mr-1 mb-1 border border-ama/30">
+                  <span
+                    key={index}
+                    className="bg-oro/10 text-oro px-2 py-1 text-xs font-slim"
+                  >
                     {lora}
                   </span>
                 ))}
               </div>
             </div>
           )}
-          
+
           {item.metadata.tags && item.metadata.tags.length > 0 && (
-            <div>
-              <h4 className="text-ama font-herm mb-2">{dict?.tags}</h4>
-              <div className="space-y-1">
+            <div className="space-y-3">
+              <span className="text-oro font-agency">{dict?.tags}</span>
+              <div className="flex flex-wrap gap-1">
                 {item.metadata.tags.map((tag: string, index: number) => (
-                  <span key={index} className="inline-block bg-ama/20 text-ama px-2 py-1 rounded-sm text-xs mr-1 mb-1 border border-ama/30">
+                  <span
+                    key={index}
+                    className="bg-oro/10 text-oro px-2 py-1 text-xs font-slim"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -76,62 +100,81 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
             </div>
           )}
         </div>
-      </div>
+      </FancyBorder>
 
-      {item.metadata.customFields && Object.keys(item.metadata.customFields).length > 0 && (
-        <div className="border border-white rounded-sm p-6">
-          <h3 className="text-lg font-herm text-white mb-4">{dict?.customFields}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.entries(item.metadata.customFields).map(([key, value]) => (
-              <div key={key}>
-                <h4 className="text-ama font-herm mb-2">{key}</h4>
-                <p className="text-white text-sm bg-black/20 p-3 rounded-sm border border-white/20 break-all">
-                  {String(value)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {item.metadata.customFields &&
+        Object.keys(item.metadata.customFields).length > 0 && (
+          <FancyBorder
+            type="diamond"
+            color="oro"
+            className="bg-black p-6 space-y-4"
+          >
+            <h3 className="text-lg font-agency uppercase text-white mb-4">
+              {dict?.customFields}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(item.metadata.customFields).map(
+                ([key, value]) => (
+                  <div key={key} className="space-y-2">
+                    <span className="text-oro font-agency">{key}</span>
+                    <p className="text-white font-slim text-sm break-all">
+                      {String(value)}
+                    </p>
+                  </div>
+                )
+              )}
+            </div>
+          </FancyBorder>
+        )}
 
       {item.uri && (
-        <div className="border border-white rounded-sm p-6">
-          <h3 className="text-lg font-herm text-white mb-4">{dict?.ipfsMetadataUri}</h3>
-          <div className="bg-black/20 border border-white/30 rounded-sm p-4">
-            <p className="text-white text-sm font-mono break-all">
-              {item.uri}
-            </p>
-          </div>
-        </div>
+        <FancyBorder
+          type="diamond"
+          color="oro"
+          className="bg-black p-6 space-y-4"
+        >
+          <h3 className="text-lg font-agency uppercase text-white mb-4">
+            {dict?.ipfsMetadataUri}
+          </h3>
+          <p className="text-white font-slim text-xs break-all">{item.uri}</p>
+        </FancyBorder>
       )}
 
       {item.metadata.attachments && item.metadata.attachments.length > 0 && (
-        <div className="border border-white rounded-sm p-6">
-          <h3 className="text-lg font-herm text-white mb-4">{dict?.attachments}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <FancyBorder
+          type="diamond"
+          color="oro"
+          className="bg-black p-6 space-y-4"
+        >
+          <h3 className="text-lg font-agency uppercase text-white mb-4">
+            {dict?.attachments}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {item.metadata.attachments.map((attachment, index: number) => (
-              <div key={index} className="bg-black/20 border border-white/30 rounded-sm p-4">
-                <div className="text-sm">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-ama">{dict?.type}:</span>
-                    <span className="text-white">{attachment.type}</span>
-                  </div>
-                  {attachment.uri && (
-                    <a
-                      href={attachmentUrls[index]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-ama hover:text-ama/80 text-xs underline font-herm"
-                    >
-                      View Attachment
-                    </a>
-                  )}
+              <div key={index} className="space-y-1">
+                <div className="flex gap-2 items-center justify-start text-center flex-row">
+                  <span className="text-oro flex font-agency text-sm">
+                    {dict?.type}:
+                  </span>
+                  <span className="text-white flex font-awk text-base uppercase">
+                    {attachment.type}
+                  </span>
                 </div>
+                {attachment.uri && (
+                  <a
+                    href={attachmentUrls[index]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-oro hover:text-oro/80 text-base uppercase font-awk underline"
+                  >
+                    View Attachment
+                  </a>
+                )}
               </div>
             ))}
           </div>
-        </div>
+        </FancyBorder>
       )}
-    </>
+    </div>
   );
 };

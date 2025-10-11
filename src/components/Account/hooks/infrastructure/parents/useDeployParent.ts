@@ -40,12 +40,12 @@ export const useDeployParent = (
   useEffect(() => {
     if (successTxHash) {
       context?.showSuccess(
-        "Parent contract deployed successfully!",
+        dict?.parentContractDeployedSuccessfully,
         successTxHash
       );
       setSuccessTxHash(null);
     }
-  }, [successTxHash]);
+  }, [successTxHash, dict]);
 
   const deployParentContract = useCallback(
     async (formData: DeployParentFormData) => {

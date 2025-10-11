@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { useSearchBar } from "../hooks/useSearchBar";
 import { SearchBarProps } from "../types";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const SearchBar = ({ searchText, onSearch, dict }: SearchBarProps) => {
   const { inputValue, handleInputChange, handleSubmit, handleClear } =
@@ -10,33 +12,70 @@ export const SearchBar = ({ searchText, onSearch, dict }: SearchBarProps) => {
     });
 
   return (
-    <div className="w-full max-w-md mx-auto mb-6">
-      <form onSubmit={handleSubmit} className="relative">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder={dict?.searchPlaceholder}
-          className="w-full px-4 py-2 font-herm bg-offNegro border border-white text-white focus:outline-none focus:border-ama/50 pr-20"
-        />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
-          {inputValue && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="text-gray-400 hover:text-white font-herm text-sm"
-            >
-              {dict?.close}
-            </button>
-          )}
-          <button
-            type="submit"
-            className="px-3 py-1 bg-ama/20 font-herm text-ama border border-ama/30 text-sm hover:bg-ama/30 transition-colors"
-          >
-            {dict?.search}
-          </button>
+    <div className="relative w-full h-fit flex font-chicago">
+      <div className="w-full max-w-lg mx-auto mb-6 h-10 flex flex-row gap-3">
+        <div className="relative w-fit flex">
+          <div className="relative w-7 h-full flex">
+            <Image
+              src={"/images/detail.png"}
+              draggable={false}
+              objectFit="contain"
+              fill
+              alt="detail"
+            />
+          </div>
         </div>
-      </form>
+        <FancyBorder
+          color="white"
+          type="circle"
+          className="relative h-full flex w-full"
+        >
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder={dict?.searchPlaceholder}
+            className="w-full px-4 py-2 z-10 flex text-white focus:outline-none pr-20"
+          />
+
+          <div className="absolute right-2 z-20 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            {inputValue && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-gris hover:text-white text-sm"
+              >
+                {dict?.close}
+              </button>
+            )}
+            <div className="relative w-fit h-fit cursor-pointer z-20 flex">
+              <div
+                onClick={() => handleSubmit()}
+                className="relative w-6 h-6 flex"
+              >
+                <Image
+                  src={"/images/arrow.png"}
+                  draggable={false}
+                  objectFit="contain"
+                  fill
+                  alt="arrow"
+                />
+              </div>
+            </div>
+          </div>
+        </FancyBorder>
+        <div className="relative w-fit flex">
+          <div className="relative w-7 h-full flex">
+            <Image
+              src={"/images/detail.png"}
+              draggable={false}
+              objectFit="contain"
+              fill
+              alt="detail"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -65,8 +65,9 @@ export interface ParentChildReferencesProps {
 
 export enum Status {
   RESERVED = "0",
-  ACTIVE = "1",
-  DISABLED = "2",
+  SUPPLY_PENDING = "1",
+  ACTIVE = "2",
+  DISABLED = "3",
 }
 
 export interface Template {

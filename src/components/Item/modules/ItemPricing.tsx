@@ -1,6 +1,7 @@
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { useItemPricing } from "../hooks/useItemPricing";
 import { ItemPricingProps } from "../types";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
   const {
@@ -10,46 +11,53 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
     getAvailabilityType,
     formatEditionLimit,
   } = useItemPricing(item, dict);
-
   const { showDigital, showPhysical } = getAvailabilityType();
 
   return (
-    <div className="border border-white rounded-sm p-6 space-y-4">
-      <h3 className="text-lg font-herm text-white mb-4">{dict?.pricingSupply}</h3>
+    <FancyBorder type="diamond" color="oro" className="text-sm bg-black p-6 space-y-4">
+      <h3 className="text-lg font-agency uppercase text-white mb-4">
+        {dict?.pricingSupply}
+      </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {showDigital && (
           <div className="space-y-2">
-            <span className="text-ama text-sm">{dict?.digitalPrice}</span>
-            <p className="text-white font-herm">{formattedDigitalPrice}</p>
+            <span className="text-oro font-agency">{dict?.digitalPrice}</span>
+            <p className="text-white font-slim">{formattedDigitalPrice}</p>
           </div>
         )}
 
         {showPhysical && (
           <div className="space-y-2">
-            <span className="text-ama text-sm">{dict?.physicalPrice}</span>
-            <p className="text-white font-herm">{formattedPhysicalPrice}</p>
+            <span className="text-oro font-agency">{dict?.physicalPrice}</span>
+            <p className="text-white font-slim">{formattedPhysicalPrice}</p>
           </div>
         )}
 
         {"designId" in item ? (
           <>
             <div className="space-y-2">
-              <span className="text-ama text-sm">{dict?.totalPurchases}</span>
-              <p className="text-white font-herm">{item.totalPurchases}</p>
+              <span className="text-oro font-agency">
+                {dict?.totalPurchases}
+              </span>
+              <p className="text-white font-slim">{item.totalPurchases}</p>
             </div>
 
             {showDigital && (
               <>
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">{dict?.maxDigital}</span>
-                  <p className="text-white font-herm">
+                  <span className="text-oro font-agency">
+                    {dict?.maxDigital}
+                  </span>
+                  <p className="text-white font-slim">
                     {formatEditionLimit(item.maxDigitalEditions)}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">{dict?.currentDigital}</span>
-                  <p className="text-white font-herm">
+                  <span className="text-oro font-agency">
+                    {dict?.currentDigital}
+                  </span>
+                  <p className="text-white font-slim">
                     {item.currentDigitalEditions}
                   </p>
                 </div>
@@ -59,15 +67,19 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
             {showPhysical && (
               <>
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">{dict?.maxPhysical}</span>
-                  <p className="text-white font-herm">
+                  <span className="text-oro font-agency">
+                    {dict?.maxPhysical}
+                  </span>
+                  <p className="text-white font-slim">
                     {formatEditionLimit(item.maxPhysicalEditions)}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">{dict?.currentPhysical}</span>
-                  <p className="text-white font-herm">
+                  <span className="text-oro font-agency">
+                    {dict?.currentPhysical}
+                  </span>
+                  <p className="text-white font-slim">
                     {item.currentPhysicalEditions}
                   </p>
                 </div>
@@ -77,24 +89,26 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
         ) : (
           <>
             <div className="space-y-2">
-              <span className="text-ama text-sm">{dict?.supplyCount}</span>
-              <p className="text-white font-herm">{item.supplyCount}</p>
+              <span className="text-oro font-agency">{dict?.supplyCount}</span>
+              <p className="text-white font-slim">{item.supplyCount}</p>
             </div>
 
             {showPhysical && (
               <>
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">{dict?.maxPhysical}</span>
-                  <p className="text-white font-herm">
+                  <span className="text-oro font-agency">
+                    {dict?.maxPhysical}
+                  </span>
+                  <p className="text-white font-slim">
                     {formatEditionLimit(item.maxPhysicalEditions)}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-ama text-sm">
+                  <span className="text-oro font-agency">
                     Physical Fulfillments:
                   </span>
-                  <p className="text-white font-herm">
+                  <p className="text-white font-slim">
                     {item.currentPhysicalEditions}
                   </p>
                 </div>
@@ -102,20 +116,20 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
             )}
 
             <div className="space-y-2">
-              <span className="text-ama text-sm">{dict?.usageCount}</span>
-              <p className="text-white font-herm">{item.usageCount}</p>
+              <span className="text-oro font-agency">{dict?.usageCount}</span>
+              <p className="text-white font-slim">{item.usageCount}</p>
             </div>
           </>
         )}
 
         <div className="space-y-2">
-          <span className="text-ama text-sm">{dict?.status}:</span>
-          <p className="text-white font-herm">{statusLabel}</p>
+          <span className="text-oro font-agency">{dict?.status}:</span>
+          <p className="text-white font-slim">{statusLabel}</p>
         </div>
 
         <div className="space-y-2">
-          <span className="text-ama text-sm">{dict?.availability}:</span>
-          <p className="text-white font-herm">
+          <span className="text-oro font-agency">{dict?.availability}:</span>
+          <p className="text-white font-slim">
             {"designId" in item
               ? getAvailabilityLabel(item.availability, dict)
               : item.availability}
@@ -123,19 +137,19 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {"designId" in item ? (
           <>
             {showDigital && (
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-1.5 h-1.5 rotate-45 ${
                     item.digitalMarketsOpenToAll === true
-                      ? "bg-green-500"
-                      : "bg-gray-500"
+                      ? "bg-oro"
+                      : "bg-gris/30"
                   }`}
                 ></div>
-                <span className="text-ama">
+                <span className="text-gris font-agency">
                   Digital Markets Open:{" "}
                   {item.digitalMarketsOpenToAll === true ? dict?.yes : dict?.no}
                 </span>
@@ -145,28 +159,28 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
             {showPhysical && (
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
+                  className={`w-1.5 h-1.5  rotate-45 ${
                     item.physicalMarketsOpenToAll === true
-                      ? "bg-green-500"
-                      : "bg-gray-500"
+                      ? "bg-oro"
+                      : "bg-gris/30"
                   }`}
                 ></div>
-                <span className="text-ama">
+                <span className="text-white font-agency">
                   Physical Markets Open:{" "}
-                  {item.physicalMarketsOpenToAll === true ? dict?.yes : dict?.no}
+                  {item.physicalMarketsOpenToAll === true
+                    ? dict?.yes
+                    : dict?.no}
                 </span>
               </div>
             )}
 
             <div className="flex items-center gap-2">
               <div
-                className={`w-3 h-3 rounded-full ${
-                  item.authorizedMarkets.length > 0
-                    ? "bg-green-500"
-                    : "bg-gray-500"
+                className={`w-1.5 h-1.5  rotate-45 ${
+                  item.authorizedMarkets.length > 0 ? "bg-oro" : "bg-gris/30"
                 }`}
               ></div>
-              <span className="text-ama">
+              <span className="text-white font-agency">
                 Authorized Markets: {item.authorizedMarkets.length}
               </span>
             </div>
@@ -175,11 +189,11 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
           <>
             <div className="flex items-center gap-2">
               <div
-                className={`w-3 h-3 rounded-full ${
-                  item.isImmutable ? "bg-red-500" : "bg-green-500"
+                className={`w-1.5 h-1.5  rotate-45 ${
+                  item.isImmutable ? "bg-fresa" : "bg-oro"
                 }`}
               ></div>
-              <span className="text-ama">
+              <span className="text-white font-agency">
                 {item.isImmutable ? dict?.immutable : dict?.mutable}
               </span>
             </div>
@@ -187,13 +201,11 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
             {showDigital && (
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
-                    item.digitalMarketsOpenToAll
-                      ? "bg-green-500"
-                      : "bg-gray-500"
+                  className={`w-1.5 h-1.5 rotate-45 ${
+                    item.digitalMarketsOpenToAll ? "bg-oro" : "bg-gris/30"
                   }`}
                 ></div>
-                <span className="text-ama">
+                <span className="text-white font-agency">
                   Digital Markets Open:{" "}
                   {item.digitalMarketsOpenToAll ? dict?.yes : dict?.no}
                 </span>
@@ -203,13 +215,11 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
             {showPhysical && (
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
-                    item.physicalMarketsOpenToAll
-                      ? "bg-green-500"
-                      : "bg-gray-500"
+                  className={`w-1.5 h-1.5 rotate-45 ${
+                    item.physicalMarketsOpenToAll ? "bg-oro" : "bg-gris/30"
                   }`}
                 ></div>
-                <span className="text-ama">
+                <span className="text-white font-agency">
                   Physical Markets Open:{" "}
                   {item.physicalMarketsOpenToAll ? dict?.yes : dict?.no}
                 </span>
@@ -218,19 +228,18 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
 
             <div className="flex items-center gap-2">
               <div
-                className={`w-3 h-3 rounded-full ${
-                  item.standaloneAllowed === true
-                    ? "bg-green-500"
-                    : "bg-gray-500"
+                className={`w-1.5 h-1.5 rotate-45 ${
+                  item.standaloneAllowed === true ? "bg-oro" : "bg-gris/30"
                 }`}
               ></div>
-              <span className="text-ama">
-                Standalone: {item.standaloneAllowed === true ? dict?.yes : dict?.no}
+              <span className="text-white font-agency">
+                Standalone:{" "}
+                {item.standaloneAllowed === true ? dict?.yes : dict?.no}
               </span>
             </div>
           </>
         )}
       </div>
-    </div>
+    </FancyBorder>
   );
 };

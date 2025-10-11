@@ -3,6 +3,8 @@ import { getCurrentNetwork } from "@/constants";
 import { ProfileManager } from "../../ProfileManager";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const MarketContractDetailView = ({
   marketContract,
@@ -24,73 +26,114 @@ export const MarketContractDetailView = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 mb-4">
-        <button
+        <div
           onClick={onBack}
-          className="flex items-center gap-2 text-white hover:text-ama transition-colors font-herm"
+          className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
         >
-          <span className="text-sm">←</span>
-          <span className="text-sm">{dict?.backToMarketContracts}</span>
-        </button>
+          <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro items-center gap-2">
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10 text-sm">←</span>
+            <span className="relative z-10">
+              {dict?.backToMarketContracts}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-black rounded-sm border border-white p-4">
-        <div className="mb-4">
-          <h1 className="text-xl font-herm text-white mb-3">{displayTitle}</h1>
+      <div className="relative">
+        <div className="relative z-10 p-4 space-y-4">
+          <h1 className="text-2xl font-awk uppercase text-oro mb-3">
+            {displayTitle}
+          </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="text-ama font-herm">{dict?.contract}:</span>
-              <p className="font-mono text-xs text-white break-all">
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.contract}:
+              </span>
+              <p className="font-pixel text-xs text-oro break-all">
                 {marketContract.contractAddress}
               </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.symbol}:</span>
-              <p className="text-white font-herm">{marketContract.symbol}</p>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.symbol}:
+              </span>
+              <p className="text-gris font-chicago text-sm">
+                {marketContract.symbol}
+              </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.txHash}:</span>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.txHash }:
+              </span>
               <a
                 href={explorerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-mar hover:text-ama text-xs break-all transition-colors underline flex"
+                className="font-pixel text-oro hover:text-white text-xs break-all transition-colors underline flex"
               >
                 {marketContract.transactionHash.substring(0, 15) + "..."}
               </a>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.deployer}:</span>
-              <p className="font-mono text-xs text-white break-all">
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.deployer}:
+              </span>
+              <p className="font-pixel text-xs text-oro break-all">
                 {marketContract.deployer}
               </p>
             </div>
           </div>
 
           {displayDescription && (
-            <div className="mt-3 pt-3 border-t border-white">
-              <p className="text-white font-herm text-sm">
+            <div className="mt-3 pt-3">
+              <p className="text-gris font-chicago text-sm">
                 {displayDescription}
               </p>
             </div>
           )}
-        </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className="px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors text-sm"
-          >
-            {dict?.fulfillerProfile}
-          </button>
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="relative"
+            >
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">
+                  {dict?.fulfillerProfile }
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="bg-black rounded-sm p-4 border border-white">
-        <p className="text-ama text-center font-herm text-sm">
-          {dict?.marketFunctionalityComingSoon}
-        </p>
-      </div>
+      <FancyBorder className="relative" type="diamond" color="oro">
+        <div className="relative z-10 p-4 text-center">
+          <p className="text-gris font-chicago text-sm">
+            {dict?.marketFunctionalityComingSoon ||
+              "Market functionality coming soon"}
+          </p>
+        </div>
+      </FancyBorder>
 
       <ProfileManager
         dict={dict}

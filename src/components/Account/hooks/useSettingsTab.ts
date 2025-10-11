@@ -23,16 +23,21 @@ export const useSettingsTab = (dict: any) => {
       setSelectedLanguage(newLanguage);
 
       const segments = path.split("/");
-      segments[1] = newLanguage;
-      const newPath = segments.join("/");
+      const hasLangSegment = segments[1] && ["en", "es", "pt"].includes(segments[1]);
 
-      document.cookie = `NEXT_LOCALE=${
-       newLanguage
-      }; path=/; SameSite=Lax`;
+      let newPath;
+      if (hasLangSegment) {
+        segments[1] = newLanguage;
+        newPath = segments.join("/");
+      } else {
+        newPath = `/${newLanguage}${path}`;
+      }
+
+      document.cookie = `NEXT_LOCALE=${newLanguage}; path=/; SameSite=Lax`;
 
       router.push(newPath);
     },
-    []
+    [path, router]
   );
 
   return {

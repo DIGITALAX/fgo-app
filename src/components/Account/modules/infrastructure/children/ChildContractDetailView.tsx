@@ -7,6 +7,8 @@ import { ProfileManager } from "../../ProfileManager";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ChildContractDetailViewProps } from "@/components/Account/types";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ChildContractDetailView = ({
   childContract,
@@ -55,95 +57,167 @@ export const ChildContractDetailView = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 mb-4">
-        <button
+        <div
           onClick={onBack}
-          className="flex items-center gap-2 text-white hover:text-ama transition-colors font-herm"
+          className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
         >
-          <span className="text-sm">←</span>
-          <span className="text-sm">{dict?.backToChildContracts}</span>
-        </button>
+          <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro items-center gap-2">
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10 text-sm">←</span>
+            <span className="relative z-10">{dict?.backToChildContracts}</span>
+          </div>
+        </div>
       </div>
-
-      <div className="bg-black rounded-sm border border-white p-4">
-        <div className="mb-4">
-          <h1 className="text-xl font-herm text-white mb-3">{displayTitle}</h1>
+      <div className="relative">
+        <div className="relative z-10 p-4 space-y-4">
+          <h1 className="text-2xl font-awk uppercase text-oro mb-3">
+            {displayTitle}
+          </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <div>
-              <span className="text-ama font-herm">{dict?.contract}:</span>
-              <p className="font-mono text-xs text-white break-all">
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.contract}:
+              </span>
+              <p className="font-pixel text-xs text-verde break-all">
                 {childContract.contractAddress}
               </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.symbol}:</span>
-              <p className="text-white font-herm">{childContract.symbol}</p>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.symbol}:
+              </span>
+              <p className="text-gris font-chicago text-sm">
+                {childContract.symbol}
+              </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.type}:</span>
-              <p className="text-white font-herm">{childContract.childType}</p>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.type}:
+              </span>
+              <p className="text-gris font-chicago text-sm">
+                {childContract.childType}
+              </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.scm}:</span>
-              <p className="text-white font-herm">{childContract.scm}</p>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.scm}:
+              </span>
+              <p className="text-gris font-chicago text-sm">
+                {childContract.scm}
+              </p>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.txHash}:</span>
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.txHash}:
+              </span>
               <a
                 href={explorerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-mar hover:text-ama text-xs break-all transition-colors underline flex"
+                className="font-pixel text-oro hover:text-white text-xs break-all transition-colors underline flex"
               >
                 {childContract.transactionHash.substring(0, 15) + "..."}
               </a>
             </div>
-            <div>
-              <span className="text-ama font-herm">{dict?.deployer}:</span>
-              <p className="font-mono text-xs text-white break-all">
+            <div className="space-y-1">
+              <span className="font-awk uppercase text-gris text-xs">
+                {dict?.deployer}:
+              </span>
+              <p className="font-pixel text-xs text-oro break-all">
                 {childContract.deployer}
               </p>
             </div>
           </div>
-        </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleCreateChildClick()}
-            className="px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
-          >
-            {dict?.createChild}
-          </button>
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={() => handleCreateChildClick()}
+              className="relative"
+            >
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">{dict?.createChild}</span>
+              </div>
+            </button>
 
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className="px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors flex items-center gap-2 text-sm"
-          >
-            {dict?.supplierProfile}
-          </button>
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="relative"
+            >
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">{dict?.supplierProfile}</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="space-y-3">
         {itemsError && (
-          <div className="bg-black border border-fresa rounded-sm p-4">
-            <p className="text-fresa text-sm font-herm">
-              {dict?.error}: {itemsError}
-            </p>
-            <button
-              onClick={refetch}
-              className="mt-2 text-fresa hover:text-ama text-xs underline font-herm"
-            >
-              {dict?.tryAgain}
-            </button>
+          <div className="relative">
+            <div className="relative z-10 p-4 space-y-3">
+              <p className="text-fresa text-sm font-chicago">
+                {dict?.error}: {itemsError}
+              </p>
+              <div
+                onClick={refetch}
+                className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
+              >
+                <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10">{dict?.tryAgain}</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {itemsLoading ? (
-          <div className="bg-black rounded-sm p-4 border border-white flex items-center justify-center">
-            <div className="flex items-center gap-2 text-white font-herm text-sm">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-              <span>{dict?.loadingChildItems}</span>
+          <div className="w-full h-full flex items-center justify-center py-12">
+            <div className="relative w-fit animate-spin h-fit flex">
+              <div className="relative w-6 h-6 flex">
+                <Image
+                  layout="fill"
+                  objectFit="cover"
+                  src={"/images/scissors.png"}
+                  draggable={false}
+                  alt="loader"
+                />
+              </div>
             </div>
           </div>
         ) : childItems.length > 0 ? (
@@ -153,10 +227,12 @@ export const ChildContractDetailView = ({
             ))}
           </div>
         ) : (
-          <div className="bg-black rounded-sm p-4 border border-white">
-            <p className="text-ama text-center font-herm text-sm">
-              {dict?.noChildItemsFound}
-            </p>
+          <div className="relative">
+            <div className="relative z-10 p-4 text-center">
+              <p className="text-gris font-chicago text-sm">
+                {dict?.noChildItemsFound}
+              </p>
+            </div>
           </div>
         )}
       </div>

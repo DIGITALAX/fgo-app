@@ -3,6 +3,7 @@ import { ManualApprovalModalProps, ApprovalTab } from "../../types";
 import { MarketsApprovalTab } from "./approval/MarketsApprovalTab";
 import { TemplatesApprovalTab } from "./approval/TemplatesApprovalTab";
 import { ParentsApprovalTab } from "./approval/ParentsApprovalTab";
+import Image from "next/image";
 
 export const ManualApprovalModal = ({
   isOpen,
@@ -57,37 +58,69 @@ export const ManualApprovalModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-black rounded-sm border border-white max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-white/20">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-herm text-white">Manual Approvals</h2>
-            <button
-              onClick={onClose}
-              className="text-white hover:text-ama transition-colors font-herm"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="flex gap-1 bg-black border border-white rounded-sm p-1 w-fit">
-            {availableTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-sm text-sm font-herm transition-colors ${
-                  activeTab === tab.id
-                    ? "bg-ama text-black"
-                    : "text-white/60 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+          <Image
+            src={"/images/borderblue.png"}
+            draggable={false}
+            objectFit="fill"
+            fill
+            alt="border"
+          />
         </div>
+        <div className="relative z-10 flex flex-col h-full">
+          <div className="p-6 border-b border-gris/20">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-awk uppercase text-oro">
+                manual approvals
+              </h2>
+              <div
+                onClick={onClose}
+                className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
+              >
+                <Image
+                  src={"/images/plug.png"}
+                  draggable={false}
+                  fill
+                  objectFit="contain"
+                  alt="close"
+                />
+              </div>
+            </div>
 
-        <div className="flex-1 overflow-y-auto">{renderActiveTab()}</div>
+            <div className="flex gap-2">
+              {availableTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className="relative"
+                >
+                  <div
+                    className={`text-xs font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center ${
+                      activeTab === tab.id
+                        ? "text-oro"
+                        : "text-gris hover:text-oro/80"
+                    }`}
+                  >
+                    <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                      <Image
+                        src={"/images/borderoro2.png"}
+                        draggable={false}
+                        objectFit="fill"
+                        fill
+                        alt="border"
+                      />
+                    </div>
+                    <span className="relative z-10">{tab.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6">{renderActiveTab()}</div>
+        </div>
       </div>
     </div>
   );

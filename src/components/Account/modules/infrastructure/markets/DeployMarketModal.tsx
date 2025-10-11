@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useDeployMarketForm } from "@/components/Account/hooks/infrastructure/markets/useDeployMarketForm";
 import { DeployMarketModalProps } from "../../../types";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const DeployMarketModal = ({
   isOpen,
@@ -41,94 +43,116 @@ export const DeployMarketModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-black rounded-sm border border-white max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-herm text-white">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+          <Image
+            src={"/images/borderblue.png"}
+            draggable={false}
+            objectFit="fill"
+            fill
+            alt="border"
+          />
+        </div>
+        <div className="relative z-10 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-awk uppercase text-oro">
               {dict?.deployMarketContract}
             </h2>
-            <button
+            <div
               onClick={handleClose}
-              className="text-white hover:text-ama transition-colors font-herm"
-              disabled={loading}
+              className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
             >
-              ✕
-            </button>
+              <Image
+                src={"/images/plug.png"}
+                draggable={false}
+                fill
+                objectFit="contain"
+                alt="close"
+              />
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-herm text-ama mb-2">
+              <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.contractName} *
               </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder={dict?.enterContractName}
-                disabled={loading}
-                required
-              />
+              <FancyBorder color="white" type="circle" className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="relative z-10 w-full px-3 py-2 text-gris text-sm focus:outline-none font-chicago placeholder:text-gris/50"
+                  placeholder={dict?.enterContractName}
+                  disabled={loading}
+                  required
+                />
+              </FancyBorder>
             </div>
 
             <div>
-              <label className="block text-sm font-herm text-ama mb-2">
+              <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.symbol} *
               </label>
-              <input
-                type="text"
-                name="symbol"
-                value={formData.symbol}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder={dict?.marketSymbolPlaceholder}
-                disabled={loading}
-                required
-              />
+              <FancyBorder color="white" type="circle" className="relative">
+                <input
+                  type="text"
+                  name="symbol"
+                  value={formData.symbol}
+                  onChange={handleInputChange}
+                  className="relative z-10 w-full px-3 py-2 text-gris text-sm focus:outline-none font-chicago placeholder:text-gris/50"
+                  placeholder={dict?.marketSymbolPlaceholder}
+                  disabled={loading}
+                  required
+                />
+              </FancyBorder>
             </div>
 
             <div>
-              <label className="block text-sm font-herm text-ama mb-2">
+              <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.title} *
               </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                placeholder={dict?.enterMarketTitle}
-                disabled={loading}
-                required
-              />
+              <FancyBorder color="white" type="circle" className="relative">
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="relative z-10 w-full px-3 py-2 text-gris text-sm focus:outline-none font-chicago placeholder:text-gris/50"
+                  placeholder={dict?.enterMarketTitle}
+                  disabled={loading}
+                  required
+                />
+              </FancyBorder>
             </div>
 
             <div>
-              <label className="block text-sm font-herm text-ama mb-2">
+              <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.description} *
               </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={3}
-                className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama resize-none font-herm"
-                placeholder={dict?.enterMarketDescription}
-                disabled={loading}
-                required
-              />
+              <FancyBorder className="relative" type="diamond" color="oro">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="relative z-10 w-full px-3 py-2 text-gris text-sm focus:outline-none font-chicago placeholder:text-gris/50 resize-none"
+                  placeholder={dict?.enterMarketDescription}
+                  disabled={loading}
+                  required
+                />
+              </FancyBorder>
             </div>
 
             <div>
-              <label className="block text-sm font-herm text-ama mb-2">
+              <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.image}
               </label>
               <div className="space-y-2">
                 {formData.image && (
-                  <div className="text-xs text-white font-herm p-2 bg-black border border-white rounded-sm">
+                  <div className="text-xs text-gris font-chicago p-2 border border-gris/30">
                     {dict?.selected}: {formData.image.name}
                   </div>
                 )}
@@ -137,34 +161,68 @@ export const DeployMarketModal = ({
                   type="file"
                   onChange={handleImageChange}
                   accept="image/*"
-                  className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white file:mr-4 file:py-1 file:px-2 file:rounded-sm file:border-0 file:text-xs file:bg-white file:text-black hover:file:opacity-70 font-herm"
+                  className="w-full px-3 py-2 text-gris text-sm font-chicago file:mr-4 file:py-1 file:px-2 file:border-0 file:text-xs file:bg-gris file:text-black hover:file:opacity-70"
                   disabled={loading}
                 />
               </div>
             </div>
 
-            <div className="flex gap-2 pt-3">
+            <div className="flex gap-3 pt-4">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
+                className="relative flex-1"
                 disabled={false}
               >
-                {dict?.cancel}
+                <div className="text-xs text-fresa font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10">{dict?.cancel}</span>
+                </div>
               </button>
               <button
                 type="submit"
-                className="flex-1 px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="relative flex-1"
                 disabled={loading || !isFormValid}
               >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                    {dict?.deploying}...
-                  </>
-                ) : (
-                  dict?.deploy
-                )}
+                <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center disabled:opacity-50">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10 flex items-center gap-2">
+                    {loading ? (
+                      <>
+                        <div className="relative w-fit animate-spin h-fit flex">
+                          <div className="relative w-3 h-3 flex">
+                            <Image
+                              layout="fill"
+                              objectFit="cover"
+                              src={"/images/scissors.png"}
+                              draggable={false}
+                              alt="loader"
+                            />
+                          </div>
+                        </div>
+                        {dict?.deploying}...
+                      </>
+                    ) : (
+                      dict?.deploy
+                    )}
+                  </span>
+                </div>
               </button>
             </div>
           </form>

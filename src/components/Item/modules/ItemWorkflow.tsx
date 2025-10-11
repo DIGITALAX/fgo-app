@@ -1,4 +1,5 @@
 import { ItemWorkflowProps } from "../types";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
   const workflow = (item as any).workflow;
@@ -10,70 +11,94 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
     return null;
   }
 
+  const formatDuration = (seconds: number): string => {
+    if (seconds === 0) return "Not specified";
+
+    const weeks = Math.floor(seconds / 604800);
+    const days = Math.floor((seconds % 604800) / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    const parts = [];
+    if (weeks > 0) parts.push(`${weeks} ${weeks === 1 ? 'week' : 'weeks'}`);
+    if (days > 0) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
+    if (hours > 0) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
+    if (minutes > 0) parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
+
+    return parts.length > 0 ? parts.join(', ') : `${seconds} seconds`;
+  };
+
   return (
-    <div className="bg-black rounded-sm border border-white p-4">
-      <h3 className="text-base font-herm text-white mb-4">
+    <FancyBorder type="diamond" color="oro" className="bg-black p-6 space-y-4">
+      <h3 className="text-lg font-agency uppercase text-white mb-4">
         {dict?.fulfillmentWorkflow}
       </h3>
 
       <div className="space-y-6">
+        {workflow.estimatedDeliveryDuration > 0 && (
+          <div className="space-y-2">
+            <span className="text-oro font-agency">
+              {dict?.estimatedDeliveryDuration }
+            </span>
+            <p className="text-white font-slim text-sm">
+              {formatDuration(workflow.estimatedDeliveryDuration)}
+            </p>
+          </div>
+        )}
         {workflow.digitalSteps?.length > 0 && (
-          <div>
-            <h4 className="text-sm font-herm text-ama mb-3">
+          <div className="space-y-3">
+            <span className="text-oro font-agency">
               {dict?.digitalSteps} ({workflow.digitalSteps.length})
-            </h4>
+            </span>
             <div className="space-y-3">
               {workflow.digitalSteps.map((step: any, index: number) => (
                 <div
                   key={index}
-                  className="bg-black border border-white rounded-sm p-3"
+                  className="bg-black/50 p-4 space-y-3"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-herm text-ama">
+                  <div className="flex items-center justify-between">
+                    <span className="text-oro font-agency text-sm">
                       {dict?.step} {index + 1}
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-ama font-herm">
-                        {dict?.primaryPerformer}:{" "}
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <span className="text-oro font-agency text-sm">
+                        {dict?.primaryPerformer}:
                       </span>
-                      <div className="text-white font-herm">
-                        <div className="font-mono text-xs">
-                          {step.fulfiller?.metadata?.title ??
-                            step.fulfiller.fulfiller}
-                        </div>
-                      </div>
+                      <p className="text-white font-pixel text-xs">
+                        {step.fulfiller?.metadata?.title ?? step.fulfiller.fulfiller}
+                      </p>
                     </div>
 
                     {step.instructions && (
-                      <div>
-                        <span className="text-ama font-herm">
-                          {dict?.instructions}:{" "}
+                      <div className="space-y-1">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.instructions}:
                         </span>
-                        <span className="text-white font-herm">
+                        <p className="text-white font-slim text-sm">
                           {step.instructions}
-                        </span>
+                        </p>
                       </div>
                     )}
 
                     {step.subPerformers?.length > 0 && (
-                      <div>
-                        <span className="text-ama font-herm">
-                          {dict?.subPerformers} ({step.subPerformers.length}):{" "}
+                      <div className="space-y-2">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.subPerformers} ({step.subPerformers.length}):
                         </span>
-                        <div className="mt-2 space-y-1">
+                        <div className="space-y-1">
                           {step.subPerformers.map(
                             (sub: any, subIndex: number) => (
                               <div
                                 key={subIndex}
-                                className="flex items-center justify-between text-xs"
+                                className="flex items-center justify-between"
                               >
-                                <span className="text-white font-mono">
+                                <span className="text-white font-pixel text-xs">
                                   {sub.performer}
                                 </span>
-                                <span className="text-mar font-herm">
+                                <span className="text-mar font-slim text-xs">
                                   {sub.splitBasisPoints / 100}%
                                 </span>
                               </div>
@@ -90,62 +115,59 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
         )}
 
         {workflow.physicalSteps?.length > 0 && (
-          <div>
-            <h4 className="text-sm font-herm text-ama mb-3">
+          <div className="space-y-3">
+            <span className="text-oro font-agency">
               {dict?.physicalSteps} ({workflow.physicalSteps.length})
-            </h4>
+            </span>
             <div className="space-y-3">
               {workflow.physicalSteps.map((step: any, index: number) => (
                 <div
                   key={index}
-                  className="bg-black border border-white rounded-sm p-3"
+                  className="bg-black/50 p-4 space-y-3"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-herm text-ama">
+                  <div className="flex items-center justify-between">
+                    <span className="text-oro font-agency text-sm">
                       {dict?.step} {index + 1}
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-ama font-herm">
-                        {dict?.primaryPerformer}:{" "}
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <span className="text-oro font-agency text-sm">
+                        {dict?.primaryPerformer}:
                       </span>
-                      <div className="text-white font-herm">
-                        <div className="font-mono text-xs">
-                          {step.fulfiller?.metadata?.title ??
-                            step.fulfiller.fulfiller}
-                        </div>
-                      </div>
+                      <p className="text-white font-pixel text-xs">
+                        {step.fulfiller?.metadata?.title ?? step.fulfiller.fulfiller}
+                      </p>
                     </div>
 
                     {step.instructions && (
-                      <div>
-                        <span className="text-ama font-herm">
-                          {dict?.instructions}:{" "}
+                      <div className="space-y-1">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.instructions}:
                         </span>
-                        <span className="text-white font-herm">
+                        <p className="text-white font-slim text-sm">
                           {step.instructions}
-                        </span>
+                        </p>
                       </div>
                     )}
 
                     {step.subPerformers?.length > 0 && (
-                      <div>
-                        <span className="text-ama font-herm">
-                          {dict?.subPerformers} ({step.subPerformers.length}):{" "}
+                      <div className="space-y-2">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.subPerformers} ({step.subPerformers.length}):
                         </span>
-                        <div className="mt-2 space-y-1">
+                        <div className="space-y-1">
                           {step.subPerformers.map(
                             (sub: any, subIndex: number) => (
                               <div
                                 key={subIndex}
-                                className="flex items-center justify-between text-xs"
+                                className="flex items-center justify-between"
                               >
-                                <span className="text-white font-mono">
+                                <span className="text-white font-pixel text-xs">
                                   {sub.performer}
                                 </span>
-                                <span className="text-mar font-herm">
+                                <span className="text-mar font-slim text-xs">
                                   {sub.splitBasisPoints / 100}%
                                 </span>
                               </div>
@@ -161,6 +183,6 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
           </div>
         )}
       </div>
-    </div>
+    </FancyBorder>
   );
 };

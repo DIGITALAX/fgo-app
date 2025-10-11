@@ -270,6 +270,7 @@ query($designId: Int!, $parentContract: String!) {
       }
     }
     workflow {
+      estimatedDeliveryDuration
       digitalSteps {
         instructions
         fulfiller {

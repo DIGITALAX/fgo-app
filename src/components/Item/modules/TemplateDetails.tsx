@@ -11,6 +11,7 @@ import { CreateItemModal } from "@/components/Account/modules/infrastructure/Cre
 import { ManualApprovalModal } from "@/components/Account/modules/infrastructure/ManualApprovalModal";
 import { TemplateDetailsProps } from "../types";
 import { useState } from "react";
+import Image from "next/image";
 
 export const TemplateDetails = ({
   contractAddress,
@@ -39,57 +40,115 @@ export const TemplateDetails = ({
   } = useTemplateActions(contractAddress, templateId, template, dict);
 
   if (isLoading) {
-    return <div>{dict?.loadingTemplate}</div>;
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="relative w-fit animate-spin h-fit flex">
+          <div className="relative w-6 h-6 flex">
+            <Image
+              layout="fill"
+              objectFit="cover"
+              src={"/images/scissors.png"}
+              draggable={false}
+              alt="loader"
+            />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div>
-        {dict?.error}: {error}
+      <div className="w-full h-screen flex items-center justify-center p-6">
+        <p className="text-fresa font-chicago text-sm">
+          {dict?.error}: {error}
+        </p>
       </div>
     );
   }
 
   if (!template) {
-    return <div>{dict?.templateNotFound}</div>;
+    return (
+      <div className="w-full h-screen flex items-center justify-center p-6">
+        <p className="text-white font-chicago text-sm">
+          {dict?.templateNotFound}
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 space-y-8 h-screen overflow-y-auto">
+    <div className="p-2 md:p-6 space-y-2 h-screen overflow-y-auto">
       {isSupplier && (
         <div className="flex gap-3 mb-6">
           {canCreate && (
             <button
               onClick={handleCreateTemplate}
               disabled={creating}
-              className={`px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black ${
-                creating && "cursor-not-allowed"
+              className={`relative px-3 py-1 bg-offNegro text-oro font-chicago text-xs uppercase cursor-pointer hover:opacity-70 ${
+                creating ? "cursor-not-allowed opacity-50" : ""
               }`}
             >
-              {creating ? dict?.creating : dict?.createTemplate}
+              <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                <Image
+                  src={"/images/borderoro2.png"}
+                  draggable={false}
+                  objectFit="fill"
+                  fill
+                  alt="border"
+                />
+              </div>
+              <span className="relative z-10">{creating ? dict?.creating : dict?.createTemplate}</span>
             </button>
           )}
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black"
+            className="relative px-3 py-1 bg-offNegro text-oro font-chicago text-xs uppercase cursor-pointer hover:opacity-70"
           >
-            {dict?.editTemplate}
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10">{dict?.editTemplate}</span>
           </button>
           <button
             onClick={handleDeleteTemplate}
             disabled={!canDelete || deleting}
-            className={`px-2 py-1 font-herm bg-white hover:opacity-70 rounded-sm flex items-center text-xs text-black ${
-              (!canDelete || deleting) && "cursor-default opacity-70"
+            className={`relative px-3 py-1 bg-offNegro text-fresa font-chicago text-xs uppercase cursor-pointer hover:opacity-70 ${
+              (!canDelete || deleting) ? "cursor-not-allowed opacity-50" : ""
             }`}
             title={!canDelete ? dict?.cannotDeleteChildUsageCount : ""}
           >
-            {deleting ? dict?.deleting : dict?.deleteTemplate}
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10">{deleting ? dict?.deleting : dict?.deleteTemplate}</span>
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}
-            className="px-2 py-1 font-herm bg-ama hover:opacity-70 rounded-sm flex items-center text-xs text-black"
+            className="relative px-3 py-1 bg-offNegro text-ama font-chicago text-xs uppercase cursor-pointer hover:opacity-70"
           >
-            {dict?.approvals}
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10">{dict?.approvals}</span>
           </button>
         </div>
       )}

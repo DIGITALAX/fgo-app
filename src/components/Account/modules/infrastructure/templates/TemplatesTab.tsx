@@ -5,6 +5,8 @@ import { ContractCard } from "../ContractCard";
 import { TemplateContractDetailView } from "./TemplateContractDetailView";
 import { useTemplatesNavigation } from "@/components/Account/hooks/infrastructure/templates/useTemplatesNavigation";
 import { useTemplateContracts } from "@/components/Account/hooks/infrastructure/templates/useTemplateContracts";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const TemplatesTab = ({
   infrastructure,
@@ -43,43 +45,78 @@ export const TemplatesTab = ({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-white">Template Contracts</h3>
+        <h3 className="text-lg font-awk uppercase text-oro">
+          template contracts
+        </h3>
         {isOwner && (
           <button
             onClick={openModal}
             disabled={infrastructure.isActive == false || loading}
-            className="px-3 py-2 bg-white hover:opacity-70 disabled:bg-ama disabled:text-black text-black text-sm font-herm rounded-sm transition-colors"
+            className="relative"
           >
-            Deploy Template Contract
+            <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center disabled:opacity-50">
+              <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                <Image
+                  src={"/images/borderoro2.png"}
+                  draggable={false}
+                  objectFit="fill"
+                  fill
+                  alt="border"
+                />
+              </div>
+              <span className="relative z-10">deploy template contract</span>
+            </div>
           </button>
         )}
       </div>
 
       {infrastructure.isActive == false && (
-        <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-          <p className="text-orange-400 text-sm">
-            Infrastructure is inactive. Cannot deploy template contracts.
-          </p>
-        </div>
+        <FancyBorder className="relative" type="diamond" color="oro">
+          <div className="relative z-10 p-4">
+            <p className="text-white text-sm font-chicago">
+              infrastructure is inactive. cannot deploy template contracts.
+            </p>
+          </div>
+        </FancyBorder>
       )}
 
       {contractsError && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-          <p className="text-red-400 text-sm">{contractsError}</p>
-          <button
-            onClick={refetch}
-            className="mt-2 text-red-400 hover:text-red-300 text-xs underline"
-          >
-            Try again
-          </button>
-        </div>
+        <FancyBorder className="relative" type="diamond" color="oro">
+          <div className="relative z-10 p-4 space-y-3">
+            <p className="text-fresa text-sm font-chicago">{contractsError}</p>
+            <div
+              onClick={refetch}
+              className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
+            >
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">try again</span>
+              </div>
+            </div>
+          </div>
+        </FancyBorder>
       )}
 
       {contractsLoading ? (
-        <div className="flex items-center justify-center font-herm">
-          <div className="flex items-center gap-2 text-white text-xs">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mar"></div>
-            <span>Loading template contracts...</span>
+        <div className="w-full h-full flex items-center justify-center py-12">
+          <div className="relative w-fit animate-spin h-fit flex">
+            <div className="relative w-6 h-6 flex">
+              <Image
+                layout="fill"
+                objectFit="cover"
+                src={"/images/scissors.png"}
+                draggable={false}
+                alt="loader"
+              />
+            </div>
           </div>
         </div>
       ) : templateContracts.length > 0 ? (
@@ -94,12 +131,14 @@ export const TemplatesTab = ({
           ))}
         </div>
       ) : (
-        <div className="p-6">
-          <p className="text-ama text-xs text-center font-herm">
-            {infrastructure.isActive
-              ? "No template contracts deployed yet. Deploy your first template contract to get started."
-              : "Infrastructure is inactive. Activate infrastructure to deploy template contracts."}
-          </p>
+        <div className="relative">
+          <div className="relative z-10 p-6 text-center">
+            <p className="text-gris font-chicago text-sm">
+              {infrastructure.isActive
+                ? "no template contracts deployed yet. deploy your first template contract to get started."
+                : "infrastructure is inactive. activate infrastructure to deploy template contracts."}
+            </p>
+          </div>
         </div>
       )}
 

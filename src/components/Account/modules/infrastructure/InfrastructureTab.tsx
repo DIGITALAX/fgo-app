@@ -5,6 +5,8 @@ import { InfrastructureCard } from "./InfrastructureCard";
 import { CreateInfrastructureModal } from "./CreateInfrastructureModal";
 import { InfrastructureDetailView } from "./InfrastructureDetailView";
 import { useCreateInfrastructure } from "../../hooks/infrastructure/useCreateInfrastructure";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const InfrastructureTab = ({ dict }: { dict: any }) => {
   const {
@@ -29,17 +31,17 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
 
   if (!isConnected) {
     return (
-      <div className="p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <h3 className="text-xl font-herm text-white mb-2">
+      <div className="p-6 flex items-center justify-center h-64">
+        <FancyBorder className="relative" type="none" color="oro">
+          <div className="relative z-10 p-8 text-center space-y-3">
+            <h3 className="text-2xl font-awk uppercase text-oro">
               {dict?.connectYourWallet}
             </h3>
-            <p className="text-white/60 font-herm">
+            <p className="text-gris font-chicago text-sm">
               {dict?.connectWalletViewInfrastructure}
             </p>
           </div>
-        </div>
+        </FancyBorder>
       </div>
     );
   }
@@ -56,41 +58,59 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-herm text-white">
+    <div className="p-4 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-awk uppercase text-oro">
           {dict?.infrastructure}
         </h2>
-        <button
+        <div
           onClick={openModal}
-          className="px-4 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors"
+          className="relative cursor-pointer hover:opacity-80 transition-opacity"
         >
-          {dict?.createInfrastructure}
-        </button>
+          <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro">
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10">{dict?.createInfrastructure}</span>
+          </div>
+        </div>
       </div>
 
       {loading && (
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ama mx-auto mb-4"></div>
-            <p className="text-white/60 font-herm">
-              {dict?.loadingInfrastructure}
-            </p>
+        <div className="w-full h-full flex items-center justify-center py-12">
+          <div className="relative w-fit animate-spin h-fit flex">
+            <div className="relative w-6 h-6 flex">
+              <Image
+                layout="fill"
+                objectFit="cover"
+                src={"/images/scissors.png"}
+                draggable={false}
+                alt="loader"
+              />
+            </div>
           </div>
         </div>
       )}
 
       {error && (
-        <div className="bg-fresa/10 border border-fresa/20 rounded-sm p-4 mb-6">
-          <p className="text-fresa text-sm font-herm">{error}</p>
-        </div>
+        <FancyBorder className="relative" type="none" color="oro">
+          <div className="relative z-10 p-4">
+            <p className="text-fresa text-sm font-chicago">{error}</p>
+          </div>
+        </FancyBorder>
       )}
 
       {!loading && fgoUser && (
         <div className="space-y-6">
           {fgoUser.ownedInfrastructures.length > 0 && (
             <div>
-              <h3 className="text-lg font-herm text-ama mb-4">
+              <h3 className="text-xl font-awk uppercase text-oro mb-4">
                 {dict?.ownedInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -109,7 +129,7 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
 
           {fgoUser.adminInfrastructures.length > 0 && (
             <div>
-              <h3 className="text-lg font-herm text-ama mb-4">
+              <h3 className="text-xl font-awk uppercase text-oro mb-4">
                 {dict?.adminInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

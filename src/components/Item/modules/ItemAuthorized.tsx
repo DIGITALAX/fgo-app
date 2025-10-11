@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useItemAuthorized } from "../hooks/useItemAuthorized";
 import { Child, ItemAuthorizedProps } from "../types";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
   const {
@@ -21,9 +22,21 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
 
   if (loading) {
     return (
-      <div className="border border-white rounded-sm p-6">
-        <div className="text-ama font-herm">{dict?.loadingAuthorizedItems}</div>
-      </div>
+      <FancyBorder type="diamond" color="oro" className="bg-black p-6">
+        <div className="w-full flex items-center justify-center py-4">
+          <div className="relative w-fit animate-spin h-fit flex">
+            <div className="relative w-6 h-6 flex">
+              <Image
+                layout="fill"
+                objectFit="cover"
+                src={"/images/scissors.png"}
+                draggable={false}
+                alt="loader"
+              />
+            </div>
+          </div>
+        </div>
+      </FancyBorder>
     );
   }
 
@@ -32,12 +45,16 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
   }
 
   return (
-    <div className="border border-white rounded-sm p-6">
-      <h3 className="text-lg font-herm text-white mb-4">{dict?.authorizedItems}</h3>
+    <FancyBorder type="diamond" color="oro" className="bg-black p-6 space-y-4">
+      <h3 className="text-lg font-agency uppercase text-white mb-4">
+        {dict?.authorizedItems}
+      </h3>
 
       {processedAuthorizedChildren.length > 0 && (
-        <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">{dict?.authorizedChildren}</h4>
+        <div className="space-y-3">
+          <span className="text-oro font-agency">
+            {dict?.authorizedChildren}
+          </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {processedAuthorizedChildren.map((child, index: number) => (
               <button
@@ -45,7 +62,7 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                 onClick={() =>
                   handleChildClick(child.childContract, child.childId)
                 }
-                className="p-2 gap-2 flex flex-col border border-white rounded-sm overflow-hidden hover:opacity-70"
+                className="p-2 gap-2 flex flex-col bg-black/50 overflow-hidden hover:opacity-70"
               >
                 {child.metadata?.image && (
                   <div className="relative w-full h-20">
@@ -54,12 +71,15 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                       fill
                       sizes="300px"
                       src={getImageUrl(child.metadata.image)}
-                      alt={child.metadata?.title || `${dict?.child} ${child.childId}`}
+                      alt={
+                        child.metadata?.title ||
+                        `${dict?.child} ${child.childId}`
+                      }
                       className="object-contain"
                     />
                   </div>
                 )}
-                <div className="text-ama font-herm text-sm underline">
+                <div className="text-oro font-agency text-sm underline">
                   {child.metadata?.title || `${dict?.child} ${child.childId}`}
                 </div>
               </button>
@@ -69,20 +89,19 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
       )}
 
       {processedAuthorizedParents.length > 0 && (
-        <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">{dict?.authorizedParents}</h4>
+        <div className="space-y-3">
+          <span className="text-oro font-agency">
+            {dict?.authorizedParents}
+          </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedParents.map((parent, index: number) => (
-              <div
-                key={index}
-                className="bg-black/20 border border-white/30 rounded-sm overflow-hidden"
-              >
+              <div key={index} className="bg-black/50 overflow-hidden">
                 {parent.metadata?.image && (
-                  <div className="relative w-full h-32">
+                  <div className="relative w-full h-32 w-32">
                     <Image
                       draggable={false}
                       fill
-                      sizes="300px"
+                      objectPosition="top left"
                       src={getImageUrl(parent.metadata.image)}
                       alt={
                         parent.metadata?.title ||
@@ -92,19 +111,17 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                     />
                   </div>
                 )}
-                <div className="p-4">
+                <div className="space-y-2">
                   <button
                     onClick={() =>
-                      handleParentClick(
-                        parent.parentContract,
-                        parent.parentId
-                      )
+                      handleParentClick(parent.parentContract, parent.parentId)
                     }
-                    className="text-ama hover:text-ama/80 font-herm text-sm underline mb-2"
+                    className="text-oro hover:text-oro/80 font-agency text-sm underline"
                   >
-                    {parent.metadata?.title || `${dict?.parent} ${parent.parentId}`}
+                    {parent.metadata?.title ||
+                      `${dict?.parent} ${parent.parentId}`}
                   </button>
-                  <p className="text-ama text-xs font-herm break-all">
+                  <p className="text-white text-xs font-slim break-all">
                     {parent.parentContract}
                   </p>
                 </div>
@@ -115,14 +132,13 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
       )}
 
       {processedAuthorizedTemplates.length > 0 && (
-        <div>
-          <h4 className="text-ama font-herm mb-3">{dict?.authorizedTemplates}</h4>
+        <div className="space-y-3">
+          <span className="text-oro font-agency">
+            {dict?.authorizedTemplates}
+          </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedTemplates.map((template, index: number) => (
-              <div
-                key={index}
-                className="bg-black/20 border border-white/30 rounded-sm overflow-hidden"
-              >
+              <div key={index} className="bg-black/50 overflow-hidden">
                 {template.metadata?.image && (
                   <div className="relative w-full h-32">
                     <Image
@@ -138,7 +154,7 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                     />
                   </div>
                 )}
-                <div className="p-4">
+                <div className="p-4 space-y-2">
                   <button
                     onClick={() =>
                       handleTemplateClick(
@@ -146,12 +162,12 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                         template.templateId
                       )
                     }
-                    className="text-ama hover:text-ama/80 font-herm text-sm underline mb-2"
+                    className="text-oro hover:text-oro/80 font-agency text-sm underline"
                   >
                     {template.metadata?.title ||
                       `${dict?.template} ${template.templateId}`}
                   </button>
-                  <p className="text-ama text-xs font-herm break-all">
+                  <p className="text-white text-xs font-slim break-all">
                     {template.templateContract}
                   </p>
                 </div>
@@ -160,6 +176,6 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
           </div>
         </div>
       )}
-    </div>
+    </FancyBorder>
   );
 };

@@ -24,102 +24,163 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
   return (
     <div
       onClick={handleClick}
-      className="group cursor-pointer transition-all duration-300 bg-amber-950/20 border border-amber-800/50 hover:border-amber-600/70 relative overflow-hidden"
+      className="group cursor-pointer transition-all duration-300 relative overflow-hidden"
     >
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-800/40 via-amber-700/60 to-amber-800/40"></div>
-
-      <div className="p-3 space-y-3">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-mono uppercase tracking-wide text-amber-600/80 mb-1">
+      <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+        <Image
+          src={"/images/borderpurple.png"}
+          draggable={false}
+          objectFit="fill"
+          fill
+          alt="border"
+        />
+      </div>
+      <div className="p-3 space-y-3 text-white">
+        <div className="flex items-start  justify-between gap-2 mb-2">
+          <div className="flex flex-col w-fit h-fit">
+            <div className="text-xs font-awk uppercase tracking-wide mb-1">
               {dict?.lot} #{itemId}
             </div>
-            <h4 className="text-white font-medium text-sm leading-tight truncate">
+            <h4 className="font-agency text-base leading-tight truncate">
               {detalles?.titulo}
             </h4>
           </div>
-          <div className="flex-shrink-0">
-            <span className="inline-block px-2 py-1 bg-amber-950/40 border border-amber-800/60 text-xs font-mono uppercase tracking-wide text-amber-200">
-              {statusLabel}
-            </span>
-          </div>
+          {!onClick && (
+            <div className="flex">
+              <div className="text-xs text-gris font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                {statusLabel}
+              </div>
+            </div>
+          )}
         </div>
-
-        <div className="relative aspect-square bg-amber-950/40 border border-amber-800/50 overflow-hidden">
+        <div className="relative aspect-square overflow-hidden">
           {detalles?.imageURL && (
             <Image
               src={detalles?.imageURL}
               fill
               draggable={false}
               alt={detalles?.titulo}
-              className="object-contain transition-transform duration-300"
+              className="object-contain rounded-md transition-transform duration-300"
             />
           )}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-950/90 via-amber-950/50 to-transparent h-16"></div>
+          <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+            <Image
+              src={"/images/borderblue.png"}
+              draggable={false}
+              objectFit="fill"
+              fill
+              alt="border"
+            />
+          </div>
           <div className="absolute bottom-2 left-2 right-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-mono text-amber-100 bg-amber-950/70 px-2 py-1 border border-amber-800/60">
+            <div className="flex items-center gap-2 text-xs">
+              <div className="text-xs text-verde font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro/70 rounded-sm">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderblue.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
                 {data?.availability}
-              </span>
-              <span className="font-mono text-amber-100 bg-amber-950/70 px-2 py-1 border border-amber-800/60">
+              </div>
+              <div className="text-xs text-verde font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro/70 rounded-sm">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderblue.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
                 {data?.scm}
-              </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-amber-800/50 pt-3">
-          <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+        <div className="pt-3">
+          <div className="grid grid-cols-2 gap-2 text-base mb-2">
             <div className="space-y-1">
-              <div className="font-mono uppercase tracking-wide text-amber-600/70">
+              <div className="font-awk uppercase tracking-wide text-gris">
                 {dict?.supplier}
               </div>
-              <div className="text-amber-200 text-xs leading-tight truncate">
+              <div className="text-oro font-slim text-xs leading-tight truncate">
                 {detalles?.proveedorT}
               </div>
             </div>
             <div className="space-y-1">
-              <div className="font-mono uppercase tracking-wide text-amber-600/70">
+              <div className="font-awk uppercase tracking-wide text-gris">
                 {dict?.usage}
               </div>
-              <div className="text-amber-100 font-mono">{data.usageCount}</div>
+              <div className="text-oro font-slim text-xs leading-tight truncate">
+                {data.usageCount}
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-amber-900/50 pt-2">
+          <div className="pt-2">
             <div className="space-y-1">
               {data?.availability !== "Physical Only" && (
                 <div className="flex justify-between items-center">
-                  <span className="font-mono uppercase text-xs text-amber-600/70">
+                  <span className="font-awk text-oro uppercase text-lg">
                     {dict?.digital}
                   </span>
-                  <span className="font-mono text-xs text-amber-100 bg-amber-950/50 px-2 py-0.5 border border-amber-800/60">
+                  <div className="text-xs text-gris font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro">
+                    <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                      <Image
+                        src={"/images/borderoro2.png"}
+                        draggable={false}
+                        objectFit="fill"
+                        fill
+                        alt="border"
+                      />
+                    </div>
                     {detalles?.precioD ? detalles?.precioD : dict?.free}
-                  </span>
+                  </div>
                 </div>
               )}
               {data?.availability !== "Digital Only" && (
                 <div className="flex justify-between items-center">
-                  <span className="font-mono uppercase text-xs text-amber-600/70">
+                  <span className="font-awk uppercase text-lg text-oro">
                     {dict?.physical}
                   </span>
-                  <span className="font-mono text-xs text-amber-100 bg-amber-950/50 px-2 py-0.5 border border-amber-800/60">
+                  <div className="text-xs text-gris font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro">
+                    <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                      <Image
+                        src={"/images/borderoro2.png"}
+                        draggable={false}
+                        objectFit="fill"
+                        fill
+                        alt="border"
+                      />
+                    </div>
                     {detalles?.precioP ? detalles?.precioP : dict?.free}
-                  </span>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-2 pt-2 border-t border-amber-900/50">
-            <div className="text-xs font-mono text-amber-600/70 uppercase tracking-wide">
+          <div className="mt-2 text-gris text-center w-full justify-center flex">
+            <div className="text-sm font-awk uppercase tracking-wide">
               {formattedDate}
             </div>
           </div>
         </div>
       </div>
-
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-800/40 via-amber-700/60 to-amber-800/40"></div>
     </div>
   );
 };

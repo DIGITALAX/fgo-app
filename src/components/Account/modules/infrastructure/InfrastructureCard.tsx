@@ -18,40 +18,87 @@ export const InfrastructureCard = ({
   return (
     <div
       onClick={() => onClick(infrastructure, isOwner)}
-      className="group overflow-hidden gap-2 flex flex-col cursor-pointer transition-colors p-2"
+      className="group cursor-pointer transition-all duration-300 relative overflow-hidden"
     >
-      <div className="border border-white rounded-sm p-2 group-hover:border-fresa transition-colors">
-        {imageUrl && (
-          <div className="aspect-square w-full relative">
+      <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+        <Image
+          src={"/images/borderpurple.png"}
+          draggable={false}
+          objectFit="fill"
+          fill
+          alt="border"
+        />
+      </div>
+      <div className="relative z-10 p-3 space-y-3">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex flex-col w-fit h-fit">
+            <div className="text-xs font-awk uppercase tracking-wide mb-1 text-oro">
+              {dict?.infraId} #{infrastructure.infraId}
+            </div>
+            <h4 className="font-agency text-base leading-tight truncate text-white">
+              {title}
+            </h4>
+          </div>
+          {isOwner && (
+            <div className="flex">
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">{dict?.superAdmin}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="relative aspect-square overflow-hidden">
+          {imageUrl && (
             <Image
               src={imageUrl}
               fill
               draggable={false}
               alt={title}
-              className="object-cover"
+              className="object-cover rounded-md transition-transform duration-300"
+            />
+          )}
+          <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+            <Image
+              src={"/images/borderblue.png"}
+              draggable={false}
+              objectFit="fill"
+              fill
+              alt="border"
             />
           </div>
-        )}
-      </div>
-      <div className="border border-white rounded-sm w-full flex flex-row gap-2 justify-between p-2 text-xs uppercase font-break text-ama group-hover:border-fresa transition-colors">
-        <div className="relative w-fit h-fit flex">{title}</div>
-        {isOwner && (
-          <div className="relative w-fit h-fit flex">{dict?.superAdmin}</div>
-        )}
-      </div>
-      <div className="space-y-2 border border-white rounded-sm p-2 group-hover:border-fresa transition-colors">
-        <div className="flex items-center justify-between">
-          <span className="text-xs truncate">{dict?.status}</span>
-          <span
-            className={`px-2 py-1 rounded bg-ama/20 border border-ama text-xs`}
-          >
-            {infrastructure.isActive ? dict?.active : dict?.inactive}
-          </span>
+          <div className="absolute bottom-2 left-2">
+            <div className="text-xs text-oro font-chicago relative lowercase flex px-3 py-1 bg-offNegro/70 rounded-sm">
+              <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                <Image
+                  src={"/images/borderblue.png"}
+                  draggable={false}
+                  objectFit="fill"
+                  fill
+                  alt="border"
+                />
+              </div>
+              <span className="relative z-10">
+                {infrastructure.isActive ? dict?.active : dict?.inactive}
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="space-y-1 text-xs">
-          <div className="flex justify-between">
-            <span>{dict?.infraId}:</span>
-            <span className="text-ama"> {infrastructure.infraId}</span>
+
+        <div className="pt-3">
+          <div className="text-gris text-center w-full justify-center flex">
+            <div className="text-sm font-awk uppercase tracking-wide">
+              {infrastructure.metadata?.description}
+            </div>
           </div>
         </div>
       </div>

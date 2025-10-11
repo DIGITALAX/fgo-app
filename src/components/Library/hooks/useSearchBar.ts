@@ -8,8 +8,7 @@ export const useSearchBar = ({ searchText, onSearch }: SearchBarProps) => {
     setInputValue(e.target.value);
   }, []);
 
-  const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(() => {
     onSearch(inputValue.trim());
   }, [inputValue, onSearch]);
 

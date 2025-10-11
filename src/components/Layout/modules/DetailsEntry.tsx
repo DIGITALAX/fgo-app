@@ -9,7 +9,7 @@ export default function DetailsEntry({ dict }: { dict: any }) {
   const { type, contract, id } = useParams();
 
   if (!type || !contract || !id) {
-    return <div>{dict?.item}</div>;
+    return <div className="font-chicago">{dict?.item}</div>;
   }
 
   return (

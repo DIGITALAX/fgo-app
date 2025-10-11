@@ -5,6 +5,7 @@ import { useLibrary } from "../hooks/useLibrary";
 import { LibraryCard } from "./LibraryCard";
 import { SearchBar } from "./SearchBar";
 import { AdvancedFilters } from "./AdvancedFilters";
+import Image from "next/image";
 
 export const Library = ({ dict }: { dict: any }) => {
   const {
@@ -19,26 +20,62 @@ export const Library = ({ dict }: { dict: any }) => {
   } = useLibrary(dict);
 
   if (error) {
-    return <div>{dict?.error}: {error}</div>;
+    return (
+      <div>
+        {dict?.error}: {error}
+      </div>
+    );
   }
 
   if (isLoading && items.length === 0) {
-    return <div>{dict?.loading}</div>;
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="relative w-fit animate-spin h-fit flex">
+        <div className="relative w-6 h-6 flex">
+          <Image
+            layout="fill"
+            objectFit="cover"
+            src={"/images/scissors.png"}
+            draggable={false}
+            alt="loader"
+          />
+        </div>
+      </div>
+    </div>
+  );
   }
 
   return (
     <div className="h-full flex flex-col">
       <div className="p-4">
-        <SearchBar searchText={filters.searchText} onSearch={handleSearch} dict={dict} />
-        <AdvancedFilters filters={filters} onFiltersChange={handleFiltersChange} dict={dict} />
+        <SearchBar
+          searchText={filters.searchText}
+          onSearch={handleSearch}
+          dict={dict}
+        />
+        <AdvancedFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          dict={dict}
+        />
       </div>
       <InfiniteScroll
         dataLength={items.length}
         next={loadMore}
         hasMore={hasMore}
         loader={
-          <div className="text-center py-4 text-gray-400">
-            {dict?.loadingMore}
+          <div className="flex items-center justify-center py-4">
+            <div className="relative w-fit animate-spin h-fit flex">
+              <div className="relative w-6 h-6 flex">
+                <Image
+                  layout="fill"
+                  objectFit="cover"
+                  src={"/images/scissors.png"}
+                  draggable={false}
+                  alt="loader"
+                />
+              </div>
+            </div>
           </div>
         }
         height="calc(100vh - 300px)"

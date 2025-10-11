@@ -1,132 +1,207 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: "Gennaro";
+  font-family: "Chicago";
   font-weight: 400;
-  src: url("/fonts/gennaro.ttf");
+  src: url("/fonts/ChicagoKare.otf");
 }
 
 @font-face {
-  font-family: "Break Regular";
+  font-family: "Pixel";
   font-weight: 400;
-  src: url("/fonts/breakRegular.ttf");
+  src: url("/fonts/PixeloidMono.otf");
 }
 
 @font-face {
-  font-family: "Clash Display M";
+  font-family: "Awkward";
   font-weight: 400;
-  src: url("/fonts/ClashDisplayM.otf");
+  src: url("/fonts/Awkward.ttf");
 }
 
 @font-face {
-  font-family: "Clash Display B";
+  font-family: "Agency";
   font-weight: 400;
-  src: url("/fonts/ClashDisplayB.otf");
+  src: url("/fonts/Agency.ttf");
 }
 
 @font-face {
-  font-family: "Hermano";
+  font-family: "Count";
   font-weight: 400;
-  src: url("/fonts/HermanoAltoStamp.ttf");
+  src: url("/fonts/Countdown.ttf");
+}
+
+@font-face {
+  font-family: "Slim";
+  font-weight: 400;
+  src: url("/fonts/Slim.otf");
 }
 
 @theme {
-  --color-offNegro: #0f0f0f;
+  --color-offNegro: #16130d;
   --color-azul: #2a36f6;
   --color-mar: #2abdf6;
   --color-fresa: #b620e0;
   --color-ama: #fbdb86;
+  --color-gris: #c7cbce;
+  --color-oro: #aba584;
+  --color-amarillo: #debf83;
+  --color-verde: #65ff85;
 
-  --font-gen: "Gennaro";
-  --font-break: "Break Regular";
-  --font-clashM: "Clash Display M";
-  --font-clashB: "Clash Display B";
-  --font-herm: "Hermano";
+  --font-chicago: "Chicago";
+  --font-pixel: "Pixel";
+  --font-awk: "Awkward";
+  --font-count: "Count";
+  --font-agency: "Agency";
+  --font-slim: "Slim";
 }
 
-@layer base {
-  body {
-    font-family: var(--font-clashM);
+@layer {
+  .font-chicago {
+    font-family: var(--font-chicago);
+  }
+  .font-pixel {
+    font-family: var(--font-pixel);
+  }
+  .font-awk {
+    font-family: var(--font-awk);
+  }
+  .font-agency {
+    font-family: var(--font-agency);
+  }
+  .font-count {
+    font-family: var(--font-count);
+  }
+  .font-slim {
+    font-family: var(--font-slim);
   }
 
-  h1 {
-    font-family: var(--font-clashB);
+  .fancy-border-oro::before,
+  .fancy-border-white::before,
+  .fancy-border-purple::before,
+  .fancy-border-blue::before,
+  .fancy-border-ama::before,
+  .fancy-border-verde::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mask:
+      radial-gradient(12px at 12px 12px, transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) -12px -12px,
+      radial-gradient(12px at calc(100% - 12px) 12px, transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) 12px -12px,
+      radial-gradient(12px at calc(100% - 12px) calc(100% - 12px), transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) 12px 12px,
+      radial-gradient(12px at 12px calc(100% - 12px), transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) -12px 12px,
+      linear-gradient(90deg, black 2px, transparent 0) -1px 50% / 100% calc(100% - 24px + 2px) repeat-x,
+      linear-gradient(black 2px, transparent 0) 50% -1px / calc(100% - 24px + 2px) 100% repeat-y;
+    -webkit-mask:
+      radial-gradient(12px at 12px 12px, transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) -12px -12px,
+      radial-gradient(12px at calc(100% - 12px) 12px, transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) 12px -12px,
+      radial-gradient(12px at calc(100% - 12px) calc(100% - 12px), transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) 12px 12px,
+      radial-gradient(12px at 12px calc(100% - 12px), transparent calc(100% - 2px), black calc(100% - 2px) 100%, transparent) -12px 12px,
+      linear-gradient(90deg, black 2px, transparent 0) -1px 50% / 100% calc(100% - 24px + 2px) repeat-x,
+      linear-gradient(black 2px, transparent 0) 50% -1px / calc(100% - 24px + 2px) 100% repeat-y;
   }
 
-  h2 {
-    font-family: var(--font-herm);
+  .fancy-border-oro {
+    position: relative;
+  }
+  .fancy-border-oro::before {
+    background: #aba584;
   }
 
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-clashM);
+  .fancy-border-white {
+    position: relative;
+  }
+  .fancy-border-white::before {
+    background: #ffffff;
   }
 
-  button {
-    font-family: var(--font-break);
+  .fancy-border-purple {
+    position: relative;
+  }
+  .fancy-border-purple::before {
+    background: #b620e0;
   }
 
-  input,
-  textarea,
-  select {
-    font-family: var(--font-clash);
+  .fancy-border-blue {
+    position: relative;
+  }
+  .fancy-border-blue::before {
+    background: #2abdf6;
   }
 
-  .font-mono {
-    font-family: var(--font-herm);
+  .fancy-border-ama {
+    position: relative;
   }
-}
+  .fancy-border-ama::before {
+    background: #fbdb86;
+  }
 
-@layer utilities {
-  .font-gen {
-    font-family: var(--font-gen);
+  .fancy-border-verde {
+    position: relative;
   }
-  .font-break {
-    font-family: var(--font-break);
-  }
-  .font-clashM {
-    font-family: var(--font-clashM);
-  }
-  .font-clashB {
-    font-family: var(--font-clashB);
-  }
-  .font-herm {
-    font-family: var(--font-herm);
+  .fancy-border-verde::before {
+    background: #65ff85;
   }
 }
 
 html {
-  background-color: #111313;
+  background-color: #000000;
   overflow-x: hidden;
   color: white;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><text x='15' y='20' font-family='monospace' font-size='14' fill='white'>×</text><text x='45' y='20' font-family='monospace' font-size='14' fill='%232abdf6'>×</text><text x='15' y='50' font-family='monospace' font-size='14' fill='%232abdf6'>×</text><text x='45' y='50' font-family='monospace' font-size='14' fill='white'>×</text></svg>");
-  background-repeat: repeat;
-  scrollbar-width: 2px;
-  scrollbar-color: #2abdf6 #f1f1f1;
-  scrollbar-face-color: #078fd6;
+  scrollbar-width: thin;
+  scrollbar-color: #aba584 transparent;
 }
 
 ::-webkit-scrollbar {
   width: 2px;
-  background-color: #f1f1f1;
+  height: 0px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 0px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #2abdf6;
+  background-color: #aba584;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #078fd6;
+  background-color: #aba584;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track:horizontal {
+  background: transparent;
 }
 
 button {
   cursor: pointer;
 }
 
-#title {
-  -webkit-text-stroke: 1px white;
-  -moz-text-stroke: 1px white;
-  text-stroke: 1px white;
+input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #aba584;
+  background-color: #16130d;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #aba584;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #16130d;
+  font-size: 12px;
+  font-weight: bold;
 }

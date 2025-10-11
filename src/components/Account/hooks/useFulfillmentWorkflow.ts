@@ -8,6 +8,9 @@ export const useFulfillmentWorkflow = (initialWorkflow?: Workflow) => {
   const [physicalSteps, setPhysicalSteps] = useState<FulfillmentStep[]>(
     initialWorkflow?.physicalSteps || []
   );
+  const [estimatedDeliveryDuration, setEstimatedDeliveryDuration] = useState<number>(
+    initialWorkflow?.estimatedDeliveryDuration || 0
+  );
 
   const createEmptyStep = (): FulfillmentStep => ({
     primaryPerformer: "",
@@ -164,11 +167,16 @@ export const useFulfillmentWorkflow = (initialWorkflow?: Workflow) => {
   const resetWorkflow = useCallback(() => {
     setDigitalSteps(initialWorkflow?.digitalSteps || []);
     setPhysicalSteps(initialWorkflow?.physicalSteps || []);
+    setEstimatedDeliveryDuration(initialWorkflow?.estimatedDeliveryDuration || 0);
   }, [initialWorkflow]);
+
+  
 
   return {
     digitalSteps,
     physicalSteps,
+    estimatedDeliveryDuration,
+    setEstimatedDeliveryDuration,
     addDigitalStep,
     addPhysicalStep,
     removeDigitalStep,

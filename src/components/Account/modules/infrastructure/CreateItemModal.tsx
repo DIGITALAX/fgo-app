@@ -6,6 +6,8 @@ import { FulfillmentWorkflowModal } from "./FulfillmentWorkflowModal";
 import { useState, useEffect } from "react";
 import { Child } from "@/components/Item/types";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
+import Image from "next/image";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const CreateItemModal = ({
   isOpen,
@@ -24,6 +26,9 @@ export const CreateItemModal = ({
   const [editingPlacementIndex, setEditingPlacementIndex] = useState<
     number | null
   >(null);
+  const [isAvailabilityDropdownOpen, setIsAvailabilityDropdownOpen] =
+    useState(false);
+
   const {
     formData,
     handleInputChange,
@@ -61,7 +66,6 @@ export const CreateItemModal = ({
 
   if (!isOpen) return null;
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -83,7 +87,6 @@ export const CreateItemModal = ({
     }
   };
 
-
   const handleCancel = () => {
     setIsCancelled(true);
     resetForm();
@@ -102,11 +105,21 @@ export const CreateItemModal = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-black rounded-sm border border-white w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl max-h-full overflow-hidden flex flex-col">
-        <div className="p-3 sm:p-4 border-b border-white flex-shrink-0">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+          <Image
+            src={"/images/borderblue.png"}
+            draggable={false}
+            objectFit="fill"
+            fill
+            alt="border"
+          />
+        </div>
+
+        <div className="relative z-10 p-6 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <h2 className="text-base sm:text-lg font-herm text-white">
+            <h2 className="text-2xl font-awk uppercase text-oro">
               {isEditMode
                 ? `${dict?.edit} ${
                     mode === "parent"
@@ -123,21 +136,26 @@ export const CreateItemModal = ({
                       : dict?.childItem
                   }`}
             </h2>
-            <button
+            <div
               onClick={handleClose}
-              className="text-white hover:text-ama transition-colors font-herm"
-              disabled={loading}
+              className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
             >
-              ✕
-            </button>
+              <Image
+                src={"/images/plug.png"}
+                draggable={false}
+                fill
+                objectFit="contain"
+                alt="close"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <form onSubmit={handleSubmit} className="p-3 sm:p-4 space-y-4 sm:space-y-6">
+        <div className="relative z-10 flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {!(mode === "parent" && isEditMode) && (
               <div>
-                <h3 className="text-base font-herm text-white mb-3">
+                <h3 className="text-xl font-awk uppercase text-oro mb-4">
                   {dict?.metadata}
                 </h3>
                 {(!isEditMode || !(editItem as Child)?.isImmutable) && (
@@ -163,177 +181,265 @@ export const CreateItemModal = ({
                   />
                 )}
                 {isEditMode && (editItem as Child)?.isImmutable && (
-                  <div className="p-4 bg-black border border-ama rounded-sm">
-                    <p className="text-ama text-sm font-herm">
-                      {dict?.metadataCannotModify}
-                    </p>
-                  </div>
+                  <FancyBorder type="diamond" color="oro" className="relative">
+                    <div className="relative z-10 p-4">
+                      <p className="text-white text-sm font-chicago">
+                        {dict?.metadataCannotModify}
+                      </p>
+                    </div>
+                  </FancyBorder>
                 )}
               </div>
             )}
 
             <div>
-              <h3 className="text-base font-herm text-white mb-3">
+              <h3 className="text-xl font-awk uppercase text-oro mb-4">
                 {dict?.contractConfiguration}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(mode === "parent" && isEditMode) ||
-                (mode === "parent" && !isEditMode && (formData.availability === 0 || formData.availability === 2)) ||
+                (mode === "parent" &&
+                  !isEditMode &&
+                  (formData.availability === 0 ||
+                    formData.availability === 2)) ||
                 (mode !== "parent" && isEditMode) ||
                 (mode !== "parent" &&
                   !isEditMode &&
                   (formData.availability === 0 ||
                     formData.availability === 2)) ? (
                   <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
+                    <label className="block text-sm font-chicago text-gris mb-2">
                       {dict?.digitalPrice} *
                     </label>
-                    <input
-                      type="text"
-                      name="digitalPrice"
-                      value={formData.digitalPrice || "0"}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      placeholder="0"
-                      disabled={loading}
-                      required
-                    />
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="text"
+                        name="digitalPrice"
+                        value={formData.digitalPrice || "0"}
+                        onChange={handleInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder="0"
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
                   </div>
                 ) : null}
 
                 {(mode === "parent" && isEditMode) ||
-                (mode === "parent" && !isEditMode && (formData.availability === 1 || formData.availability === 2)) ||
+                (mode === "parent" &&
+                  !isEditMode &&
+                  (formData.availability === 1 ||
+                    formData.availability === 2)) ||
                 (mode !== "parent" &&
                   (formData.availability === 1 ||
                     formData.availability === 2)) ? (
                   <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
+                    <label className="block text-sm font-chicago text-gris mb-2">
                       {dict?.physicalPrice} *
                     </label>
-                    <input
-                      type="text"
-                      name="physicalPrice"
-                      value={formData.physicalPrice || "0"}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      placeholder="0"
-                      disabled={loading}
-                      required
-                    />
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="text"
+                        name="physicalPrice"
+                        value={formData.physicalPrice || "0"}
+                        onChange={handleInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder="0"
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
                   </div>
                 ) : null}
 
                 {mode !== "parent" &&
                   (!isEditMode || !(editItem as Child)?.isImmutable) && (
                     <div>
-                      <label className="block text-sm font-herm text-ama mb-2">
+                      <label className="block text-sm font-chicago text-gris mb-2">
                         {dict?.version} *
                       </label>
-                      <input
-                        type="number"
-                        name="version"
-                        value={formData.version || "1"}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                        placeholder="1"
-                        min="1"
-                        disabled={loading}
-                        required
-                      />
+                      <FancyBorder
+                        color="white"
+                        type="circle"
+                        className="relative"
+                      >
+                        <input
+                          type="number"
+                          name="version"
+                          value={formData.version || "1"}
+                          onChange={handleInputChange}
+                          className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                          placeholder="1"
+                          min="1"
+                          disabled={loading}
+                          required
+                        />
+                      </FancyBorder>
                     </div>
                   )}
 
                 {(mode === "parent" && isEditMode) ||
-                (mode === "parent" && !isEditMode && (formData.availability === 1 || formData.availability === 2)) ||
+                (mode === "parent" &&
+                  !isEditMode &&
+                  (formData.availability === 1 ||
+                    formData.availability === 2)) ||
                 (mode !== "parent" &&
                   (formData.availability === 1 ||
                     formData.availability === 2)) ? (
                   <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
+                    <label className="block text-sm font-chicago text-gris mb-2">
                       {dict?.maxPhysicalEditions} *
                     </label>
-                    <input
-                      type="number"
-                      name="maxPhysicalEditions"
-                      value={formData.maxPhysicalEditions || "0"}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      placeholder="0"
-                      min={
-                        isEditMode && editItem?.currentPhysicalEditions
-                          ? editItem.currentPhysicalEditions
-                          : "0"
-                      }
-                      disabled={loading}
-                      required
-                    />
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="number"
+                        name="maxPhysicalEditions"
+                        value={formData.maxPhysicalEditions || "0"}
+                        onChange={handleInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder="0"
+                        min={
+                          isEditMode && editItem?.currentPhysicalEditions
+                            ? editItem.currentPhysicalEditions
+                            : "0"
+                        }
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
                   </div>
                 ) : null}
 
-                {mode === "parent" && (formData.availability === 0 || formData.availability === 2) && (
-                  <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
-                      {dict?.maxDigitalEditions} *
-                    </label>
-                    <input
-                      type="number"
-                      name="maxDigitalEditions"
-                      value={formData.maxDigitalEditions || "0"}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      placeholder="0"
-                      min="0"
-                      disabled={loading}
-                      required
-                    />
-                  </div>
-                )}
+                {mode === "parent" &&
+                  (formData.availability === 0 ||
+                    formData.availability === 2) && (
+                    <div>
+                      <label className="block text-sm font-chicago text-gris mb-2">
+                        {dict?.maxDigitalEditions} *
+                      </label>
+                      <FancyBorder
+                        color="white"
+                        type="circle"
+                        className="relative"
+                      >
+                        <input
+                          type="number"
+                          name="maxDigitalEditions"
+                          value={formData.maxDigitalEditions || "0"}
+                          onChange={handleInputChange}
+                          className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                          placeholder="0"
+                          min="0"
+                          disabled={loading}
+                          required
+                        />
+                      </FancyBorder>
+                    </div>
+                  )}
 
                 {!isEditMode && (
                   <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
+                    <label className="block text-sm font-chicago text-gris mb-2">
                       {dict?.availability} *
                     </label>
-                    <select
-                      name="availability"
-                      value={formData.availability}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      disabled={loading}
-                      required
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
                     >
-                      {availabilityOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      <div
+                        onClick={() =>
+                          setIsAvailabilityDropdownOpen(
+                            !isAvailabilityDropdownOpen
+                          )
+                        }
+                        className="relative z-10 w-full px-3 py-2 text-gris text-sm cursor-pointer flex items-center justify-between font-chicago"
+                      >
+                        <span>
+                          {
+                            availabilityOptions.find(
+                              (opt) => opt.value === formData.availability
+                            )?.label
+                          }
+                        </span>
+                        <div className="relative w-3 h-3 rotate-90">
+                          <Image
+                            src={"/images/arrow.png"}
+                            draggable={false}
+                            fill
+                            alt="arrow"
+                          />
+                        </div>
+                      </div>
+                      {isAvailabilityDropdownOpen && (
+                        <div className="absolute z-20 w-full mt-1 bg-black border border-white font-chicago">
+                          {availabilityOptions.map((option) => (
+                            <div
+                              key={option.value}
+                              onClick={() => {
+                                handleInputChange({
+                                  target: {
+                                    name: "availability",
+                                    value: option.value,
+                                  },
+                                } as any);
+                                setIsAvailabilityDropdownOpen(false);
+                              }}
+                              className="px-3 py-2 text-sm cursor-pointer hover:bg-white hover:text-black text-gris"
+                            >
+                              {option.label}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </FancyBorder>
                   </div>
                 )}
 
                 {mode === "parent" && !isEditMode && (
                   <div>
-                    <label className="block text-sm font-herm text-ama mb-2">
+                    <label className="block text-sm font-chicago text-gris mb-2">
                       {dict?.printType} *
                     </label>
-                    <input
-                      type="number"
-                      name="printType"
-                      value={formData.printType || "0"}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 bg-black border border-white rounded-sm text-white focus:outline-none focus:ring-2 focus:ring-ama focus:border-ama font-herm"
-                      placeholder="0"
-                      min="0"
-                      disabled={loading}
-                      required
-                    />
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="number"
+                        name="printType"
+                        value={formData.printType || "0"}
+                        onChange={handleInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder="0"
+                        min="0"
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
                   </div>
                 )}
               </div>
 
               <div className="mt-6">
                 <div className="space-y-3">
-                  <h4 className="text-sm font-herm text-ama">{dict?.settings}</h4>
+                  <h4 className="text-sm font-chicago text-oro">
+                    {dict?.settings}
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {mode !== "parent" &&
                       (!isEditMode || !(editItem as Child)?.isImmutable) && (
@@ -343,47 +449,50 @@ export const CreateItemModal = ({
                             name="isImmutable"
                             checked={formData.isImmutable}
                             onChange={handleCheckboxChange}
-                            className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
                             disabled={loading}
                           />
-                          <span className="ml-2 text-sm text-white font-herm">
+                          <span className="ml-2 text-sm text-gris font-chicago">
                             {dict?.makeImmutable}
                           </span>
                         </label>
                       )}
-                    {!isEditMode && (formData.availability === 0 ||
-                      formData.availability === 2) && (
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="digitalMarketsOpenToAll"
-                          checked={formData.digitalMarketsOpenToAll}
-                          onChange={handleCheckboxChange}
-                          className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
-                          disabled={loading}
-                        />
-                        <span className="ml-2 text-sm text-white font-herm">
-                          {dict?.anyMarketCanListDigital}
-                        </span>
-                      </label>
-                    )}
-                    {!isEditMode && (formData.availability === 1 ||
-                      formData.availability === 2) && (
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="physicalMarketsOpenToAll"
-                          checked={formData.physicalMarketsOpenToAll}
-                          onChange={handleCheckboxChange}
-                          className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
-                          disabled={loading}
-                        />
-                        <span className="ml-2 text-sm text-white font-herm">
-                          {dict?.anyMarketCanListPhysical}
-                        </span>
-                      </label>
-                    )}
-                    {!isEditMode && mode !== "parent" &&
+                    {!isEditMode &&
+                      (formData.availability === 0 ||
+                        formData.availability === 2) && (
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            name="digitalMarketsOpenToAll"
+                            checked={formData.digitalMarketsOpenToAll}
+                            onChange={handleCheckboxChange}
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
+                            disabled={loading}
+                          />
+                          <span className="ml-2 text-sm text-gris font-chicago">
+                            {dict?.anyMarketCanListDigital}
+                          </span>
+                        </label>
+                      )}
+                    {!isEditMode &&
+                      (formData.availability === 1 ||
+                        formData.availability === 2) && (
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            name="physicalMarketsOpenToAll"
+                            checked={formData.physicalMarketsOpenToAll}
+                            onChange={handleCheckboxChange}
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
+                            disabled={loading}
+                          />
+                          <span className="ml-2 text-sm text-gris font-chicago">
+                            {dict?.anyMarketCanListPhysical}
+                          </span>
+                        </label>
+                      )}
+                    {!isEditMode &&
+                      mode !== "parent" &&
                       (formData.availability === 0 ||
                         formData.availability === 2) && (
                         <label className="flex items-center">
@@ -392,15 +501,16 @@ export const CreateItemModal = ({
                             name="digitalReferencesOpenToAll"
                             checked={formData.digitalReferencesOpenToAll}
                             onChange={handleCheckboxChange}
-                            className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
                             disabled={loading}
                           />
-                          <span className="ml-2 text-sm text-white font-herm">
+                          <span className="ml-2 text-sm text-gris font-chicago">
                             {dict?.anyoneCanUseDigital}
                           </span>
                         </label>
                       )}
-                    {!isEditMode && mode !== "parent" &&
+                    {!isEditMode &&
+                      mode !== "parent" &&
                       (formData.availability === 1 ||
                         formData.availability === 2) && (
                         <label className="flex items-center">
@@ -409,10 +519,10 @@ export const CreateItemModal = ({
                             name="physicalReferencesOpenToAll"
                             checked={formData.physicalReferencesOpenToAll}
                             onChange={handleCheckboxChange}
-                            className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
                             disabled={loading}
                           />
-                          <span className="ml-2 text-sm text-white font-herm">
+                          <span className="ml-2 text-sm text-gris font-chicago">
                             {dict?.anyoneCanUsePhysical}
                           </span>
                         </label>
@@ -425,10 +535,10 @@ export const CreateItemModal = ({
                             name="standaloneAllowed"
                             checked={formData.standaloneAllowed}
                             onChange={handleCheckboxChange}
-                            className="rounded border-white text-ama focus:ring-ama focus:ring-offset-black"
+                            className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
                             disabled={loading}
                           />
-                          <span className="ml-2 text-sm text-white font-herm">
+                          <span className="ml-2 text-sm text-gris font-chicago">
                             {dict?.standaloneAllowed}
                           </span>
                         </label>
@@ -438,52 +548,66 @@ export const CreateItemModal = ({
               </div>
             </div>
 
-            {((mode === "parent") ||
-              (mode === "template" && !isEditMode)) && (
-                <div>
-                  <h3 className="text-base font-herm text-white mb-3">
-                    {dict?.childPlacements}
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <p className="text-sm text-white font-herm">
-                        {dict?.addChildren} (0-50) {mode === "parent" ? dict?.design : dict?.template}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setIsChildSelectionOpen(true)}
-                        disabled={
-                          loading || formData.childReferences.length >= 50
-                        }
-                        className="px-3 py-2 bg-white hover:opacity-70 disabled:opacity-50 text-black text-sm font-herm rounded-sm transition-colors whitespace-nowrap"
-                      >
-                        {dict?.addChildren} ({formData.childReferences.length}/50)
-                      </button>
+            {(mode === "parent" || (mode === "template" && !isEditMode)) && (
+              <div>
+                <h3 className="text-xl font-awk uppercase text-oro mb-4">
+                  {dict?.childPlacements}
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gris font-chicago">
+                      {dict?.addChildren} (0-50){" "}
+                      {mode === "parent" ? dict?.design : dict?.template}
+                    </p>
+                    <div
+                      onClick={() =>
+                        !loading &&
+                        formData.childReferences.length < 50 &&
+                        setIsChildSelectionOpen(true)
+                      }
+                      className={`relative cursor-pointer hover:opacity-80 transition-opacity ${
+                        loading || formData.childReferences.length >= 50
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro">
+                        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                          <Image
+                            src={"/images/borderoro2.png"}
+                            draggable={false}
+                            objectFit="fill"
+                            fill
+                            alt="border"
+                          />
+                        </div>
+                        <span className="relative z-10">
+                          {dict?.addChildren} ({formData.childReferences.length}
+                          /50)
+                        </span>
+                      </div>
                     </div>
+                  </div>
 
-                    {formData.childReferences.length > 0 ? (
-                      <div className="space-y-3">
-                        {formData.childReferences.map((placement, index) => (
-                          <div
-                            key={index}
-                            className="bg-black rounded-sm p-3 border border-white"
-                          >
-                            <div className="flex items-center  mb-3">
+                  {formData.childReferences.length > 0 ? (
+                    <div className="space-y-3">
+                      {formData.childReferences.map((placement, index) => (
+                        <div key={index} className="relative">
+                          <div className="relative z-10 p-4">
+                            <div className="flex items-center mb-3">
                               <div className="text-sm">
-                                <div className="text-white font-herm">
+                                <div className="text-gris font-chicago">
                                   Child ID: {placement.childId}
                                 </div>
-                                <div className="text-ama font-mono text-xs truncate">
+                                <div className="text-oro font-chicago text-xs truncate">
                                   {placement.childContract}
                                 </div>
                               </div>
                             </div>
 
                             <div className="flex items-center justify-between">
-                              <div>
-                                <div className="text-sm text-white font-herm">
-                                  Amount: {placement.amount}
-                                </div>
+                              <div className="text-sm text-gris font-chicago">
+                                Amount: {placement.amount}
                               </div>
                               <div className="flex gap-2">
                                 <button
@@ -491,118 +615,171 @@ export const CreateItemModal = ({
                                   onClick={() =>
                                     handleEditChildReference(index)
                                   }
-                                  className="px-3 py-1 text-mar hover:text-ama text-xs font-herm"
+                                  className="text-xs text-gris hover:text-oro font-chicago"
                                   disabled={loading}
                                 >
-                                  Edit
+                                  {dict?.edit}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => removeChildReference(index)}
-                                  className="px-3 py-1 text-fresa hover:text-ama text-xs font-herm"
+                                  className="text-xs text-fresa hover:text-oro font-chicago"
                                   disabled={loading}
                                 >
-                                  Remove
+                                  {dict?.remove}
                                 </button>
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="bg-black rounded-sm p-4 border border-white text-center">
-                        <p className="text-ama text-sm font-herm">
-                          {dict?.noChildrenAdded} {mode === "parent" ? dict?.design : dict?.template}.
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <div className="relative z-10 p-4 text-center">
+                        <p className="text-white text-sm font-chicago">
+                          {dict?.noChildrenAdded}{" "}
+                          {mode === "parent" ? dict?.design : dict?.template}.
                         </p>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
             {mode === "parent" && !isEditMode && (
               <div>
-                <h3 className="text-base font-herm text-white mb-3">
+                <h3 className="text-xl font-awk uppercase text-oro mb-4">
                   {dict?.fulfillmentWorkflow}
                 </h3>
-                <div className="bg-black rounded-sm p-4 border border-white">
-                  {formData.fulfillmentWorkflow &&
-                  (formData.fulfillmentWorkflow.digitalSteps.length > 0 ||
-                    formData.fulfillmentWorkflow.physicalSteps.length > 0) ? (
-                    <div className="text-sm text-white font-herm mb-3 space-y-1">
-                      {(formData.availability === 0 ||
-                        formData.availability === 2) &&
-                        formData.fulfillmentWorkflow.digitalSteps.length >
-                          0 && (
-                          <p>
-                            {dict?.digitalSteps} {formData.fulfillmentWorkflow.digitalSteps.length}
-                          </p>
-                        )}
-                      {(formData.availability === 1 ||
-                        formData.availability === 2) &&
-                        formData.fulfillmentWorkflow.physicalSteps.length >
-                          0 && (
-                          <p>
-                            {dict?.physicalSteps} {formData.fulfillmentWorkflow.physicalSteps.length}
-                          </p>
-                        )}
+                <div className="relative">
+                  <div className="relative z-10 p-4">
+                    {formData.fulfillmentWorkflow &&
+                    (formData.fulfillmentWorkflow.digitalSteps.length > 0 ||
+                      formData.fulfillmentWorkflow.physicalSteps.length > 0) ? (
+                      <div className="text-sm text-gris font-chicago mb-3 space-y-1">
+                        {(formData.availability === 0 ||
+                          formData.availability === 2) &&
+                          formData.fulfillmentWorkflow.digitalSteps.length >
+                            0 && (
+                            <p>
+                              {dict?.digitalSteps}{" "}
+                              {formData.fulfillmentWorkflow.digitalSteps.length}
+                            </p>
+                          )}
+                        {(formData.availability === 1 ||
+                          formData.availability === 2) &&
+                          formData.fulfillmentWorkflow.physicalSteps.length >
+                            0 && (
+                            <p>
+                              {dict?.physicalSteps}{" "}
+                              {
+                                formData.fulfillmentWorkflow.physicalSteps
+                                  .length
+                              }
+                            </p>
+                          )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gris font-chicago mb-3">
+                        {dict?.configureCustomSteps}
+                      </p>
+                    )}
+                    <div
+                      onClick={() => setIsWorkflowModalOpen(true)}
+                      className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
+                    >
+                      <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro">
+                        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                          <Image
+                            src={"/images/borderoro2.png"}
+                            draggable={false}
+                            objectFit="fill"
+                            fill
+                            alt="border"
+                          />
+                        </div>
+                        <span className="relative z-10">
+                          {dict?.configureWorkflow}
+                        </span>
+                      </div>
                     </div>
-                  ) : (
-                    <p className="text-sm text-white font-herm mb-3">
-                      {dict?.configureCustomSteps}
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setIsWorkflowModalOpen(true)}
-                    className="px-3 py-2 bg-white hover:opacity-70 text-black text-sm font-herm rounded-sm transition-colors"
-                    disabled={loading}
-                  >
-                    {dict?.configureWorkflow}
-                  </button>
+                  </div>
                 </div>
               </div>
             )}
           </form>
         </div>
 
-        <div className="p-4 border-t border-white flex-shrink-0">
-          <div className="flex gap-2">
-            <button
-              type="button"
+        <div className="relative z-10 p-6 flex-shrink-0">
+          <div className="flex gap-3">
+            <div
               onClick={handleCancel}
-              className="flex-1 px-3 py-2 border border-white hover:bg-white hover:text-black text-white font-herm rounded-sm transition-colors"
-              disabled={false}
+              className="relative cursor-pointer hover:opacity-80 transition-opacity flex-1"
             >
-              {dict?.cancel}
-            </button>
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">{dict?.cancel}</span>
+              </div>
+            </div>
             <button
               type="submit"
-              form="create-child-form"
               onClick={handleSubmit}
-              className="flex-1 px-3 py-2 bg-white hover:opacity-70 text-black font-herm rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="relative flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading || !isFormValid}
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-black"></div>
-                  {isEditMode ? dict?.updating : dict?.creating}
-                </>
-              ) : isEditMode ? (
-                `${dict?.update} ${
-                  mode === "parent"
-                    ? dict?.parent
-                    : mode === "template"
-                    ? dict?.template
-                    : dict?.child
-                }`
-              ) : mode === "parent" ? (
-                dict?.createParent
-              ) : mode === "template" ? (
-                dict?.createTemplate
-              ) : (
-                dict?.createChild
-              )}
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center gap-2">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                {loading ? (
+                  <>
+                    <div className="relative w-3 h-3 animate-spin">
+                      <Image
+                        layout="fill"
+                        objectFit="cover"
+                        src={"/images/scissors.png"}
+                        draggable={false}
+                        alt="loader"
+                      />
+                    </div>
+                    <span className="relative z-10">
+                      {isEditMode ? dict?.updating : dict?.creating}...
+                    </span>
+                  </>
+                ) : (
+                  <span className="relative z-10">
+                    {isEditMode
+                      ? `${dict?.update} ${
+                          mode === "parent"
+                            ? dict?.parent
+                            : mode === "template"
+                            ? dict?.template
+                            : dict?.child
+                        }`
+                      : mode === "parent"
+                      ? dict?.createParent
+                      : mode === "template"
+                      ? dict?.createTemplate
+                      : dict?.createChild}
+                  </span>
+                )}
+              </div>
             </button>
           </div>
         </div>

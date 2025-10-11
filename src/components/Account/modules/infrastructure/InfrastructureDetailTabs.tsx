@@ -2,6 +2,7 @@ import {
   InfrastructureDetailTabsProps,
   InfrastructureDetailTab,
 } from "../../types";
+import Image from "next/image";
 
 export const InfrastructureDetailTabs = ({
   activeTab,
@@ -18,22 +19,29 @@ export const InfrastructureDetailTabs = ({
   ];
 
   return (
-    <div className="border-b border-white/20 bg-black/30">
-      <div className="flex overflow-x-auto">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`flex items-center gap-1 px-3 py-2 text-xs font-herm border-b-2 whitespace-nowrap transition-colors ${
-              activeTab === tab.id
-                ? "border-fresa text-fresa bg-fresa/10"
-                : "border-transparent text-white hover:text-ama hover:bg-white/5"
-            }`}
-          >
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
+    <div className="flex overflow-x-auto gap-2 pb-4">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className="relative"
+        >
+          <div className={`text-xs font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center ${
+            activeTab === tab.id ? "text-oro" : "text-gris"
+          }`}>
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10">{tab.label}</span>
+          </div>
+        </button>
+      ))}
     </div>
   );
 };

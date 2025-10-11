@@ -7,21 +7,37 @@ import { DesignerTab } from "./designer/DesignerTab";
 import { SupplierTab } from "./supplier/SupplierTab";
 import { FulfillerTab } from "./fulfiller/FulfillerTab";
 import { SettingsTab } from "./settings/SettingsTab";
+import Image from "next/image";
 
 export const Account = ({ dict }: { dict: any }) => {
   const { activeTab, setActiveTab, isConnected } = useAccount();
 
   if (!isConnected) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <h2 className="text-2xl font-herm text-white mb-4">
-            {dict?.connect}
-          </h2>
-          <p className="text-white/60 font-herm mb-6">
-            {dict?.access}
-          </p>
-          <SettingsTab dict={dict} />
+      <div className="flex items-center justify-center h-full w-full p-8">
+        <div className="relative w-full max-w-2xl">
+          <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+            <Image
+              src={"/images/borderpurple.png"}
+              draggable={false}
+              objectFit="fill"
+              fill
+              alt="border"
+            />
+          </div>
+          <div className="relative z-10 p-8 space-y-8">
+            <div className="text-center space-y-4">
+              <h2 className="text-5xl font-count text-oro uppercase tracking-wider">
+                {dict?.connect}
+              </h2>
+              <p className="text-gris font-chicago text-base leading-relaxed max-w-md mx-auto">
+                {dict?.access}
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <SettingsTab dict={dict} />
+            </div>
+          </div>
         </div>
       </div>
     );

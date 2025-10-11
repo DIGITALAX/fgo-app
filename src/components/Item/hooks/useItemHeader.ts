@@ -42,14 +42,14 @@ export const useItemHeader = (item: Child | Template | Parent, isTemplate: boole
           const processedDesigner = await ensureMetadata(parentItem.designerProfile);
           designer = processedDesigner.metadata?.title;
         }
-        setSupplierTitle(designer || dict?.unknownDesigner || "Unknown Designer");
+        setSupplierTitle(designer || dict?.unknownDesigner);
       } else {
         let supplier = (item as Child | Template).supplierProfile?.metadata?.title;
         if (!supplier && (item as Child | Template).supplierProfile?.uri) {
           const processedSupplier = await ensureMetadata((item as Child | Template).supplierProfile);
           supplier = processedSupplier.metadata?.title;
         }
-        setSupplierTitle(supplier || dict?.unknownSupplier || "Unknown Supplier");
+        setSupplierTitle(supplier || dict?.unknownSupplier);
       }
     };
 

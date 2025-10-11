@@ -16,6 +16,7 @@ export const useParentDetails = (contractAddress: string, designId: string | num
 
     try {
       const result = await getParent(Number(designId), contractAddress);
+      console.log({result})
       if (result?.data?.parents && result.data.parents.length > 0) {
         const parentData = result.data.parents[0];
         

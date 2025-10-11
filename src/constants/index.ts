@@ -1,13 +1,5 @@
 import { CoreContractAddresses } from "@/components/Library/types";
 
-export const DEFAULT_COLORS_ROLES: { [key: string]: string } = {
-  superadmin: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30",
-  admin: "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-  designer: "bg-purple-500/20 text-purple-400 border border-purple-500/30",
-  supplier: "bg-orange-500/20 text-orange-400 border border-orange-500/30",
-  fulfiller: "bg-teal-500/20 text-teal-400 border border-teal-500/30",
-};
-
 export const getCoreContractAddresses = (
   chainId: number
 ): CoreContractAddresses => {
@@ -22,8 +14,9 @@ export const getCoreContractAddresses = (
 
 export const STATUS_LABELS = {
   0: "Active",
-  1: "Disabled",
-  2: "Deleted",
+  1: "Supply Pending",
+  2: "Disabled",
+  3: "Deleted",
 } as const;
 
 export const AVAILABILITY_LABELS = {
@@ -32,7 +25,7 @@ export const AVAILABILITY_LABELS = {
   2: "Physical Only",
 } as const;
 
-export const LOCALES: string[] = ["en", "es"];
+export const LOCALES: string[] = ["en", "es", "pt"];
 
 export const INFURA_GATEWAY: string = "https://thedial.infura-ipfs.io/ipfs/";
 
@@ -50,7 +43,11 @@ export const ROUTES = {
 export const NAV_ITEMS = [
   { label: "Library", href: ROUTES.HOME },
   { label: "Account", href: ROUTES.ACCOUNT },
-    { label: "Standard", href: "http://cc0web3fashion.com/dhawu" },
+  { label: "Standard", href: "http://cc0web3fashion.com/dhawu" },
+  {
+    label: "Contracts",
+    href: "https://github.com/DIGITALAX/fractional-garment-ownership",
+  },
 ] as const;
 
 export const PARENT_TYPE_LABELS = {

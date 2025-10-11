@@ -3,6 +3,8 @@ import { useApprovalActions } from "../hooks/useApprovalActions";
 import { ApprovalAmountInput } from "./ApprovalAmountInput";
 import { ItemRequestsProps } from "../types";
 import { useAccount } from "wagmi";
+import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import Image from "next/image";
 
 export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
   const { address } = useAccount();
@@ -71,41 +73,41 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
   }
 
   return (
-    <div className="border border-white rounded-sm p-6">
-      <h3 className="text-lg font-herm text-white mb-4">{dict?.requests}</h3>
+    <FancyBorder type="diamond" color="oro" className="bg-black p-6 space-y-4">
+      <h3 className="text-lg font-agency uppercase text-white mb-4">
+        {dict?.requests}
+      </h3>
 
       {item.marketRequests && item.marketRequests.length > 0 && (
-        <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">{dict?.marketRequests}</h4>
-          <div className="space-y-3">
+        <div className="space-y-3">
+          <span className="text-oro font-agency">{dict?.marketRequests}</span>
+          <div className="space-y-4">
             {item.marketRequests.map((request, index: number) => (
-              <div
-                key={index}
-                className="bg-black/20 border border-white/30 rounded-sm p-4"
-              >
+              <div key={index} className="bg-black/50 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="mb-2">
-                      <span className="text-white font-herm text-sm">
-                        {dict?.marketContract}
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <span className="text-oro font-agency text-sm">
+                        {dict?.marketContract}:
+                      </span>
+                      <span className="text-white font-slim text-sm ml-2 break-all">
+                        {request.marketContract}
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-ama">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <span className="text-ama">{dict?.contract}</span>
-                        <span className="font-herm text-xs break-all ml-1 text-white">
-                          {request.marketContract}
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.date}:
                         </span>
-                      </div>
-                      <div>
-                        <span className="text-ama">{dict?.date}</span>{" "}
-                        <span className="text-white">
+                        <span className="text-white font-slim text-sm ml-1">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.status}:</span>
-                        <span className="text-white font-herm text-xs ml-1">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.status}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)
                               .text
@@ -125,12 +127,22 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                             `approve-market-${request.marketContract}`
                           ]
                         }
-                        className="px-3 py-1 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white text-sm rounded-sm font-herm transition-colors flex items-center gap-1"
+                        className="px-3 py-1 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white text-sm rounded-sm font-pixel transition-colors flex items-center gap-1"
                       >
                         {loadingStates[
                           `approve-market-${request.marketContract}`
                         ] && (
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                          <div className="relative w-fit animate-spin h-fit flex">
+                            <div className="relative w-3 h-3 flex">
+                              <Image
+                                layout="fill"
+                                objectFit="cover"
+                                src={"/images/scissors.png"}
+                                draggable={false}
+                                alt="loader"
+                              />
+                            </div>
+                          </div>
                         )}
                         {dict?.approve}
                       </button>
@@ -143,12 +155,22 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                             `reject-market-${request.marketContract}`
                           ]
                         }
-                        className="px-3 py-1 bg-red-600 hover:bg-red-500 disabled:bg-gray-600 text-white text-sm rounded-sm font-herm transition-colors flex items-center gap-1"
+                        className="px-3 py-1 bg-red-600 hover:bg-red-500 disabled:bg-gray-600 text-white text-sm rounded-sm font-pixel transition-colors flex items-center gap-1"
                       >
                         {loadingStates[
                           `reject-market-${request.marketContract}`
                         ] && (
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                          <div className="relative w-fit animate-spin h-fit flex">
+                            <div className="relative w-3 h-3 flex">
+                              <Image
+                                layout="fill"
+                                objectFit="cover"
+                                src={"/images/scissors.png"}
+                                draggable={false}
+                                alt="loader"
+                              />
+                            </div>
+                          </div>
                         )}
                         {dict?.reject}
                       </button>
@@ -162,59 +184,66 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
       )}
 
       {processedTemplateRequests.length > 0 && (
-        <div className="mb-6">
-          <h4 className="text-ama font-herm mb-3">{dict?.templateRequests}</h4>
-          <div className="space-y-3">
+        <div className="space-y-3">
+          <span className="text-oro font-agency">{dict?.templateRequests}</span>
+          <div className="space-y-4">
             {processedTemplateRequests.map((request, index: number) => (
-              <div
-                key={index}
-                className="bg-black/20 border border-white/30 rounded-sm p-4"
-              >
+              <div key={index} className="bg-black/50 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="mb-2">
-                      <button
-                        onClick={() =>
-                          handleTemplateClick(
-                            request.templateContract,
-                            request.templateId
-                          )
-                        }
-                        className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
-                      >
-                        {request.template?.metadata?.image && (
-                          <img
+                  <div className="flex-1 space-y-3">
+                    <button
+                      onClick={() =>
+                        handleTemplateClick(
+                          request.templateContract,
+                          request.templateId
+                        )
+                      }
+                      className="text-oro hover:text-oro/80 font-agency text-sm underline flex items-center gap-2"
+                    >
+                      {request.template?.metadata?.image && (
+                        <div className="relative w-6 h-6 flex-shrink-0">
+                          <Image
+                            draggable={false}
                             src={getImageUrl(request.template.metadata.image)}
                             alt=""
-                            className="w-6 h-6 rounded-sm object-cover"
+                            layout="fill"
+                            className="object-cover"
                           />
-                        )}
-                        {request.template?.metadata?.title ||
-                          `Template ${request.templateId}`}
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
+                        </div>
+                      )}
+                      {request.template?.metadata?.title ||
+                        `Template ${request.templateId}`}
+                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                       <div>
-                        <span className="text-ama">{dict?.requested}</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.requested}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {request.requestedAmount}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.approved}:</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.approved}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {request.approvedAmount || "0"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.date}</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.date}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.status}:</span>
-                        <span className="text-white font-herm text-xs ml-1">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.status}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)
                               .text
@@ -261,59 +290,66 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
       )}
 
       {processedParentRequests.length > 0 && (
-        <div>
-          <h4 className="text-ama font-herm mb-3">{dict?.parentRequests}</h4>
-          <div className="space-y-3">
+        <div className="space-y-3">
+          <span className="text-oro font-agency">{dict?.parentRequests}</span>
+          <div className="space-y-4">
             {processedParentRequests.map((request, index: number) => (
-              <div
-                key={index}
-                className="bg-black/20 border border-white/30 rounded-sm p-4"
-              >
+              <div key={index} className="bg-black/50 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="mb-2">
-                      <button
-                        onClick={() =>
-                          handleParentClick(
-                            request.parentContract,
-                            request.parentId
-                          )
-                        }
-                        className="text-ama hover:text-ama/80 font-herm text-sm underline flex items-center gap-2"
-                      >
-                        {request.parent?.metadata?.image && (
-                          <img
+                  <div className="flex-1 space-y-3">
+                    <button
+                      onClick={() =>
+                        handleParentClick(
+                          request.parentContract,
+                          request.parentId
+                        )
+                      }
+                      className="text-oro hover:text-oro/80 font-agency text-sm underline flex items-center gap-2"
+                    >
+                      {request.parent?.metadata?.image && (
+                        <div className="relative w-6 h-6 flex-shrink-0">
+                          <Image
+                            draggable={false}
                             src={getImageUrl(request.parent.metadata.image)}
                             alt=""
-                            className="w-6 h-6 rounded-sm object-cover"
+                            layout="fill"
+                            className="object-cover"
                           />
-                        )}
-                        {request.parent?.metadata?.title ||
-                          `Parent ${request.parentId}`}
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs text-ama">
+                        </div>
+                      )}
+                      {request.parent?.metadata?.title ||
+                        `Parent ${request.parentId}`}
+                    </button>
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                       <div>
-                        <span className="text-ama">{dict?.requested}</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.requested}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {request.requestedAmount}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.approved}:</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.approved}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {request.approvedAmount || "0"}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.date}</span>{" "}
-                        <span className="text-white">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.date}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {formatTimestamp(request.timestamp)}
                         </span>
                       </div>
                       <div>
-                        <span className="text-ama">{dict?.status}:</span>
-                        <span className="text-white font-herm text-xs ml-1">
+                        <span className="text-oro font-agency text-sm">
+                          {dict?.status}:
+                        </span>
+                        <span className="text-white font-slim text-sm ml-1">
                           {
                             getStatusInfo(request.isPending, request.approved)
                               .text
@@ -358,6 +394,6 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
           </div>
         </div>
       )}
-    </div>
+    </FancyBorder>
   );
 };

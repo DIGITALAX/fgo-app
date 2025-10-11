@@ -6,51 +6,33 @@ import { usePathname } from "next/navigation";
 
 export const Navigation = ({ dict }: { dict: any }) => {
   const pathname = usePathname();
+  const isRootPath =
+    pathname === "/" ||
+    pathname === "/en/" ||
+    pathname === "/es/" ||
+    pathname === "/pt/";
 
   return (
-    <div className="relative w-full h-fit flex items-center justify-center pt-2 sm:pt-3 text-white px-2">
-      <div className="relative flex w-fit h-fit max-w-full">
-        <div className="bg-black backdrop-blur-sm border-2 border-mar px-3 sm:px-6 py-2 sm:py-3 w-full">
-          <div className="flex items-center space-x-2 sm:space-x-6 justify-center flex-wrap sm:flex-nowrap">
-            <div className="relative w-fit h-fit flex flex-col items-center justify-start gap-2 sm:gap-0 flex-shrink-0">
-              <div className="relative font-gen uppercase flex w-fit text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center tracking-widest">
-                FGO
-              </div>
-              <div
-                className="absolute text-black font-gen uppercase flex w-fit text-center text-xl sm:text-2xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
-                id="title"
-              >
-                FGO
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-1 sm:space-x-4 overflow-x-auto flex-shrink-0">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-                    pathname === item.href ||
-                    pathname.replace(/\/$/, "") === item.href
-                      ? "text-mar"
-                      : "hover:text-mar/80"
-                  }`}
-                >
-                  <div className="relative w-fit h-fit flex flex-col items-center justify-start gap-2 sm:gap-0">
-                    <div className="relative font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center tracking-widest">
-                      {dict?.[item.label.toLowerCase()] || item.label}
-                    </div>
-                    <div
-                      className="absolute text-black font-gen uppercase flex w-fit text-center text-lg sm:text-xl lg:text-5xl h-fit justify-center items-center z-1 sm:right-1 right-px tracking-widest"
-                      id="title"
-                    >
-                      {dict?.[item.label.toLowerCase()] || item.label}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+    <div className="relative flex items-center justify-center w-full px-4">
+      <div className="relative w-[95%] sm:w-[85%] h-fit flex items-center justify-center sm:justify-between flex-row pt-2 sm:pt-3 text-white px-3 sm:flex-nowrap flex-wrap gap-5">
+        <div className="relative w-fit h-fit text-4xl text-oro font-count">
+          fgo
+        </div>
+        <div className="flex flex-wrap justify-center items-center flex-row gap-2 font-pixel">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`rounded-md uppercase text-sm ${
+                (item.label.toLowerCase() === "library" && isRootPath) ||
+                pathname.includes(item.label.toLowerCase())
+                  ? "text-oro"
+                  : "text-gris hover:text-oro"
+              }`}
+            >
+              {dict?.[item.label.toLowerCase()] || item.label}
+            </Link>
+          ))}
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import { ParentsTab } from "./parents/ParentsTab";
 import { ChildrenTab } from "./children/ChildrenTab";
 import { TemplatesTab } from "./templates/TemplatesTab";
 import { MarketsTab } from "./markets/MarketsTab";
+import Image from "next/image";
 
 export const InfrastructureDetailView = ({
   infrastructure,
@@ -51,22 +52,43 @@ export const InfrastructureDetailView = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3 mb-4">
-        <button
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
+        <div
           onClick={onBack}
-          className="flex items-center gap-2 text-white/60 hover:text-ama transition-colors font-herm text-sm"
+          className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
         >
-          <span className="text-base">←</span>
-          <span>{dict?.back}</span>
-        </button>
-        <div className="w-px h-4 bg-white/20"></div>
-        <h2 className="text-lg font-herm text-white">
+          <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro items-center gap-2">
+            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+              <Image
+                src={"/images/borderoro2.png"}
+                draggable={false}
+                objectFit="fill"
+                fill
+                alt="border"
+              />
+            </div>
+            <span className="relative z-10 text-sm">←</span>
+            <span className="relative z-10">{dict?.back}</span>
+          </div>
+        </div>
+        <h2 className="text-lg font-awk uppercase text-oro">
           {infrastructure.metadata?.title || `${dict?.infra} ${infrastructure.infraId}`}
         </h2>
         {isOwner && (
-          <span className="px-2 py-0.5 rounded-sm text-xs bg-fresa/20 text-fresa border border-fresa/30 font-herm">
-            {dict?.owner}
-          </span>
+          <div className="relative">
+            <div className="text-xs text-oro font-chicago relative lowercase flex px-3 py-1 bg-offNegro">
+              <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                <Image
+                  src={"/images/borderoro2.png"}
+                  draggable={false}
+                  objectFit="fill"
+                  fill
+                  alt="border"
+                />
+              </div>
+              <span className="relative z-10">{dict?.owner}</span>
+            </div>
+          </div>
         )}
       </div>
 
