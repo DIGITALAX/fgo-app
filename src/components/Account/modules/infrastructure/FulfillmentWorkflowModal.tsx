@@ -515,23 +515,14 @@ export const FulfillmentWorkflowModal = ({
                 </div>
 
                 {physicalSteps.length === 0 ? (
-                  <div className="relative">
-                    <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                      <Image
-                        src={"/images/borderorow.png"}
-                        draggable={false}
-                        objectFit="fill"
-                        fill
-                        alt="border"
-                      />
-                    </div>
+                  <FancyBorder color="oro" type="diamond" className="relative">
                     <div className="relative z-10 p-6 text-center">
                       <p className="text-gris text-sm font-chicago">
                         {dict?.noPhysicalStepsConfigured ||
                           "No physical steps configured"}
                       </p>
                     </div>
-                  </div>
+                  </FancyBorder>
                 ) : (
                   <div className="space-y-4">
                     {physicalSteps.map((step, index) => (
@@ -597,16 +588,11 @@ export const FulfillmentWorkflowModal = ({
                               <label className="block text-xs font-chicago text-gris mb-2">
                                 {dict?.instructions}
                               </label>
-                              <div className="relative">
-                                <div className="absolute z-0 top-0 left-0 w-full h-full">
-                                  <Image
-                                    src={"/images/borderorow2.png"}
-                                    draggable={false}
-                                    objectFit="fill"
-                                    fill
-                                    alt="border"
-                                  />
-                                </div>
+                              <FancyBorder
+                                color="oro"
+                                type="diamond"
+                                className="relative"
+                              >
                                 <textarea
                                   value={step.instructions}
                                   onChange={(e) =>
@@ -621,7 +607,7 @@ export const FulfillmentWorkflowModal = ({
                                     dict?.stepInstructionsPlaceholder
                                   }
                                 />
-                              </div>
+                              </FancyBorder>
                             </div>
 
                             <div>

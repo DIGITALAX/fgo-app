@@ -23,7 +23,6 @@ export const useInfrastructure = (dict: any) => {
 
       try {
         const result = await getFGOUser(address.toLowerCase());
-        console.log({result, address})
         if (result?.data?.fgousers && result.data.fgousers.length > 0) {
           const user = result.data.fgousers[0];
           
