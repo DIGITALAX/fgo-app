@@ -2,7 +2,7 @@ import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useMarketsApproval } from "../../../hooks/infrastructure/approval/useMarketsApproval";
 import { ApprovalItemCard } from "./ApprovalItemCard";
-import { MarketsApprovalTabProps } from "@/components/Account/types";
+import { MarketContract, MarketsApprovalTabProps } from "@/components/Account/types";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
@@ -11,7 +11,7 @@ export const MarketsApprovalTab = ({
   itemType,
   dict,
 }: MarketsApprovalTabProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
     markets,
@@ -94,21 +94,21 @@ export const MarketsApprovalTab = ({
               </div>
             </div>
           }
-          height="100%"
-          style={{ height: "100%" }}
+          height={500}
+          className="overflow-y-auto"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-            {markets.map((market: any) => {
+            {markets.map((market, i) => {
               const isApproved =
                 itemData.authorizedMarkets?.some(
-                  (am: any) =>
+                  (am: MarketContract) =>
                     am.contractAddress?.toLowerCase() ===
                     market.contractAddress?.toLowerCase()
                 ) || false;
 
               return (
                 <ApprovalItemCard
-                  key={market.contractAddress}
+                  key={i}
                   item={market}
                   isApproved={isApproved}
                   isActive={market.isActive !== false}

@@ -7,10 +7,11 @@ import { InfrastructureDetailView } from "./InfrastructureDetailView";
 import { useCreateInfrastructure } from "../../hooks/infrastructure/useCreateInfrastructure";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import { useContext } from "react";
+import { AppContext } from "@/lib/providers/Providers";
 
 export const InfrastructureTab = ({ dict }: { dict: any }) => {
   const {
-    fgoUser,
     loading,
     error,
     isConnected,
@@ -18,7 +19,7 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
     handleInfrastructureClick,
     handleBackToList,
   } = useInfrastructure(dict);
-
+  const context = useContext(AppContext);
   const {
     isModalOpen,
     loading: createLoading,
@@ -106,34 +107,36 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
         </FancyBorder>
       )}
 
-      {!loading && fgoUser && (
+      {!loading && context?.fgoUser && (
         <div className="space-y-6">
-          {fgoUser.ownedInfrastructures.length > 0 && (
+          {context?.fgoUser.ownedInfrastructures.length > 0 && (
             <div>
               <h3 className="text-xl font-awk uppercase text-oro mb-4">
                 {dict?.ownedInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {fgoUser.ownedInfrastructures.map((infrastructure, index) => (
-                  <InfrastructureCard
-                    key={`owned-${infrastructure.infraId}-${index}`}
-                    infrastructure={infrastructure}
-                    isOwner={true}
-                    onClick={handleInfrastructureClick}
-                    dict={dict}
-                  />
-                ))}
+                {context?.fgoUser.ownedInfrastructures.map(
+                  (infrastructure, index) => (
+                    <InfrastructureCard
+                      key={`owned-${infrastructure.infraId}-${index}`}
+                      infrastructure={infrastructure}
+                      isOwner={true}
+                      onClick={handleInfrastructureClick}
+                      dict={dict}
+                    />
+                  )
+                )}
               </div>
             </div>
           )}
 
-          {fgoUser.adminInfrastructures.length > 0 && (
+          {context?.fgoUser.adminInfrastructures.length > 0 && (
             <div>
               <h3 className="text-xl font-awk uppercase text-oro mb-4">
                 {dict?.adminInfrastructure}
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {fgoUser.adminInfrastructures.map((infrastructure, index) => (
+                {context?.fgoUser.adminInfrastructures.map((infrastructure, index) => (
                   <InfrastructureCard
                     key={`admin-${infrastructure.infraId}-${index}`}
                     infrastructure={infrastructure}

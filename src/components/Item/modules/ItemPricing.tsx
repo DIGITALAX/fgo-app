@@ -1,6 +1,6 @@
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { useItemPricing } from "../hooks/useItemPricing";
-import { ItemPricingProps } from "../types";
+import { Child, ItemPricingProps } from "../types";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
@@ -14,7 +14,11 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
   const { showDigital, showPhysical } = getAvailabilityType();
 
   return (
-    <FancyBorder type="diamond" color="oro" className="text-sm bg-black p-6 space-y-4">
+    <FancyBorder
+      type="diamond"
+      color="oro"
+      className="text-sm bg-black p-6 space-y-4"
+    >
       <h3 className="text-lg font-agency uppercase text-white mb-4">
         {dict?.pricingSupply}
       </h3>
@@ -119,6 +123,39 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
               <span className="text-oro font-agency">{dict?.usageCount}</span>
               <p className="text-white font-slim">{item.usageCount}</p>
             </div>
+
+            {Number((item as Child).totalPrepaidUsed) > 0 && (
+              <div className="space-y-2">
+                <span className="text-oro font-agency">
+                  {dict?.totalPrepaidUsed}
+                </span>
+                <p className="text-white font-slim">
+                  {(item as Child).totalPrepaidUsed}
+                </p>
+              </div>
+            )}
+
+            {Number((item as Child).totalPrepaidAmount) > 0 && (
+              <div className="space-y-2">
+                <span className="text-oro font-agency">
+                  {dict?.totalPrepaidAmount}
+                </span>
+                <p className="text-white font-slim">
+                  {(item as Child).totalPrepaidAmount}
+                </p>
+              </div>
+            )}
+
+            {Number((item as Child).totalReservedSupply) > 0 && (
+              <div className="space-y-2">
+                <span className="text-oro font-agency">
+                  {dict?.totalReservedSupply}
+                </span>
+                <p className="text-white font-slim">
+                  {(item as Child).totalReservedSupply}
+                </p>
+              </div>
+            )}
           </>
         )}
 

@@ -1,6 +1,7 @@
 import {
   Attachment,
   Child,
+  Futures,
   MarketRequests,
   Template,
 } from "@/components/Item/types";
@@ -21,6 +22,7 @@ export type AccountTab =
   | "infrastructure"
   | "designer"
   | "supplier"
+  | "futureCredits"
   | "fulfiller"
   | "settings";
 
@@ -164,11 +166,28 @@ export interface ChildReference {
   parent?: Parent;
   childContract: string;
   childId: string;
+  prepaidAmount: string;
+  prepaidUsed: string;
   template?: Template;
   isTemplate?: boolean;
   child?: Child;
   amount: string;
-  uri: string;
+  placementURI: string;
+  metadata: {
+    instructions: string;
+    customFields: Record<string, string>;
+  };
+}
+
+export interface SupplyRequestFormData {
+  existingChildId: string;
+  quantity: string;
+  preferredMaxPrice: string;
+  deadline: string;
+  existingChildContract: string;
+  isPhysical: boolean;
+  customSpec: string;
+  child?: Child;
   metadata: {
     instructions: string;
     customFields: Record<string, string>;
@@ -191,6 +210,7 @@ export interface CreateItemFormData {
   standaloneAllowed: boolean;
   authorizedMarkets: MarketContract[];
   childReferences: ChildReference[];
+  supplyRequests: SupplyRequestFormData[];
   metadata: {
     title: string;
     description: string;
@@ -204,6 +224,12 @@ export interface CreateItemFormData {
     customFields: Record<string, string>;
   };
   fulfillmentWorkflow?: Workflow;
+  futures?: {
+    isFutures: boolean;
+    deadline: string;
+    pricePerUnit: string;
+    maxDigitalEditions: string;
+  };
 }
 
 export interface DeployParentModalProps {
@@ -264,6 +290,20 @@ export interface ChildSelectionModalProps {
   editingPlacement?: ChildReference;
 }
 
+export interface SupplyRequestModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (supplyRequest: SupplyRequestFormData) => void;
+  onCancel?: () => void;
+  dict: any;
+  editingRequest?: SupplyRequestFormData;
+}
+
+export interface UseSupplyRequestModalProps
+  extends Omit<SupplyRequestModalProps, "isOpen"> {
+  isOpen: boolean;
+}
+
 export interface DetailsTabProps {
   infrastructure: Infrastructure;
   dict: any;
@@ -316,6 +356,7 @@ export interface FGOUser {
   id: string;
   ownedInfrastructures: Infrastructure[];
   adminInfrastructures: Infrastructure[];
+  futureCredits: FutureCredit[];
 }
 
 export interface InfrastructureCardProps {
@@ -470,6 +511,7 @@ export interface Parent {
   status: string;
   infraCurrency: string;
   totalPurchases: string;
+  supplyRequests: ChildSupplyRequest[];
   maxDigitalEditions: string;
   maxPhysicalEditions: string;
   currentDigitalEditions: string;
@@ -487,6 +529,19 @@ export interface Parent {
   authorizedChildren: Child[];
   authorizedTemplates: Template[];
   workflow: Workflow;
+}
+
+export interface ChildSupplyRequest {
+  existingChildId: string;
+  id: string;
+  quantity: string;
+  preferredMaxPrice: string;
+  deadline: string;
+  existingChildContract: string;
+  isPhysical: boolean;
+  fulfilled: boolean;
+  customSpec: string;
+  placementURI: string;
 }
 
 export interface Workflow {
@@ -556,6 +611,20 @@ export interface Designer {
     link: string;
   };
   accessControlContract: string;
+}
+
+export interface FutureCreditsTabProps {
+  dict: any;
+}
+
+
+export interface FutureCredit {
+  child: Child;
+  buyer: string;
+  credits: string;
+  available: string;
+  consumed: string;
+  position: Futures;
 }
 
 export interface Supplier {
@@ -640,4 +709,6 @@ export interface ApprovalItemCardProps {
   onRevoke: () => void;
   itemType: "market" | "parent" | "template";
   dict: any;
+  onApprovePhysical?: () => void;
+  onApproveDigital?: () => void;
 }

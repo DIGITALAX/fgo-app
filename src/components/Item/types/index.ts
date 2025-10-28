@@ -1,5 +1,6 @@
 import {
   ChildReference,
+  ChildSupplyRequest,
   MarketContract,
   Parent,
 } from "@/components/Account/types";
@@ -7,6 +8,11 @@ import {
 export interface TemplateDetailsProps {
   contractAddress: string;
   templateId: number;
+  dict: any;
+}
+
+export interface ItemSupplyRequestsProps {
+  supplyRequests: ChildSupplyRequest[];
   dict: any;
 }
 
@@ -84,6 +90,8 @@ export interface Template {
   physicalPrice: string;
   version: string;
   maxPhysicalEditions: string;
+  maxDigitalEditions: string;
+  currentDigitalEditions: string;
   currentPhysicalEditions: string;
   uriVersion: string;
   usageCount: string;
@@ -115,6 +123,42 @@ export interface Template {
   physicalRights: PhysicalRights[];
 }
 
+export interface Futures {
+  supplier: string;
+  totalAmount: string;
+  soldAmount: string;
+  pricePerUnit: string;
+  deadline: string;
+  isSettled: boolean;
+  isActive: boolean;
+  purchases: PurchaseRecord[];
+  blockNumber: string;
+  blockTimestamp: string;
+  transactionHash: string;
+  settlements: Settlement[];
+  closed: boolean;
+  closedBlockNumber: string;
+  closedBlockTimestamp: string;
+  closedTransactionHash: string;
+}
+
+export interface Settlement {
+  buyer: string;
+  credits: string;
+  blockNumber: string;
+  blockTimestamp: string;
+  transactionHash: string;
+}
+
+export interface PurchaseRecord {
+  amount: string;
+  totalCost: string;
+  buyer: string;
+  blockNumber: string;
+  blockTimestamp: string;
+  transactionHash: string;
+}
+
 export interface Attachment {
   uri: string;
   type: string;
@@ -124,6 +168,7 @@ export interface AuthorizedParents {
   parentContract: string;
   parentId: string;
   uri: string;
+  isPhysical: boolean;
   metadata: {
     title: string;
     image: string;
@@ -134,6 +179,7 @@ export interface AuthorizedTemplates {
   templateContract: string;
   templateId: string;
   uri: string;
+  isPhysical: boolean;
   metadata: {
     title: string;
     image: string;
@@ -148,6 +194,15 @@ export interface ApprovalAmountInputProps {
   rejecting: boolean;
   isSupplier: boolean;
   dict: any;
+  hasBothAvailability?: boolean;
+  onApprovePhysical?: (amount: string) => void;
+  onApproveDigital?: (amount: string) => void;
+  onRejectPhysical?: () => void;
+  onRejectDigital?: () => void;
+  loadingPhysical?: boolean;
+  loadingDigital?: boolean;
+  rejectingPhysical?: boolean;
+  rejectingDigital?: boolean;
 }
 
 export interface ParentRequests {
@@ -159,8 +214,10 @@ export interface ParentRequests {
   approved: boolean;
   approvedAmount: string;
   timestamp: string;
+  isPhysical: boolean;
   parent?: {
     uri: string;
+    availability: string;
     metadata: {
       image: string;
       title: string;
@@ -177,8 +234,10 @@ export interface TemplateRequests {
   approved: boolean;
   approvedAmount: string;
   timestamp: string;
+  isPhysical: boolean;
   template?: {
     uri: string;
+    availability: string;
     metadata: {
       image: string;
       title: string;
@@ -198,6 +257,9 @@ export interface AuthorizedChildren {
   childContract: string;
   childId: string;
   uri: string;
+  futures: {
+    id: string;
+  };
   metadata: {
     title: string;
     image: string;
@@ -238,9 +300,14 @@ export interface Child {
   scm: string;
   title: string;
   symbol: string;
+  futures: Futures;
+  totalPrepaidAmount: string;
+  totalReservedSupply: string;
+  totalPrepaidUsed: string;
   digitalPrice: string;
   physicalPrice: string;
   version: string;
+  currentDigitalEditions: string;
   maxPhysicalEditions: string;
   currentPhysicalEditions: string;
   uriVersion: string;

@@ -4,6 +4,7 @@ import FGOSuppliersABI from "./core/FGOSuppliers.json";
 import FGODesignersABI from "./core/FGODesigners.json";
 import FGOFactoryABI from "./core/FGOFactory.json";
 import ERC20ABI from "./core/ERC20.json";
+import FGOSupplyCoordinationABI from "./core/FGOSupplyCoordination.json";
 
 import FGOTemplateChildABI from "./children/FGOTemplateChild.json";
 import FGOChildABI from "./children/FGOChild.json";
@@ -16,6 +17,7 @@ export const ABIS = {
   FGODesigners: FGODesignersABI,
   FGOFactory: FGOFactoryABI,
   ERC20: ERC20ABI,
+  FGOSupplyCoordination: FGOSupplyCoordinationABI,
   FGOTemplateChild: FGOTemplateChildABI,
   FGOChild: FGOChildABI,
   FGOParent: FGOParentABI,

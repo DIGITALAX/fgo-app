@@ -181,6 +181,10 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: default;
+}
+
 input[type="checkbox"] {
   appearance: none;
   width: 16px;

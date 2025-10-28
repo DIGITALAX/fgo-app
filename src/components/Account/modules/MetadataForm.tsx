@@ -15,10 +15,10 @@ export const MetadataForm = ({
   existingAttachments = [],
   dict,
 }: MetadataFormProps) => {
-  const [currentTag, setCurrentTag] = useState("");
-  const [currentLora, setCurrentLora] = useState("");
-  const [newFieldKey, setNewFieldKey] = useState("");
-  const [newFieldValue, setNewFieldValue] = useState("");
+  const [currentTag, setCurrentTag] = useState<string>("");
+  const [currentLora, setCurrentLora] = useState<string>("");
+  const [newFieldKey, setNewFieldKey] = useState<string>("");
+  const [newFieldValue, setNewFieldValue] = useState<string>("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
 

@@ -1,8 +1,11 @@
 import Image from "next/image";
 import { useItemHeader } from "../hooks/useItemHeader";
 import { ItemHeaderProps } from "../types";
+import { useContext } from "react";
+import { AppContext } from "@/lib/providers/Providers";
 
 export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
+  const context = useContext(AppContext);
   const { imageUrl, title, supplierTitle, contractAddress, itemId } =
     useItemHeader(item, isTemplate, dict);
 
@@ -79,7 +82,11 @@ export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
         )}
       </div>
       {imageUrl && (
-        <div className="aspect-square sm:order-2 order-1 w-[50%] relative">
+        <div
+          className={`aspect-square sm:order-2 order-1 w-[50%] relative ${
+            context?.colorSwitch ? "bg-white" : "bg-black"
+          }`}
+        >
           <Image
             src={imageUrl}
             fill
@@ -87,6 +94,25 @@ export const ItemHeader = ({ item, isTemplate, dict }: ItemHeaderProps) => {
             alt={title}
             className="object-contain"
           />
+          <div
+            className="absolute top-1 right-2 cursor-pointer flex w-fit h-fit"
+            onClick={(e) => {
+              e.stopPropagation();
+              context?.setColorSwitch((prev) => !prev);
+            }}
+          >
+            <div className="relative w-4 h-4 flex">
+              <Image
+                src={`/images/${
+                  context?.colorSwitch ? "blackswitch" : "whiteswitch"
+                }.png`}
+                draggable={false}
+                objectFit="contain"
+                fill
+                alt="switch"
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

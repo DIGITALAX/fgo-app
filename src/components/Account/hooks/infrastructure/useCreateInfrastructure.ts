@@ -122,12 +122,10 @@ export const useCreateInfrastructure = (dict: any) => {
 
   const handleSubmit = useCallback(
     async (formData: CreateInfrastructureFormData) => {
-      try {
-        await deployInfrastructure(formData);
-        if (!cancelledRef.current) {
-          closeModal();
-        }
-      } catch (err) {}
+      await deployInfrastructure(formData);
+      if (!cancelledRef.current) {
+        closeModal();
+      }
     },
     [deployInfrastructure, closeModal]
   );

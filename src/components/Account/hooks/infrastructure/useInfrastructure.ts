@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useWalletConnection } from "@/components/Library/hooks/useWalletConnection";
 import { getFGOUser } from "@/lib/subgraph/queries/getFGOUser";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { FGOUser, Infrastructure } from "../../types";
+import { AppContext } from "@/lib/providers/Providers";
 
 export const useInfrastructure = (dict: any) => {
   const { address, isConnected } = useWalletConnection();
-  const [fgoUser, setFgoUser] = useState<FGOUser | null>(null);
+  const context = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedInfrastructure, setSelectedInfrastructure] = useState<{ infrastructure: Infrastructure; isOwner: boolean } | null>(null);
+  const [selectedInfrastructure, setSelectedInfrastructure] = useState<{
+    infrastructure: Infrastructure;
+    isOwner: boolean;
+  } | null>(null);
 
   useEffect(() => {
     const fetchUserInfrastructure = async () => {
       if (!address || !isConnected) {
-        setFgoUser(null);
+        context?.setFgoUser(null);
         return;
       }
 
@@ -25,13 +29,13 @@ export const useInfrastructure = (dict: any) => {
         const result = await getFGOUser(address.toLowerCase());
         if (result?.data?.fgousers && result.data.fgousers.length > 0) {
           const user = result.data.fgousers[0];
-          
+
           const processedOwnedInfrastructures = await Promise.all(
             user.ownedInfrastructures.map(async (infra: Infrastructure) => {
               const processedInfra = await ensureMetadata(infra);
               return {
                 ...processedInfra,
-                infraId: parseInt(infra.infraId, 16).toString()
+                infraId: parseInt(infra.infraId, 16).toString(),
               };
             })
           );
@@ -41,21 +45,23 @@ export const useInfrastructure = (dict: any) => {
               const processedInfra = await ensureMetadata(infra);
               return {
                 ...processedInfra,
-                infraId: parseInt(infra.infraId, 16).toString()
+                infraId: parseInt(infra.infraId, 16).toString(),
               };
             })
           );
 
-          setFgoUser({
+          context?.setFgoUser({
             id: user.id,
             ownedInfrastructures: processedOwnedInfrastructures,
             adminInfrastructures: processedAdminInfrastructures,
+            futureCredits: user?.futureCredits,
           });
         } else {
-          setFgoUser({
+          context?.setFgoUser({
             id: address.toLowerCase(),
             ownedInfrastructures: [],
             adminInfrastructures: [],
+            futureCredits: [],
           });
         }
       } catch (err) {
@@ -68,7 +74,10 @@ export const useInfrastructure = (dict: any) => {
     fetchUserInfrastructure();
   }, [address, isConnected]);
 
-  const handleInfrastructureClick = (infrastructure: Infrastructure, isOwner: boolean) => {
+  const handleInfrastructureClick = (
+    infrastructure: Infrastructure,
+    isOwner: boolean
+  ) => {
     setSelectedInfrastructure({ infrastructure, isOwner });
   };
 
@@ -77,7 +86,6 @@ export const useInfrastructure = (dict: any) => {
   };
 
   return {
-    fgoUser,
     loading,
     error,
     isConnected,

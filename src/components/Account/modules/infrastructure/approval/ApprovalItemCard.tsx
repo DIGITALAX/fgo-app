@@ -12,6 +12,8 @@ export const ApprovalItemCard = ({
   itemType,
   loading = false,
   dict,
+  onApprovePhysical,
+  onApproveDigital,
 }: ApprovalItemCardProps) => {
   const getItemData = () => {
     switch (itemType) {
@@ -206,6 +208,49 @@ export const ApprovalItemCard = ({
                 </span>
               </div>
             </button>
+          ) : onApprovePhysical && onApproveDigital ? (
+            <div className="flex gap-2">
+              <button
+                onClick={onApprovePhysical}
+                disabled={loading}
+                className="w-full relative disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="text-xs text-ama font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10">
+                    {loading ? dict?.approving : dict?.physical}
+                  </span>
+                </div>
+              </button>
+              <button
+                onClick={onApproveDigital}
+                disabled={loading}
+                className="w-full relative disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="text-xs text-verde font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10">
+                    {loading ? dict?.approving : dict?.digital}
+                  </span>
+                </div>
+              </button>
+            </div>
           ) : (
             <button
               onClick={onApprove}

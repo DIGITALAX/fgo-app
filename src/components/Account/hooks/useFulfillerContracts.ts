@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { getContractsbyFulfiller } from "@/lib/subgraph/queries/getContracts";
+import { MarketContract } from "../types";
 
 export const useFulfillerContracts = (walletAddress: string, dict: any) => {
-  const [marketContracts, setMarketContracts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [marketContracts, setMarketContracts] = useState<MarketContract[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchContracts = useCallback(async () => {

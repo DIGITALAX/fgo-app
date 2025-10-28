@@ -64,7 +64,7 @@ export const ChildSelectionModal = ({
 
     return (
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col">
           <div className="absolute z-0 top-0 left-0 w-full h-full flex">
             <Image
               src={"/images/borderblue.png"}
@@ -74,7 +74,7 @@ export const ChildSelectionModal = ({
               alt="border"
             />
           </div>
-          <div className="relative z-10 p-6 space-y-4">
+          <div className="relative z-10 p-6 space-y-4 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-awk uppercase text-oro">

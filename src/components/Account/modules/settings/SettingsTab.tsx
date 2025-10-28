@@ -15,7 +15,7 @@ export const SettingsTab = ({ dict }: { dict: any }) => {
     handleLanguageChange,
   } = useSettingsTab(dict);
 
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState<boolean>(false);
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">

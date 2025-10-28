@@ -19,8 +19,8 @@ export const useChildSelectionModal = ({
     "children"
   );
   const [configuring, setConfiguring] = useState<Child | Template | null>(null);
-  const [amount, setAmount] = useState("1");
-  const [instructions, setInstructions] = useState("");
+  const [amount, setAmount] = useState<string>("1");
+  const [instructions, setInstructions] = useState<string>("");
   const [customFields, setCustomFields] = useState<
     Array<{ id: string; key: string; value: string }>
   >([]);
@@ -85,7 +85,9 @@ export const useChildSelectionModal = ({
         ? (configuring as Template).templateContract
         : (configuring as Child).childContract,
       amount,
-      uri: "",
+      placementURI: "",
+      prepaidAmount: "0",
+      prepaidUsed: "0",
       metadata: {
         instructions,
         customFields: customFields.reduce((acc, field) => {
@@ -134,11 +136,11 @@ export const useChildSelectionModal = ({
         if (isTemplate) {
           const template = item as Template;
           const templateStatus = Number(template.status);
-          if (templateStatus !== 0 && templateStatus !== 1) return false;
+          if (templateStatus !== 0 && templateStatus !== 2) return false;
         } else {
           const child = item as Child;
           const childStatus = Number(child.status);
-          if (childStatus !== 1) return false;
+          if (childStatus !== 2) return false;
         }
 
         const itemId = isTemplate
@@ -159,14 +161,14 @@ export const useChildSelectionModal = ({
     const childrenCount = items.filter((item) => {
       if ("templateId" in item) return false;
       const child = item as Child;
-      return Number(child.status) === 1;
+      return Number(child.status) === 2;
     }).length;
 
     const templatesCount = items.filter((item) => {
       if (!("templateId" in item)) return false;
       const template = item as Template;
       const templateStatus = Number(template.status);
-      return templateStatus === 0 || templateStatus === 1;
+      return templateStatus === 0 || templateStatus === 2;
     }).length;
 
     return { childrenCount, templatesCount };

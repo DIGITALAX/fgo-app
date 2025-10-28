@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useParentsApproval } from "../../../hooks/infrastructure/approval/useParentsApproval";
 import { ApprovalItemCard } from "./ApprovalItemCard";
 import { MarketsApprovalTabProps } from "@/components/Account/types";
-import { Child, Template } from "@/components/Item/types";
+import { AuthorizedParents, Child, Template } from "@/components/Item/types";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
@@ -12,7 +12,7 @@ export const ParentsApprovalTab = ({
   itemType,
   dict,
 }: MarketsApprovalTabProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
     parents,
@@ -95,25 +95,27 @@ export const ParentsApprovalTab = ({
               </div>
             </div>
           }
-          height="100%"
-          style={{ height: "100%" }}
+          height={500}
+          className="overflow-y-auto"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-            {parents.map((parent: any) => {
+            {parents.map((parent, i) => {
               const isApproved =
                 (itemData as Child | Template).authorizedParents?.some(
-                  (ap: any) =>
+                  (ap: AuthorizedParents) =>
                     ap.parentContract?.toLowerCase() ===
                     parent.parentContract?.toLowerCase()
                 ) || false;
 
+              const hasBothAvailability = parent.availability === "2";
+
               return (
                 <ApprovalItemCard
-                  key={parent.parentContract}
+                  key={i}
                   item={parent}
                   isApproved={isApproved}
                   isActive={parent.status !== "2"}
-                  onApprove={() => approveParent(parent)}
+                  onApprove={() => approveParent(parent, false)}
                   onRevoke={() => revokeParent(parent)}
                   itemType="parent"
                   loading={
@@ -121,6 +123,16 @@ export const ParentsApprovalTab = ({
                     revoking === parent.parentContract
                   }
                   dict={dict}
+                  onApprovePhysical={
+                    hasBothAvailability
+                      ? () => approveParent(parent, true)
+                      : undefined
+                  }
+                  onApproveDigital={
+                    hasBothAvailability
+                      ? () => approveParent(parent, false)
+                      : undefined
+                  }
                 />
               );
             })}

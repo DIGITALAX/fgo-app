@@ -9,6 +9,7 @@ export const AccountTabs = ({
     { id: "infrastructure", label: dict?.infrastructure },
     { id: "designer", label: dict?.designer },
     { id: "supplier", label: dict?.supplier },
+    { id: "futureCredits", label: dict?.futureCredits },
     { id: "fulfiller", label: dict?.fulfiller },
     { id: "settings", label: dict?.settings },
   ];

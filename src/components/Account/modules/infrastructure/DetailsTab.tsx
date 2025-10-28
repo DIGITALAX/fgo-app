@@ -339,7 +339,7 @@ export const DetailsTab = ({ infrastructure, dict }: DetailsTabProps) => {
               <p className="text-xs font-awk uppercase text-gris">
                 {dict?.uri}
               </p>
-              <p className="text-gris font-pixel text-xs break-all">
+              <p className="text-gris break-all font-pixel text-xs break-all">
                 {infrastructure.uri}
               </p>
             </div>

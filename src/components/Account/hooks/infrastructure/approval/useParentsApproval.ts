@@ -3,18 +3,20 @@ import { useWalletClient, usePublicClient } from "wagmi";
 import { getAllParents } from "@/lib/subgraph/queries/getApprovals";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
+import { Parent } from "@/components/Account/types";
+import { Child, Template } from "@/components/Item/types";
 
 export const useParentsApproval = (
-  itemData: any,
+  itemData: Child | Template | Parent,
   itemType: "child" | "template" | "parent",
   searchQuery: string,
   dict: any
 ) => {
-  const [parents, setParents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [parents, setParents] = useState<Parent[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
 
@@ -80,25 +82,25 @@ export const useParentsApproval = (
     switch (itemType) {
       case "child":
         return {
-          contractAddress: itemData.childContract,
-          itemId: itemData.childId,
+          contractAddress: (itemData as Child).childContract,
+          itemId: (itemData as Child).childId,
         };
       case "template":
         return {
-          contractAddress: itemData.templateContract,
-          itemId: itemData.templateId,
+          contractAddress: (itemData as Template).templateContract,
+          itemId: (itemData as Template).templateId,
         };
       case "parent":
         return {
-          contractAddress: itemData.parentContract,
-          itemId: itemData.designId,
+          contractAddress: (itemData as Parent).parentContract,
+          itemId: (itemData as Parent).designId,
         };
       default:
         throw new Error(dict?.item);
     }
   };
 
-  const approveParent = async (parent: any) => {
+  const approveParent = async (parent: Parent, isPhysical: boolean) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;
@@ -120,6 +122,7 @@ export const useParentsApproval = (
               BigInt(parent.designId),
               BigInt("1"),
               parent.parentContract as `0x${string}`,
+              isPhysical,
             ],
           });
           break;
@@ -134,6 +137,7 @@ export const useParentsApproval = (
               BigInt(parent.designId),
               BigInt("1"),
               parent.parentContract as `0x${string}`,
+              isPhysical,
             ],
           });
           break;
@@ -153,7 +157,7 @@ export const useParentsApproval = (
     }
   };
 
-  const revokeParent = async (parent: any) => {
+  const revokeParent = async (parent: Parent) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;

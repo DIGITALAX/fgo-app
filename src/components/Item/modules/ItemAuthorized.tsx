@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useItemAuthorized } from "../hooks/useItemAuthorized";
-import { Child, ItemAuthorizedProps } from "../types";
+import { ItemAuthorizedProps } from "../types";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
@@ -56,11 +56,13 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
             {dict?.authorizedChildren}
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {processedAuthorizedChildren.map((child, index: number) => (
+            {processedAuthorizedChildren.map((child, index: number) => {
+
+              return (
               <button
                 key={index}
                 onClick={() =>
-                  handleChildClick(child.childContract, child.childId)
+                  handleChildClick(child.childContract, child.childId,  child.futures?.id ? true : false)
                 }
                 className="p-2 gap-2 flex flex-col bg-black/50 overflow-hidden hover:opacity-70"
               >
@@ -83,7 +85,8 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                   {child.metadata?.title || `${dict?.child} ${child.childId}`}
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -111,16 +114,21 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                     />
                   </div>
                 )}
-                <div className="space-y-2">
-                  <button
-                    onClick={() =>
-                      handleParentClick(parent.parentContract, parent.parentId)
-                    }
-                    className="text-oro hover:text-oro/80 font-agency text-sm underline"
-                  >
-                    {parent.metadata?.title ||
-                      `${dict?.parent} ${parent.parentId}`}
-                  </button>
+                <div className="p-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        handleParentClick(parent.parentContract, parent.parentId)
+                      }
+                      className="text-oro hover:text-oro/80 font-agency text-sm underline"
+                    >
+                      {parent.metadata?.title ||
+                        `${dict?.parent} ${parent.parentId}`}
+                    </button>
+                    <span className={`px-2 py-0.5 text-xs font-chicago rounded ${parent.isPhysical ? "bg-ama/20 text-ama" : "bg-verde/20 text-verde"}`}>
+                      {parent.isPhysical ? dict?.physical : dict?.digital}
+                    </span>
+                  </div>
                   <p className="text-white text-xs font-slim break-all">
                     {parent.parentContract}
                   </p>
@@ -155,18 +163,23 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                   </div>
                 )}
                 <div className="p-4 space-y-2">
-                  <button
-                    onClick={() =>
-                      handleTemplateClick(
-                        template.templateContract,
-                        template.templateId
-                      )
-                    }
-                    className="text-oro hover:text-oro/80 font-agency text-sm underline"
-                  >
-                    {template.metadata?.title ||
-                      `${dict?.template} ${template.templateId}`}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        handleTemplateClick(
+                          template.templateContract,
+                          template.templateId
+                        )
+                      }
+                      className="text-oro hover:text-oro/80 font-agency text-sm underline"
+                    >
+                      {template.metadata?.title ||
+                        `${dict?.template} ${template.templateId}`}
+                    </button>
+                    <span className={`px-2 py-0.5 text-xs font-chicago rounded ${template.isPhysical ? "bg-ama/20 text-ama" : "bg-verde/20 text-verde"}`}>
+                      {template.isPhysical ? dict?.physical : dict?.digital}
+                    </span>
+                  </div>
                   <p className="text-white text-xs font-slim break-all">
                     {template.templateContract}
                   </p>

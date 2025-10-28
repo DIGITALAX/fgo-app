@@ -13,14 +13,15 @@ import { ItemRequests } from "./ItemRequests";
 import { ItemBlockchainInfo } from "./ItemBlockchainInfo";
 import { ChildReferences } from "./ChildReferences";
 import { ItemAuthorized } from "./ItemAuthorized";
+import { ItemSupplyRequests } from "./ItemSupplyRequests";
 
 export const ParentDetails = ({
   contractAddress,
   designId,
   dict,
 }: ParentDetailsProps) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState<boolean>(false);
 
   const { parent, isLoading, error } = useParentDetails(
     contractAddress,
@@ -160,6 +161,7 @@ export const ParentDetails = ({
       <ItemRequests item={parent} dict={dict} />
       <ItemAuthorized item={parent} dict={dict} />
       <ChildReferences childData={parent.childReferences || []} dict={dict} />
+      <ItemSupplyRequests supplyRequests={parent.supplyRequests || []} dict={dict} />
       <ItemBlockchainInfo item={parent} dict={dict} />
 
       <CreateItemModal

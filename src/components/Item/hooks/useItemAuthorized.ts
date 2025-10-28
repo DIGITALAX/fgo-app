@@ -2,15 +2,15 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { getIPFSUrl } from "@/lib/helpers/ipfs";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { Child,  Template } from "../types";
+import { AuthorizedChildren, AuthorizedParents, AuthorizedTemplates, Child,  Template } from "../types";
 import { Parent } from "@/components/Account/types";
 
 export const useItemAuthorized = (item: Child | Parent | Template) => {
   const router = useRouter();
-  const [processedAuthorizedChildren, setProcessedAuthorizedChildren] = useState<any[]>([]);
-  const [processedAuthorizedParents, setProcessedAuthorizedParents] = useState<any[]>([]);
-  const [processedAuthorizedTemplates, setProcessedAuthorizedTemplates] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [processedAuthorizedChildren, setProcessedAuthorizedChildren] = useState<AuthorizedChildren[]>([]);
+  const [processedAuthorizedParents, setProcessedAuthorizedParents] = useState<AuthorizedParents[]>([]);
+  const [processedAuthorizedTemplates, setProcessedAuthorizedTemplates] = useState<AuthorizedTemplates[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const processAuthorizedItems = async () => {
@@ -19,9 +19,9 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
       try {
         if (item.authorizedChildren && item.authorizedChildren.length > 0) {
           const processedChildren = await Promise.all(
-            item.authorizedChildren.map(async (child: any) => {
+            item.authorizedChildren.map(async (child: AuthorizedChildren | Child) => {
               const processedChild = await ensureMetadata(child);
-              return processedChild;
+              return processedChild as AuthorizedChildren;
             })
           );
           setProcessedAuthorizedChildren(processedChildren);
@@ -29,7 +29,7 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
 
         if ("authorizedParents" in item && item.authorizedParents && item.authorizedParents.length > 0) {
           const processedParents = await Promise.all(
-            item.authorizedParents.map(async (parent: any) => {
+            item.authorizedParents.map(async (parent: AuthorizedParents) => {
               const processedParent = await ensureMetadata(parent);
               return processedParent;
             })
@@ -39,7 +39,7 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
 
         if (item.authorizedTemplates && item.authorizedTemplates.length > 0) {
           const processedTemplates = await Promise.all(
-            item.authorizedTemplates.map(async (template: any) => {
+            item.authorizedTemplates.map(async (template: AuthorizedTemplates | Template) => {
               const processedTemplate = await ensureMetadata(template);
               return processedTemplate;
             })
@@ -47,7 +47,6 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
           setProcessedAuthorizedTemplates(processedTemplates);
         }
       } catch (error) {
-        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -56,9 +55,12 @@ export const useItemAuthorized = (item: Child | Parent | Template) => {
     processAuthorizedItems();
   }, [item]);
 
-  const handleChildClick = useCallback((childContract: string, childId: string) => {
-    const path = `/library/child/${childContract}/${childId}`;
-    router.push(path);
+  const handleChildClick = useCallback((childContract: string, childId: string, isFutures?: boolean) => {
+    if (isFutures) {
+      router.push(`/market/future/${childContract}/${childId}`);
+    } else {
+      router.push(`/library/child/${childContract}/${childId}`);
+    }
   }, [router]);
 
   const handleParentClick = useCallback((parentContract: string, parentId: string) => {

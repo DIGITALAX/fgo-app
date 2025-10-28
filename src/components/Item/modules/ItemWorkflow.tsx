@@ -1,8 +1,9 @@
+import { FulfillmentStep, SubPerformer } from "@/components/Account/types";
 import { ItemWorkflowProps } from "../types";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
-export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
-  const workflow = (item as any).workflow;
+export const ItemWorkflow = ({ item, dict }: ItemWorkflowProps) => {
+  const workflow = item.workflow;
 
   if (
     !workflow ||
@@ -20,12 +21,13 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
     const minutes = Math.floor((seconds % 3600) / 60);
 
     const parts = [];
-    if (weeks > 0) parts.push(`${weeks} ${weeks === 1 ? 'week' : 'weeks'}`);
-    if (days > 0) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
-    if (hours > 0) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
-    if (minutes > 0) parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
+    if (weeks > 0) parts.push(`${weeks} ${weeks === 1 ? "week" : "weeks"}`);
+    if (days > 0) parts.push(`${days} ${days === 1 ? "day" : "days"}`);
+    if (hours > 0) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+    if (minutes > 0)
+      parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
 
-    return parts.length > 0 ? parts.join(', ') : `${seconds} seconds`;
+    return parts.length > 0 ? parts.join(", ") : `${seconds} seconds`;
   };
 
   return (
@@ -38,7 +40,7 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
         {workflow.estimatedDeliveryDuration > 0 && (
           <div className="space-y-2">
             <span className="text-oro font-agency">
-              {dict?.estimatedDeliveryDuration }
+              {dict?.estimatedDeliveryDuration}
             </span>
             <p className="text-white font-slim text-sm">
               {formatDuration(workflow.estimatedDeliveryDuration)}
@@ -51,11 +53,8 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
               {dict?.digitalSteps} ({workflow.digitalSteps.length})
             </span>
             <div className="space-y-3">
-              {workflow.digitalSteps.map((step: any, index: number) => (
-                <div
-                  key={index}
-                  className="bg-black/50 p-4 space-y-3"
-                >
+              {workflow.digitalSteps.map((step: FulfillmentStep, index: number) => (
+                <div key={index} className="bg-black/50 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-oro font-agency text-sm">
                       {dict?.step} {index + 1}
@@ -67,8 +66,9 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
                       <span className="text-oro font-agency text-sm">
                         {dict?.primaryPerformer}:
                       </span>
-                      <p className="text-white font-pixel text-xs">
-                        {step.fulfiller?.metadata?.title ?? step.fulfiller.fulfiller}
+                      <p className="text-white break-all font-pixel text-xs">
+                        {step.fulfiller?.metadata?.title ??
+                          step.fulfiller?.fulfiller}
                       </p>
                     </div>
 
@@ -90,12 +90,12 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
                         </span>
                         <div className="space-y-1">
                           {step.subPerformers.map(
-                            (sub: any, subIndex: number) => (
+                            (sub: SubPerformer, subIndex: number) => (
                               <div
                                 key={subIndex}
                                 className="flex items-center justify-between"
                               >
-                                <span className="text-white font-pixel text-xs">
+                                <span className="text-white break-all font-pixel text-xs">
                                   {sub.performer}
                                 </span>
                                 <span className="text-mar font-slim text-xs">
@@ -120,11 +120,8 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
               {dict?.physicalSteps} ({workflow.physicalSteps.length})
             </span>
             <div className="space-y-3">
-              {workflow.physicalSteps.map((step: any, index: number) => (
-                <div
-                  key={index}
-                  className="bg-black/50 p-4 space-y-3"
-                >
+              {workflow.physicalSteps.map((step: FulfillmentStep, index: number) => (
+                <div key={index} className="bg-black/50 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-oro font-agency text-sm">
                       {dict?.step} {index + 1}
@@ -136,8 +133,9 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
                       <span className="text-oro font-agency text-sm">
                         {dict?.primaryPerformer}:
                       </span>
-                      <p className="text-white font-pixel text-xs">
-                        {step.fulfiller?.metadata?.title ?? step.fulfiller.fulfiller}
+                      <p className="text-white font-pixel break-all text-xs">
+                        {step.fulfiller?.metadata?.title ??
+                          step.fulfiller?.fulfiller}
                       </p>
                     </div>
 
@@ -159,12 +157,12 @@ export const ItemWorkflow = ({ item , dict}: ItemWorkflowProps) => {
                         </span>
                         <div className="space-y-1">
                           {step.subPerformers.map(
-                            (sub: any, subIndex: number) => (
+                            (sub: SubPerformer, subIndex: number) => (
                               <div
                                 key={subIndex}
                                 className="flex items-center justify-between"
                               >
-                                <span className="text-white font-pixel text-xs">
+                                <span className="text-white break-all font-pixel text-xs">
                                   {sub.performer}
                                 </span>
                                 <span className="text-mar font-slim text-xs">

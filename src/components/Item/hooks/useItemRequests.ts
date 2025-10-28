@@ -9,7 +9,7 @@ export const useItemRequests = (item: Child | Template | Parent) => {
   const router = useRouter();
   const [processedParentRequests, setProcessedParentRequests] = useState<ParentRequests[]>([]);
   const [processedTemplateRequests, setProcessedTemplateRequests] = useState<TemplateRequests[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const processRequests = async () => {
@@ -18,7 +18,7 @@ export const useItemRequests = (item: Child | Template | Parent) => {
       try {
         if ("parentRequests" in item && item.parentRequests && item.parentRequests.length > 0) {
           const processedParents = await Promise.all(
-            item.parentRequests.map(async (request: any) => {
+            item.parentRequests.map(async (request: ParentRequests) => {
               if (request.parent) {
                 const processedParent = await ensureMetadata(request.parent);
                 return { ...request, parent: processedParent };
@@ -31,7 +31,7 @@ export const useItemRequests = (item: Child | Template | Parent) => {
 
         if ("templateRequests" in item && item.templateRequests && item.templateRequests.length > 0) {
           const processedTemplates = await Promise.all(
-            item.templateRequests.map(async (request: any) => {
+            item.templateRequests.map(async (request: TemplateRequests) => {
               if (request.template) {
                 const processedTemplate = await ensureMetadata(request.template);
                 return { ...request, template: processedTemplate };

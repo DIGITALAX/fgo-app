@@ -3,6 +3,7 @@ import { getTemplate } from "@/lib/subgraph/queries/getItems";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Template } from "../types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
+import { ChildReference, Parent } from "@/components/Account/types";
 
 export const useTemplateDetails = (
   contractAddress: string,
@@ -43,10 +44,10 @@ export const useTemplateDetails = (
         let finalAuthorizedChildren = [
           ...(templateData.authorizedChildren || []),
         ];
-        if (Number(templateData.status) === 1 && templateData.childReferences) {
+        if (Number(templateData.status) === 2 && templateData.childReferences) {
           const childRefsToAdd = await Promise.all(
             templateData.childReferences
-              .filter((childRef: any) => {
+              .filter((childRef: ChildReference) => {
                 const childKey = `${childRef.childContract}-${childRef.childId}`;
                 return !finalAuthorizedChildren.some(
                   (authChild: any) =>
@@ -54,12 +55,12 @@ export const useTemplateDetails = (
                     childKey
                 );
               })
-              .map(async (childRef: any) => {
+              .map(async (childRef: ChildReference) => {
                 let metadata = { title: "", image: "" };
-                if (childRef.uri) {
+                if (childRef.placementURI) {
                   try {
                     const childMetadata = await ensureMetadata({
-                      uri: childRef.child.uri,
+                      uri: childRef?.child?.uri,
                     });
                     metadata = {
                       title:
@@ -73,7 +74,7 @@ export const useTemplateDetails = (
                 return {
                   childContract: childRef.childContract,
                   childId: childRef.childId,
-                  uri: childRef.uri,
+                  placementURI: childRef.placementURI,
                   isTemplate: childRef?.isTemplate,
                   metadata,
                 };
@@ -102,10 +103,12 @@ export const useTemplateDetails = (
             templateData.title ||
             `${templateData.__typename} ${templateData.templateId}`,
           symbol: templateData.symbol || "",
+          maxDigitalEditions: templateData.maxDigitalEditions || "0",
           digitalPrice: templateData.digitalPrice,
           physicalPrice: templateData.physicalPrice,
           version: templateData.version || "1",
           maxPhysicalEditions: templateData.maxPhysicalEditions || "0",
+          currentDigitalEditions: templateData.currentDigitalEditions || "0",
           currentPhysicalEditions: templateData.currentPhysicalEditions || "0",
           uriVersion: templateData.uriVersion || "1",
           usageCount: templateData.usageCount || "0",
@@ -145,8 +148,24 @@ export const useTemplateDetails = (
           blockNumber: templateData.blockNumber || "0",
           blockTimestamp: templateData.blockTimestamp || templateData.createdAt,
           transactionHash: templateData.transactionHash || "",
-          authorizedParents: templateData.authorizedParents || [],
-          authorizedTemplates: templateData.authorizedTemplates || [],
+          authorizedParents:
+            templateData.authorizedParents.map((item: Parent) => {
+              return {
+                ...item,
+                isPhysical:
+                  Number(templateData.availability) > 0 &&
+                  Number(item.availability) > 0,
+              };
+            }) || [],
+          authorizedTemplates:
+            templateData.authorizedTemplates.map((item: Template) => {
+              return {
+                ...item,
+                isPhysical:
+                  Number(templateData.availability) > 0 &&
+                  Number(item.availability) > 0,
+              };
+            }) || [],
           parentRequests: templateData.parentRequests || [],
           templateRequests: templateData.templateRequests || [],
           marketRequests: templateData.marketRequests || [],

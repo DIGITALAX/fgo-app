@@ -11,6 +11,7 @@ import {
   SuccessData,
 } from "@/components/Modals/types";
 import { chains } from "@lens-chain/sdk/viem";
+import { FGOUser } from "@/components/Account/types";
 
 const currentNetwork = getCurrentNetwork();
 
@@ -36,8 +37,9 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
+  const [colorSwitch, setColorSwitch] = useState<boolean>(false);
   const [errorData, setErrorData] = useState<ErrorData | null>(null);
-
+  const [fgoUser, setFgoUser] = useState<FGOUser | null>(null);
   const showSuccess = (message: string, txHash?: string) => {
     setSuccessData({ message, txHash });
   };
@@ -61,6 +63,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     hideError,
     successData,
     errorData,
+    fgoUser,
+    setFgoUser,
+    colorSwitch,
+    setColorSwitch,
   };
 
   return (

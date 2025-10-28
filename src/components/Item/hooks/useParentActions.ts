@@ -14,9 +14,9 @@ export const useParentActions = (
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const context = useContext(AppContext);
-  const [deleting, setDeleting] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [creating, setCreating] = useState<boolean>(false);
+  const [updating, setUpdating] = useState<boolean>(false);
 
   const isDesigner =
     address && address.toLowerCase() === parent?.designer?.toLowerCase();
@@ -83,7 +83,7 @@ export const useParentActions = (
         address: contractAddress as `0x${string}`,
         abi: ABIS.FGOParent,
         functionName: "deleteParent",
-        args: [BigInt(designId)],
+        args: [BigInt(designId), BigInt(0)],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });

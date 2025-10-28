@@ -15,9 +15,9 @@ export const useTemplateActions = (
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const context = useContext(AppContext);
-  const [deleting, setDeleting] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [creating, setCreating] = useState<boolean>(false);
+  const [updating, setUpdating] = useState<boolean>(false);
 
   const isSupplier =
     address && address.toLowerCase() === template?.supplier?.toLowerCase();

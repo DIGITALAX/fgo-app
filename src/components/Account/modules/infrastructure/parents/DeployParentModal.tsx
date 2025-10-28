@@ -166,7 +166,7 @@ export const DeployParentModal = ({
 
             <div>
               <label className="block text-sm font-chicago text-gris mb-2">
-                {dict?.imag}
+                {dict?.image}
               </label>
               <div className="space-y-2">
                 {formData.image && (

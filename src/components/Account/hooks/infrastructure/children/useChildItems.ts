@@ -12,119 +12,167 @@ import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { getInfrastructureStatus } from "@/lib/subgraph/queries/getInfrastructureStatus";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
+const ITEMS_PER_PAGE = 20;
+
 export const useChildItems = (
   contractAddress: string,
   infrastructureOrInfraId: any,
   dict: any
 ) => {
   const [childItems, setChildItems] = useState<Child[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [createLoading, setCreateLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [skip, setSkip] = useState<number>(0);
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const context = useContext(AppContext);
 
-  const fetchChildItems = useCallback(async () => {
-    if (!contractAddress) return;
+  const fetchChildItems = useCallback(
+    async (reset = false) => {
+      if (!contractAddress) return;
+      if (loading) return;
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const result = await getChildren(contractAddress);
-      if (result?.data?.childs) {
-        const processedItems: Child[] = await Promise.all(
-          result?.data?.childs.map(async (item: any) => {
-            const processedItem = await ensureMetadata(item);
-
-            return {
-              childId: item.childId,
-              childContract: item.childContract,
-              supplier: item.supplier || "Unknown",
-              supplierProfile: item.supplierProfile || {
-                uri: "",
-                version: "",
-                metadata: { title: "", image: "", description: "", link: "" },
-              },
-              childType: item.childType || "Unknown",
-              scm: item.scm || "Unknown",
-              title:
-                processedItem.metadata?.title ||
-                item.title ||
-                `${item.__typename} ${item.childId}`,
-              symbol: item.symbol || "",
-              digitalPrice: item.digitalPrice,
-              physicalPrice: item.physicalPrice,
-              version: item.version || "1",
-              maxPhysicalEditions: item.maxPhysicalEditions || "0",
-              currentPhysicalEditions: item.currentPhysicalEditions || "0",
-              uriVersion: item.uriVersion || "1",
-              usageCount: item.usageCount || "0",
-              supplyCount: item.supplyCount,
-              infraCurrency: item.infraCurrency,
-              uri: item.uri,
-              metadata: processedItem.metadata || {
-                title: "",
-                description: "",
-                image: "",
-                attachments: [],
-                tags: [],
-                prompt: "",
-                aiModel: "",
-                loras: [],
-                workflow: "",
-                version: "",
-                customFields: {},
-              },
-              status: item.status,
-              availability: getAvailabilityLabel(item.availability || 0, dict),
-              isImmutable: item.isImmutable || false,
-              digitalMarketsOpenToAll: item.digitalMarketsOpenToAll || false,
-              physicalMarketsOpenToAll: item.physicalMarketsOpenToAll || false,
-              digitalReferencesOpenToAll:
-                item.digitalReferencesOpenToAll || false,
-              physicalReferencesOpenToAll:
-                item.physicalReferencesOpenToAll || false,
-              standaloneAllowed: item.standaloneAllowed || "false",
-              authorizedMarkets: item.authorizedMarkets || "",
-              createdAt: item.createdAt,
-              updatedAt: item.updatedAt || item.createdAt,
-              blockNumber: item.blockNumber || "0",
-              blockTimestamp: item.blockTimestamp || item.createdAt,
-              transactionHash: item.transactionHash || "",
-              authorizedParents: item.authorizedParents || [],
-              authorizedTemplates: item.authorizedTemplates || [],
-              parentRequests: item.parentRequests || [],
-              templateRequests: item.templateRequests || [],
-              marketRequests: item.marketRequests || [],
-              authorizedChildren: item.authorizedChildren || [],
-              physicalRights: item.physicalRights || [],
-            } as Child;
-          })
+      try {
+        const currentSkip = reset ? 0 : skip;
+        const result = await getChildren(
+          contractAddress,
+          ITEMS_PER_PAGE,
+          currentSkip
         );
-        setChildItems(processedItems);
-      } else {
-        setChildItems([]);
-      }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : dict?.failedToFetchChildItems;
-      setError(errorMessage);
-      setChildItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [contractAddress]);
 
-  useEffect(() => {
-    fetchChildItems();
-  }, [fetchChildItems]);
+        if (result?.data?.childs) {
+          const processedItems: Child[] = await Promise.all(
+            result?.data?.childs.map(async (item: any) => {
+              const processedItem = await ensureMetadata(item);
+
+              return {
+                childId: item.childId,
+                childContract: item.childContract,
+                supplier: item.supplier || "Unknown",
+                supplierProfile: item.supplierProfile || {
+                  uri: "",
+                  version: "",
+                  metadata: { title: "", image: "", description: "", link: "" },
+                },
+                childType: item.childType || "Unknown",
+                scm: item.scm || "Unknown",
+                title:
+                  processedItem.metadata?.title ||
+                  item.title ||
+                  `${item.__typename} ${item.childId}`,
+                symbol: item.symbol || "",
+                digitalPrice: item.digitalPrice,
+                physicalPrice: item.physicalPrice,
+                version: item.version || "1",
+                maxPhysicalEditions: item.maxPhysicalEditions || "0",
+                currentPhysicalEditions: item.currentPhysicalEditions || "0",
+                currentDigitalEditions: item.currentDigitalEditions || "0",
+                futures: item.futures,
+                totalPrepaidAmount: item.totalPrepaidAmount || "0",
+                totalPrepaidUsed: item.totalPrepaidUsed || "0",
+                totalReservedSupply: item.totalReservedSupply || "0",
+                uriVersion: item.uriVersion || "1",
+                usageCount: item.usageCount || "0",
+                supplyCount: item.supplyCount,
+                infraCurrency: item.infraCurrency,
+                uri: item.uri,
+                metadata: processedItem.metadata || {
+                  title: "",
+                  description: "",
+                  image: "",
+                  attachments: [],
+                  tags: [],
+                  prompt: "",
+                  aiModel: "",
+                  loras: [],
+                  workflow: "",
+                  version: "",
+                  customFields: {},
+                },
+                status: item.status,
+                availability: getAvailabilityLabel(
+                  item.availability || 0,
+                  dict
+                ),
+                isImmutable: item.isImmutable || false,
+                digitalMarketsOpenToAll: item.digitalMarketsOpenToAll || false,
+                physicalMarketsOpenToAll:
+                  item.physicalMarketsOpenToAll || false,
+                digitalReferencesOpenToAll:
+                  item.digitalReferencesOpenToAll || false,
+                physicalReferencesOpenToAll:
+                  item.physicalReferencesOpenToAll || false,
+                standaloneAllowed: item.standaloneAllowed || "false",
+                authorizedMarkets: item.authorizedMarkets || "",
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt || item.createdAt,
+                blockNumber: item.blockNumber || "0",
+                blockTimestamp: item.blockTimestamp || item.createdAt,
+                transactionHash: item.transactionHash || "",
+                authorizedParents: item.authorizedParents || [],
+                authorizedTemplates: item.authorizedTemplates || [],
+                parentRequests: item.parentRequests || [],
+                templateRequests: item.templateRequests || [],
+                marketRequests: item.marketRequests || [],
+                authorizedChildren: item.authorizedChildren || [],
+                physicalRights: item.physicalRights || [],
+              } as Child;
+            })
+          );
+
+          if (reset) {
+            setChildItems(processedItems);
+            setSkip(ITEMS_PER_PAGE);
+          } else {
+            setChildItems((prev) => [...prev, ...processedItems]);
+            setSkip((prev) => prev + ITEMS_PER_PAGE);
+          }
+
+          if (processedItems.length < ITEMS_PER_PAGE) {
+            setHasMore(false);
+          }
+        } else {
+          if (reset) {
+            setChildItems([]);
+          }
+          setHasMore(false);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : dict?.failedToFetchChildItems;
+        setError(errorMessage);
+        if (reset) {
+          setChildItems([]);
+        }
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [contractAddress, skip, loading, dict]
+  );
+
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      fetchChildItems(false);
+    }
+  }, [fetchChildItems, loading, hasMore]);
 
   const refetch = useCallback(() => {
-    fetchChildItems();
+    setSkip(0);
+    setHasMore(true);
+    fetchChildItems(true);
   }, [fetchChildItems]);
+
+  useEffect(() => {
+    fetchChildItems(true);
+  }, [contractAddress]);
 
   const createChild = useCallback(
     async (formData: CreateItemFormData, abortController?: AbortController) => {
@@ -211,6 +259,7 @@ export const useChildItems = (
             formData.availability === 0
               ? BigInt("0")
               : BigInt(formData.maxPhysicalEditions || "0"),
+          maxDigitalEditions: BigInt("0"),
           availability: formData.availability,
           isImmutable: formData.isImmutable,
           digitalMarketsOpenToAll:
@@ -230,6 +279,21 @@ export const useChildItems = (
               ? false
               : formData.physicalReferencesOpenToAll,
           standaloneAllowed: formData.standaloneAllowed,
+          futures: formData.futures?.isFutures
+            ? {
+                deadline: BigInt(formData.futures.deadline),
+                pricePerUnit: parseEther(formData.futures.pricePerUnit),
+                maxDigitalEditions: BigInt(
+                  formData.futures.maxDigitalEditions
+                ),
+                isFutures: true,
+              }
+            : {
+                deadline: BigInt("0"),
+                pricePerUnit: BigInt("0"),
+                maxDigitalEditions: BigInt("0"),
+                isFutures: false,
+              },
           childUri: `ipfs://${metadataHash}`,
           authorizedMarkets:
             formData.authorizedMarkets as any as `0x${string}`[],
@@ -254,6 +318,8 @@ export const useChildItems = (
         });
 
         context?.showSuccess(dict?.childCreatedSuccessfully, hash);
+
+        refetch();
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : dict?.failedToCreateChild;
@@ -263,13 +329,23 @@ export const useChildItems = (
         setCreateLoading(false);
       }
     },
-    [contractAddress, walletClient, publicClient]
+    [
+      contractAddress,
+      walletClient,
+      publicClient,
+      dict,
+      infrastructureOrInfraId,
+      context,
+      refetch,
+    ]
   );
 
   return {
     childItems,
     loading,
     error,
+    hasMore,
+    loadMore,
     refetch,
     createChild,
     createLoading,

@@ -2,7 +2,7 @@ import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 import { useCreateInfrastructureForm } from "../../hooks/infrastructure/useCreateInfrastructureForm";
 import { CreateInfrastructureModalProps } from "../../types";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const CreateInfrastructureModal = ({
   isOpen,
@@ -23,7 +23,15 @@ export const CreateInfrastructureModal = ({
     isFormValid,
   } = useCreateInfrastructureForm(paymentTokens);
 
-  const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
+  const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState<boolean>(false);
+  const prevOpenRef = useRef(isOpen);
+
+  useEffect(() => {
+    if (prevOpenRef.current && !isOpen && !loading) {
+      resetForm();
+    }
+    prevOpenRef.current = isOpen;
+  }, [isOpen, loading, resetForm]);
 
   if (!isOpen) return null;
 
@@ -33,10 +41,7 @@ export const CreateInfrastructureModal = ({
       return;
     }
 
-    try {
-      await onSubmit(formData);
-      resetForm();
-    } catch (error) {}
+    onSubmit(formData);
   };
 
   const handleCancel = () => {
@@ -49,9 +54,9 @@ export const CreateInfrastructureModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-hidden">
+      <div className="relative max-w-2xl w-full h-auto max-h-[90vh] flex flex-col">
+        <div className="absolute z-0 top-0 left-0 w-full h-full flex pointer-events-none">
           <Image
             src={"/images/borderblue.png"}
             draggable={false}
@@ -60,7 +65,7 @@ export const CreateInfrastructureModal = ({
             alt="border"
           />
         </div>
-        <div className="relative z-10 p-6">
+        <div className="relative z-10 p-6 overflow-y-auto" style={{maxHeight: 'calc(90vh - 2rem)'}}>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-awk uppercase text-oro">
               {dict?.createInfrastructure}
@@ -246,6 +251,11 @@ export const CreateInfrastructureModal = ({
                 className="hidden"
                 disabled={loading}
               />
+              {formData.image && (
+                <p className="text-xs text-verde font-chicago mt-2">
+                  {formData.image.name}
+                </p>
+              )}
             </div>
 
             <div className="flex gap-3 pt-4">

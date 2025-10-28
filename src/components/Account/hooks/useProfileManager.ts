@@ -29,8 +29,8 @@ export const useProfileManager = ({
     vigBasisPoints: "",
   });
   const [existingProfile, setExistingProfile] = useState<Designer | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [checkingProfile, setCheckingProfile] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [checkingProfile, setCheckingProfile] = useState<boolean>(true);
   const cancelledRef = useRef<boolean>(false);
 
   const publicClient = usePublicClient();

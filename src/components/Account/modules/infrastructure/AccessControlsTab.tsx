@@ -743,11 +743,11 @@ export const AccessControlsTab = ({
           </h3>
 
           <div>
-            <h4 className="text-sm font-awk uppercase text-gris mb-3">
+            <h4 className="text-sm font-awk break-all uppercase text-gris mb-3">
               {dict?.updateInfrastructureUri}
             </h4>
             <div className="mb-4">
-              <p className="text-xs text-gris mb-3 font-chicago">
+              <p className="text-xs break-all text-gris mb-3 font-chicago">
                 {dict?.currentUri}: {infrastructure.uri}
               </p>
 
@@ -829,7 +829,7 @@ export const AccessControlsTab = ({
                     alt="border"
                   />
                 </div>
-                <span className="relative z-10 flex items-center gap-2">
+                <span className="relative break-all z-10 flex items-center gap-2">
                   {loading === "updateURI" && (
                     <div className="relative w-fit animate-spin h-fit flex">
                       <div className="relative w-3 h-3 flex">

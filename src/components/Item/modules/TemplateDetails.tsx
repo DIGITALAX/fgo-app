@@ -18,8 +18,8 @@ export const TemplateDetails = ({
   templateId,
   dict,
 }: TemplateDetailsProps) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState<boolean>(false);
 
   const { template, isLoading, error } = useTemplateDetails(
     contractAddress,

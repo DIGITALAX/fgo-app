@@ -20,7 +20,7 @@ export const useMarketContracts = (infraId: string, dict: any) => {
       
       if (result?.data?.marketContracts) {
         const processedContracts = await Promise.all(
-          result.data.marketContracts.map(async (contract: any) => {
+          result.data.marketContracts.map(async (contract: MarketContract) => {
             const processedContract = await ensureMetadata(contract);
             return {
               ...processedContract,

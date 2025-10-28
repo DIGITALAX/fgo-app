@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { getChild } from "@/lib/subgraph/queries/getItems";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { Child } from "../types";
+import { Child, Template } from "../types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
+import { Parent } from "@/components/Account/types";
 
-export const useChildDetails = (contractAddress: string, childId: number, dict: any) => {
+export const useChildDetails = (
+  contractAddress: string,
+  childId: number,
+  dict: any
+) => {
   const [child, setChild] = useState<Child | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +39,11 @@ export const useChildDetails = (contractAddress: string, childId: number, dict: 
             version: "",
             metadata: { title: "", image: "", description: "", link: "" },
           },
+          futures: childData.futures,
+          totalPrepaidUsed: childData.totalPrepaidUsed || "0",
+          totalPrepaidAmount: childData.totalPrepaidAmount || "0",
+          totalReservedSupply: childData.totalReservedSupply || "0",
+          currentDigitalEditions: childData.currentDigitalEditions || "0",
           childType: childData.childType || "Unknown",
           scm: childData.scm || "Unknown",
           title:
@@ -79,8 +89,24 @@ export const useChildDetails = (contractAddress: string, childId: number, dict: 
           blockNumber: childData.blockNumber || "0",
           blockTimestamp: childData.blockTimestamp || childData.createdAt,
           transactionHash: childData.transactionHash || "",
-          authorizedParents: childData.authorizedParents || [],
-          authorizedTemplates: childData.authorizedTemplates || [],
+          authorizedParents:
+            childData.authorizedParents.map((item: Parent) => {
+              return {
+                ...item,
+                isPhysical:
+                  Number(childData.availability) > 0 &&
+                  Number(item.availability) > 0,
+              };
+            }) || [],
+          authorizedTemplates:
+            childData.authorizedTemplates.map((item: Template) => {
+              return {
+                ...item,
+                isPhysical:
+                  Number(childData.availability) > 0 &&
+                  Number(item.availability) > 0,
+              };
+            }) || [],
           parentRequests: childData.parentRequests || [],
           templateRequests: childData.templateRequests || [],
           marketRequests: childData.marketRequests || [],

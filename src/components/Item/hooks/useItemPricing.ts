@@ -17,14 +17,14 @@ export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
         const digital = await formatPrice(item.digitalPrice, currency);
         setFormattedDigitalPrice(digital);
       } else {
-        setFormattedDigitalPrice(dict?.free || "Free");
+        setFormattedDigitalPrice(dict?.free);
       }
 
       if (item.physicalPrice && item.physicalPrice !== "0") {
         const physical = await formatPrice(item.physicalPrice, currency);
         setFormattedPhysicalPrice(physical);
       } else {
-        setFormattedPhysicalPrice(dict?.free || "Free");
+        setFormattedPhysicalPrice(dict?.free);
       }
     };
 
@@ -34,7 +34,7 @@ export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
   const statusLabel = getStatusLabel(item.status, dict);
 
   const statusColor =
-    Number(item.status) === 1
+    Number(item.status) === 2
       ? "bg-green-500/20 text-green-400 border border-green-500/30"
       : Number(item.status) === 0
       ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
@@ -59,9 +59,9 @@ export const useItemPricing = (item: Child | Template | Parent, dict: any) => {
   }, [item.availability]);
 
   const formatEditionLimit = useCallback((value: string | number) => {
-    if (!value) return dict?.unlimited || "UNLIMITED";
+    if (!value) return dict?.unlimited;
     const numValue = typeof value === 'string' ? parseInt(value, 10) : Number(value);
-    if (isNaN(numValue) || numValue === 0) return dict?.unlimited || "UNLIMITED";
+    if (isNaN(numValue) || numValue === 0) return dict?.unlimited ;
     return numValue.toString();
   }, []);
 

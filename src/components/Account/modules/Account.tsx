@@ -5,6 +5,7 @@ import { AccountTabs } from "./AccountTabs";
 import { InfrastructureTab } from "./infrastructure/InfrastructureTab";
 import { DesignerTab } from "./designer/DesignerTab";
 import { SupplierTab } from "./supplier/SupplierTab";
+import { FutureCreditsTab } from "./FutureCreditsTab";
 import { FulfillerTab } from "./fulfiller/FulfillerTab";
 import { SettingsTab } from "./settings/SettingsTab";
 import Image from "next/image";
@@ -51,6 +52,8 @@ export const Account = ({ dict }: { dict: any }) => {
         return <DesignerTab dict={dict} />;
       case "supplier":
         return <SupplierTab dict={dict} />;
+      case "futureCredits":
+        return <FutureCreditsTab dict={dict} />;
       case "fulfiller":
         return <FulfillerTab dict={dict} />;
       case "settings":

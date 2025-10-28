@@ -5,6 +5,25 @@ const GET_FGO_USER = `
 query($id: String!) {
   fgousers(where: {id: $id}) {
     id
+    futureCredits {
+      child {
+        childId
+        childContract
+        metadata {
+          title
+          image
+        }
+      }
+      position {
+        pricePerUnit
+        deadline
+        isSettled
+        isActive
+        blockTimestamp
+      }
+      credits
+      consumed
+    }
     ownedInfrastructures {
       isDesignerGated
       isSupplierGated

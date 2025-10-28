@@ -18,7 +18,7 @@ export const FulfillmentWorkflowModal = ({
   infraId,
   dict,
 }: FulfillmentWorkflowModalProps) => {
-  const [validating, setValidating] = useState(false);
+  const [validating, setValidating] = useState<boolean>(false);
   const cancelledRef = useRef<boolean>(false);
   const context = useContext(AppContext);
 

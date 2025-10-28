@@ -38,11 +38,13 @@ export const AVAILABILITY_OPTIONS = [
 export const ROUTES = {
   HOME: "/",
   ACCOUNT: "/account",
+  MARKET: "/market",
 } as const;
 
 export const NAV_ITEMS = [
   { label: "Library", href: ROUTES.HOME },
   { label: "Account", href: ROUTES.ACCOUNT },
+  { label: "Market", href: ROUTES.MARKET },
   { label: "Standard", href: "http://cc0web3fashion.com/dhawu" },
   {
     label: "Contracts",
@@ -92,11 +94,15 @@ export const getCurrentNetwork = (): NetworkConfig => {
 
 export const CORE_CONTRACT_ADDRESSES: Record<number, CoreContractAddresses> = {
   [NETWORKS.LENS_TESTNET.chainId]: {
-    Factory: "0x906b05fb0e297d6c8c1d812ae872d2daa6c4b3c8",
+    Factory: "0x6b43c0527200792F93717fb0f47da928C667751b",
+    SupplyCoord: "0x58D65dbD884A24e9816D3AA8677A337ec819A75f",
+    FuturesCoord: "0x08cDDA32055Ca84f728a76ba84c2547041360415",
     TestToken: "0xE5E9D4C119a28302EDa029155bF00efd35E06c93",
   },
   [NETWORKS.LENS_MAINNET.chainId]: {
-    Factory: "0x906b05fb0e297d6c8c1d812ae872d2daa6c4b3c8",
+    Factory: "0x6b43c0527200792F93717fb0f47da928C667751b",
+    SupplyCoord: "0x58D65dbD884A24e9816D3AA8677A337ec819A75f",
+    FuturesCoord: "0x08cDDA32055Ca84f728a76ba84c2547041360415",
     TestToken: "0xE5E9D4C119a28302EDa029155bF00efd35E06c93",
   },
 };

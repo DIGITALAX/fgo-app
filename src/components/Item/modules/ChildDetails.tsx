@@ -25,10 +25,11 @@ export const ChildDetails = ({
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const context = useContext(AppContext);
-  const [deleting, setDeleting] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] =
+    useState<boolean>(false);
+  const [updating, setUpdating] = useState<boolean>(false);
 
   const { child, isLoading, error } = useChildDetails(
     contractAddress,
@@ -76,6 +77,7 @@ export const ChildDetails = ({
     address && address.toLowerCase() === child.supplier.toLowerCase();
   const canDelete =
     parseInt(child.usageCount) === 0 && parseInt(child.supplyCount) === 0;
+  const isFuturesChild = Boolean(Number(child.futures?.pricePerUnit) > 0);
 
   const handleDeleteChild = async () => {
     if (!walletClient || !publicClient || !context) {
@@ -200,26 +202,28 @@ export const ChildDetails = ({
     <div className="p-2 md:p-6 space-y-2 h-screen overflow-y-auto">
       {isSupplier && (
         <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="relative px-3 py-1 bg-offNegro text-oro font-chicago text-xs uppercase cursor-pointer hover:opacity-70"
-          >
-            <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-              <Image
-                src={"/images/borderoro2.png"}
-                draggable={false}
-                objectFit="fill"
-                fill
-                alt="border"
-              />
-            </div>
-            <span className="relative z-10">{dict?.editChild}</span>
-          </button>
+          {!isFuturesChild && (
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="relative px-3 py-1 bg-offNegro text-oro font-chicago text-xs uppercase cursor-pointer hover:opacity-70"
+            >
+              <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                <Image
+                  src={"/images/borderoro2.png"}
+                  draggable={false}
+                  objectFit="fill"
+                  fill
+                  alt="border"
+                />
+              </div>
+              <span className="relative z-10">{dict?.editChild}</span>
+            </button>
+          )}
           <button
             onClick={handleDeleteChild}
             disabled={!canDelete || deleting}
             className={`relative px-3 py-1 bg-offNegro text-fresa font-chicago text-xs uppercase cursor-pointer hover:opacity-70 ${
-              (!canDelete || deleting) ? "cursor-not-allowed opacity-50" : ""
+              !canDelete || deleting ? "cursor-not-allowed opacity-50" : ""
             }`}
             title={!canDelete ? dict?.cannotDeleteChildUsageCount : ""}
           >
@@ -232,7 +236,9 @@ export const ChildDetails = ({
                 alt="border"
               />
             </div>
-            <span className="relative z-10">{deleting ? dict?.deleting : dict?.deleteChild}</span>
+            <span className="relative z-10">
+              {deleting ? dict?.deleting : dict?.deleteChild}
+            </span>
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}

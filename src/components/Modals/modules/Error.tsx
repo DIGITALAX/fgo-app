@@ -9,7 +9,7 @@ export const Error = ({ dict }: { dict: any }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative max-w-md w-full">
+      <div className="relative max-w-md w-full max-h-[90vh] flex flex-col bg-black">
         <div className="absolute z-0 top-0 left-0 w-full h-full flex">
           <Image
             src={"/images/borderblue.png"}
@@ -19,8 +19,8 @@ export const Error = ({ dict }: { dict: any }) => {
             alt="border"
           />
         </div>
-        <div className="relative z-10 p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="relative z-10 p-6 flex-shrink-0">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-awk uppercase text-fresa">{dict?.error}</h2>
             <div
               onClick={context.hideError}
@@ -35,13 +35,17 @@ export const Error = ({ dict }: { dict: any }) => {
               />
             </div>
           </div>
+        </div>
 
+        <div className="relative z-10 flex-1 min-h-0 overflow-y-auto px-6">
           <div className="mb-6">
             <p className="text-gris font-chicago text-sm leading-relaxed whitespace-pre-wrap break-words">
               {context.errorData.message}
             </p>
           </div>
+        </div>
 
+        <div className="relative z-10 px-6 pb-6 flex-shrink-0">
           <div className="flex justify-end">
             <button
               onClick={context.hideError}

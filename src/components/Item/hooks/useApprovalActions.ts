@@ -82,13 +82,13 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
     }
   }, [walletClient, publicClient, context, contractAddress, itemId, contractType]);
 
-  const approveParentRequest = useCallback(async (parentContract: string, parentId: string, approvedAmount: string) => {
+  const approveParentRequest = useCallback(async (parentContract: string, parentId: string, approvedAmount: string, isPhysical: boolean) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;
     }
 
-    const loadingKey = `approve-parent-${parentContract}-${parentId}`;
+    const loadingKey = `approve-parent-${parentContract}-${parentId}-${isPhysical ? 'physical' : 'digital'}`;
     setLoading(loadingKey, true);
 
     try {
@@ -96,7 +96,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
         address: contractAddress as `0x${string}`,
         abi: getABI(),
         functionName: "approveParentRequest",
-        args: [BigInt(itemId), BigInt(parentId), BigInt(approvedAmount), parentContract as `0x${string}`],
+        args: [BigInt(itemId), BigInt(parentId), BigInt(approvedAmount), parentContract as `0x${string}`, isPhysical],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -109,13 +109,13 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
     }
   }, [walletClient, publicClient, context, contractAddress, itemId, contractType]);
 
-  const rejectParentRequest = useCallback(async (parentContract: string, parentId: string) => {
+  const rejectParentRequest = useCallback(async (parentContract: string, parentId: string, isPhysical: boolean) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;
     }
 
-    const loadingKey = `reject-parent-${parentContract}-${parentId}`;
+    const loadingKey = `reject-parent-${parentContract}-${parentId}-${isPhysical ? 'physical' : 'digital'}`;
     setLoading(loadingKey, true);
 
     try {
@@ -123,7 +123,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
         address: contractAddress as `0x${string}`,
         abi: getABI(),
         functionName: "rejectParentRequest",
-        args: [BigInt(itemId), BigInt(parentId), parentContract as `0x${string}`],
+        args: [BigInt(itemId), BigInt(parentId), parentContract as `0x${string}`, isPhysical],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -136,13 +136,13 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
     }
   }, [walletClient, publicClient, context, contractAddress, itemId, contractType]);
 
-  const approveTemplateRequest = useCallback(async (templateContract: string, templateId: string, approvedAmount: string) => {
+  const approveTemplateRequest = useCallback(async (templateContract: string, templateId: string, approvedAmount: string, isPhysical: boolean) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;
     }
 
-    const loadingKey = `approve-template-${templateContract}-${templateId}`;
+    const loadingKey = `approve-template-${templateContract}-${templateId}-${isPhysical ? 'physical' : 'digital'}`;
     setLoading(loadingKey, true);
 
     try {
@@ -150,7 +150,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
         address: contractAddress as `0x${string}`,
         abi: getABI(),
         functionName: "approveTemplateRequest",
-        args: [BigInt(itemId), BigInt(templateId), BigInt(approvedAmount), templateContract as `0x${string}`],
+        args: [BigInt(itemId), BigInt(templateId), BigInt(approvedAmount), templateContract as `0x${string}`, isPhysical],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -163,13 +163,13 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
     }
   }, [walletClient, publicClient, context, contractAddress, itemId, contractType]);
 
-  const rejectTemplateRequest = useCallback(async (templateContract: string, templateId: string) => {
+  const rejectTemplateRequest = useCallback(async (templateContract: string, templateId: string, isPhysical: boolean) => {
     if (!walletClient || !publicClient || !context) {
       context?.showError(dict?.walletNotConnected);
       return;
     }
 
-    const loadingKey = `reject-template-${templateContract}-${templateId}`;
+    const loadingKey = `reject-template-${templateContract}-${templateId}-${isPhysical ? 'physical' : 'digital'}`;
     setLoading(loadingKey, true);
 
     try {
@@ -177,7 +177,7 @@ export const useApprovalActions = (contractAddress: string, itemId: string, cont
         address: contractAddress as `0x${string}`,
         abi: getABI(),
         functionName: "rejectTemplateRequest",
-        args: [BigInt(itemId), BigInt(templateId), templateContract as `0x${string}`],
+        args: [BigInt(itemId), BigInt(templateId), templateContract as `0x${string}`, isPhysical],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });

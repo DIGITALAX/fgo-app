@@ -1,5 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { CreateItemFormData, ChildReference, Workflow } from "../types";
+import {
+  CreateItemFormData,
+  ChildReference,
+  Workflow,
+  MarketContract,
+  SupplyRequestFormData,
+} from "../types";
 import { Child, Template } from "@/components/Item/types";
 import { Parent } from "../types";
 import { formatPrice } from "@/lib/helpers/pricing";
@@ -25,13 +31,15 @@ const parsePlacementFromURI = async (
   placement: any
 ): Promise<ChildReference> => {
   try {
-    if (placement.uri) {
-      const metadata = await fetchMetadataFromIPFS(placement.uri);
+    if (placement.placementURI) {
+      const metadata = await fetchMetadataFromIPFS(placement.placementURI);
       return {
         childId: placement.childId,
         childContract: placement.childContract,
         amount: placement.amount,
-        uri: placement.uri,
+        placementURI: placement.placementURI,
+        prepaidAmount: placement.prepaidAmount || "0",
+        prepaidUsed: placement.prepaidUsed || "0",
         metadata: {
           instructions: metadata.instructions || "",
           customFields: metadata.customFields || {},
@@ -46,7 +54,9 @@ const parsePlacementFromURI = async (
     childId: placement.childId,
     childContract: placement.childContract,
     amount: placement.amount,
-    uri: "",
+    placementURI: "",
+    prepaidAmount: placement.prepaidAmount || "0",
+    prepaidUsed: placement.prepaidUsed || "0",
     metadata: { instructions: "", customFields: {} },
   };
 };
@@ -66,14 +76,14 @@ export const useCreateItemForm = (
       if ("designId" in editItem) {
         const parent = editItem as Parent;
         const authorizedMarkets = Array.isArray(parent.authorizedMarkets)
-          ? parent.authorizedMarkets.map((market: any) =>
+          ? parent.authorizedMarkets.map((market) =>
               typeof market === "string"
                 ? market
                 : market.contractAddress || market.id
             )
           : parent.authorizedMarkets &&
             typeof parent.authorizedMarkets === "object"
-          ? Object.values(parent.authorizedMarkets).map((market: any) =>
+          ? Object.values(parent.authorizedMarkets as any[]).map((market) =>
               typeof market === "string"
                 ? market
                 : market.contractAddress || market.id
@@ -96,6 +106,7 @@ export const useCreateItemForm = (
           standaloneAllowed: true,
           authorizedMarkets,
           childReferences: [],
+          supplyRequests: [],
           metadata: {
             title: metadata?.title || "",
             description: metadata?.description || "",
@@ -150,12 +161,15 @@ export const useCreateItemForm = (
                   childId: cp.childId,
                   childContract: cp.childContract,
                   amount: cp.amount,
-                  uri: cp.uri,
+                  placementURI: cp.placementURI,
+                  prepaidAmount: "0",
+                  prepaidUsed: "0",
                   metadata: {
                     instructions: "",
                     customFields: {},
                   },
                 })) || [],
+          supplyRequests: [],
           metadata: {
             title: metadata?.title || "",
             description: metadata?.description || "",
@@ -180,7 +194,7 @@ export const useCreateItemForm = (
       maxPhysicalEditions: "0",
       maxDigitalEditions: "0",
       availability: 0,
-      printType: 0,
+      printType: "0",
       isImmutable: false,
       digitalMarketsOpenToAll: true,
       physicalMarketsOpenToAll: true,
@@ -189,6 +203,7 @@ export const useCreateItemForm = (
       standaloneAllowed: true,
       authorizedMarkets: [],
       childReferences: [],
+      supplyRequests: [],
       metadata: {
         title: "",
         description: "",
@@ -202,6 +217,7 @@ export const useCreateItemForm = (
         customFields: {},
       },
       fulfillmentWorkflow: undefined,
+      futures: undefined,
     };
   };
 
@@ -398,12 +414,86 @@ export const useCreateItemForm = (
     []
   );
 
+  const addSupplyRequest = useCallback((request: SupplyRequestFormData) => {
+    setFormData((prev) => ({
+      ...prev,
+      supplyRequests: [...prev.supplyRequests, request],
+    }));
+  }, []);
+
+  const removeSupplyRequest = useCallback((index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      supplyRequests: prev.supplyRequests.filter((_, i) => i !== index),
+    }));
+  }, []);
+
+  const updateSupplyRequest = useCallback(
+    (index: number, updatedRequest: SupplyRequestFormData) => {
+      setFormData((prev) => ({
+        ...prev,
+        supplyRequests: prev.supplyRequests.map((request, i) =>
+          i === index ? updatedRequest : request
+        ),
+      }));
+    },
+    []
+  );
+
   const handleWorkflowChange = useCallback((workflow: Workflow) => {
     setFormData((prev) => ({
       ...prev,
       fulfillmentWorkflow: workflow,
     }));
   }, []);
+
+  const handleFuturesToggle = useCallback(() => {
+    setFormData((prev) => {
+      if (prev.futures?.isFutures) {
+        return {
+          ...prev,
+          futures: undefined,
+          availability: prev.availability === 2 ? 0 : prev.availability,
+        };
+      } else {
+        return {
+          ...prev,
+          futures: {
+            isFutures: true,
+            deadline: "0",
+            pricePerUnit: "0",
+            maxDigitalEditions: "0",
+          },
+          availability: prev.availability === 2 ? 0 : prev.availability,
+        };
+      }
+    });
+  }, []);
+
+  const handleFuturesInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      if (
+        name === "deadline" ||
+        name === "pricePerUnit" ||
+        name === "maxDigitalEditions"
+      ) {
+        if (validateNumberInput(value, "edition")) {
+          setFormData((prev) => ({
+            ...prev,
+            futures: prev.futures
+              ? {
+                  ...prev.futures,
+                  [name]: value,
+                }
+              : undefined,
+          }));
+        }
+      }
+    },
+    []
+  );
 
   const resetForm = useCallback(() => {
     setFormData(initializeFormData());
@@ -429,7 +519,17 @@ export const useCreateItemForm = (
       ? true
       : formData.maxPhysicalEditions.trim()) &&
     formData.version.trim() &&
-    hasValidMetadata;
+    hasValidMetadata &&
+    (!formData.futures?.isFutures ||
+      (formData.futures.deadline &&
+        parseInt(formData.futures.deadline) > 0 &&
+        formData.futures.pricePerUnit &&
+        parseInt(formData.futures.pricePerUnit) > 0 &&
+        (formData.availability === 1
+          ? formData.maxPhysicalEditions &&
+            parseInt(formData.maxPhysicalEditions) > 0
+          : formData.futures.maxDigitalEditions &&
+            parseInt(formData.futures.maxDigitalEditions) > 0)));
 
   return {
     formData,
@@ -442,7 +542,12 @@ export const useCreateItemForm = (
     addChildReference,
     removeChildReference,
     updateChildReference,
+    addSupplyRequest,
+    removeSupplyRequest,
+    updateSupplyRequest,
     handleWorkflowChange,
+    handleFuturesToggle,
+    handleFuturesInputChange,
     resetForm,
     isFormValid,
   };

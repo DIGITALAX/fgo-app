@@ -19,7 +19,7 @@ export const useChildContracts = (infraId: string, dict: any) => {
       const result = await getChildContracts(convertInfraIdToBytes32(infraId));
       if (result?.data?.childContracts) {
         const processedContracts = await Promise.all(
-          result.data.childContracts.map(async (contract: any) => {
+          result.data.childContracts.map(async (contract: ChildContract) => {
             const processedContract = await ensureMetadata(contract);
             return {
               ...processedContract,

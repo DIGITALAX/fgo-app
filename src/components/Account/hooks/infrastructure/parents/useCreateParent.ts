@@ -1,16 +1,18 @@
 import { useState, useContext } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { usePublicClient, useWalletClient, useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { ABIS } from "@/abis";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { CreateItemFormData } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";
+import { validateDemandForParent, validateFuturesCredits } from "@/lib/helpers/demandValidation";
 
 export const useCreateParent = (contractAddress: string, dict: any) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
+  const { address } = useAccount();
   const context = useContext(AppContext);
 
   const createParent = async (formData: CreateItemFormData) => {
@@ -65,8 +67,100 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
           return {
             childId: BigInt(ref.childId),
             amount: BigInt(ref.amount),
+            prepaidAmount: BigInt("0"),
+            prepaidUsed: BigInt("0"),
             childContract: ref.childContract as `0x${string}`,
-            uri: `ipfs://${placementHash}`,
+            placementURI: `ipfs://${placementHash}`,
+          };
+        }) || []
+      );
+
+      const totalEditions =
+        (formData.availability === 1
+          ? BigInt("0")
+          : BigInt(formData.maxDigitalEditions || "0")) +
+        (formData.availability === 0
+          ? BigInt("0")
+          : BigInt(formData.maxPhysicalEditions || "0"));
+
+      if (formData.childReferences && formData.childReferences.length > 0) {
+        const childRefsInput = formData.childReferences.map((ref) => ({
+          childContract: ref.childContract,
+          childId: ref.childId,
+          amount: ref.amount,
+          isTemplate: ref.isTemplate,
+        }));
+
+        const validation = await validateDemandForParent(
+          childRefsInput,
+          totalEditions,
+          dict
+        );
+
+        if (!validation.isValid) {
+          const errorMsg = `${dict?.insufficientSupply || "Insufficient supply"}:\n${validation.errors.join("\n")}`;
+          setError(errorMsg);
+          throw new Error(errorMsg);
+        }
+
+        if (address) {
+          const futuresValidation = await validateFuturesCredits(
+            childRefsInput,
+            totalEditions,
+            address,
+            formData.availability,
+            dict
+          );
+
+          if (!futuresValidation.isValid) {
+            const errorMsg = `${dict?.insufficientFuturesCredits || "Insufficient futures credits"}:\n${futuresValidation.errors.join("\n")}`;
+            setError(errorMsg);
+            throw new Error(errorMsg);
+          }
+        }
+      }
+
+      const processedSupplyRequests = await Promise.all(
+        formData.supplyRequests?.map(async (request) => {
+          const customSpecHash = await uploadJSONToIPFS({ spec: request.customSpec });
+
+          const placementData = {
+            instructions: request.metadata.instructions || "",
+            customFields: request.metadata.customFields || {},
+          };
+          const placementHash = await uploadJSONToIPFS(placementData);
+
+          if (request.existingChildId !== "0") {
+            const childRefsInput = [{
+              childContract: request.existingChildContract,
+              childId: request.existingChildId,
+              amount: request.quantity,
+              isTemplate: false,
+            }];
+
+            const validation = await validateDemandForParent(
+              childRefsInput,
+              totalEditions,
+              dict
+            );
+
+            if (!validation.isValid) {
+              const errorMsg = `${dict?.insufficientSupply || "Insufficient supply"} (Supply Request):\n${validation.errors.join("\n")}`;
+              setError(errorMsg);
+              throw new Error(errorMsg);
+            }
+          }
+
+          return {
+            existingChildId: BigInt(request.existingChildId || "0"),
+            quantity: BigInt(request.quantity),
+            preferredMaxPrice: parseEther(request.preferredMaxPrice),
+            deadline: BigInt(request.deadline),
+            existingChildContract: (request.existingChildContract || "0x0000000000000000000000000000000000000000") as `0x${string}`,
+            isPhysical: request.isPhysical,
+            fulfilled: false,
+            customSpec: `ipfs://${customSpecHash}`,
+            placementURI: `ipfs://${placementHash}`,
           };
         }) || []
       );
@@ -94,6 +188,7 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
         physicalMarketsOpenToAll: formData.physicalMarketsOpenToAll,
         uri: `ipfs://${metadataUri}`,
         childReferences: placements,
+        supplyRequests: processedSupplyRequests,
         authorizedMarkets:
           formData.authorizedMarkets || ([] as `0x${string}`[]),
         workflow: {

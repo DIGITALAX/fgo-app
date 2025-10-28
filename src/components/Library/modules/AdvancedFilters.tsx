@@ -10,10 +10,10 @@ export const AdvancedFilters = ({
   onFiltersChange,
   dict,
 }: AdvancedFiltersProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isOrderByOpen, setIsOrderByOpen] = useState(false);
-  const [isOrderDirectionOpen, setIsOrderDirectionOpen] = useState(false);
-  const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isOrderByOpen, setIsOrderByOpen] = useState<boolean>(false);
+  const [isOrderDirectionOpen, setIsOrderDirectionOpen] = useState<boolean>(false);
+  const [isAvailabilityOpen, setIsAvailabilityOpen] = useState<boolean>(false);
 
   const handleFilterChange = (key: keyof LibraryFilters, value: any) => {
     onFiltersChange({

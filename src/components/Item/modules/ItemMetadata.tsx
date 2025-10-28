@@ -35,7 +35,7 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
           {item.metadata.prompt && (
             <div className="space-y-2">
               <span className="text-oro font-agency">{dict?.prompt}</span>
-              <p className="text-white font-slim text-sm">
+              <p className="text-white font-slim text-sm break-all">
                 {item.metadata.prompt}
               </p>
             </div>
@@ -44,18 +44,34 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
           {item.metadata.aiModel && (
             <div className="space-y-2">
               <span className="text-oro font-agency">{dict?.aiModel}</span>
-              <p className="text-white font-slim text-sm">
+              <p className="text-white font-slim text-sm break-all">
                 {item.metadata.aiModel}
               </p>
             </div>
           )}
 
           {item.metadata.workflow && (
-            <div className="space-y-2">
+            <div className="space-y-2 col-span-full">
               <span className="text-oro font-agency">{dict?.workflow}</span>
-              <p className="text-white font-slim text-sm">
-                {item.metadata.workflow}
-              </p>
+              <details className="text-white font-slim text-sm">
+                <summary className="cursor-pointer text-oro hover:text-oro/80 font-chicago">
+                  {dict?.viewWorkflow }
+                </summary>
+                <div className="mt-2 p-4 bg-black/50 rounded max-h-96 overflow-y-auto">
+                  <pre className="text-xs text-white/80 whitespace-pre-wrap break-all font-chicago">
+                    {typeof item.metadata.workflow === 'string'
+                      ? (() => {
+                          try {
+                            return JSON.stringify(JSON.parse(item.metadata.workflow), null, 2);
+                          } catch {
+                            return item.metadata.workflow;
+                          }
+                        })()
+                      : JSON.stringify(item.metadata.workflow, null, 2)
+                    }
+                  </pre>
+                </div>
+              </details>
             </div>
           )}
 
@@ -75,7 +91,7 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
                 {item.metadata.loras.map((lora: string, index: number) => (
                   <span
                     key={index}
-                    className="bg-oro/10 text-oro px-2 py-1 text-xs font-slim"
+                    className="bg-oro/10 break-all text-oro px-2 py-1 text-xs font-slim"
                   >
                     {lora}
                   </span>
@@ -91,7 +107,7 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
                 {item.metadata.tags.map((tag: string, index: number) => (
                   <span
                     key={index}
-                    className="bg-oro/10 text-oro px-2 py-1 text-xs font-slim"
+                    className="bg-oro/10 break-all text-oro px-2 py-1 text-xs font-slim"
                   >
                     {tag}
                   </span>
@@ -117,7 +133,7 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
                 ([key, value]) => (
                   <div key={key} className="space-y-2">
                     <span className="text-oro font-agency">{key}</span>
-                    <p className="text-white font-slim text-sm break-all">
+                    <p className="text-white break-all font-slim text-sm break-all">
                       {String(value)}
                     </p>
                   </div>
@@ -133,7 +149,7 @@ export const ItemMetadata = ({ item, dict }: ItemMetadataProps) => {
           color="oro"
           className="bg-black p-6 space-y-4"
         >
-          <h3 className="text-lg font-agency uppercase text-white mb-4">
+          <h3 className="text-lg break-all font-agency uppercase text-white mb-4">
             {dict?.ipfsMetadataUri}
           </h3>
           <p className="text-white font-slim text-xs break-all">{item.uri}</p>

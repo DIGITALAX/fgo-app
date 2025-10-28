@@ -11,7 +11,7 @@ export const MarketContractDetailView = ({
   onBack,
   dict,
 }: MarketContractDetailViewProps) => {
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const { address } = useAccount();
 
   const network = getCurrentNetwork();

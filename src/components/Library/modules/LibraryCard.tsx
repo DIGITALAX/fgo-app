@@ -3,9 +3,12 @@ import { LibraryCardProps } from "../types";
 import { useLibraryCard } from "../hooks/useLibraryCard";
 import { getStatusLabel } from "@/lib/helpers/status";
 import Image from "next/image";
+import { useContext } from "react";
+import { AppContext } from "@/lib/providers/Providers";
 
 export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
   const router = useRouter();
+  const context = useContext(AppContext);
   const { detalles, formattedDate, isTemplate, contractAddress, itemId } =
     useLibraryCard(data);
 
@@ -15,9 +18,15 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
     if (onClick) {
       onClick();
     } else {
-      const type = isTemplate ? "template" : "child";
-      const path = `/library/${type}/${contractAddress}/${itemId}`;
-      router.push(path);
+      const isFutures =
+        "futures" in data && Number(data.futures?.pricePerUnit) > 0;
+
+      if (isFutures) {
+        router.push(`/market/future/${contractAddress}/${itemId}`);
+      } else {
+        const type = isTemplate ? "template" : "child";
+        router.push(`/library/${type}/${contractAddress}/${itemId}`);
+      }
     }
   };
 
@@ -62,7 +71,11 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
             </div>
           )}
         </div>
-        <div className="relative aspect-square overflow-hidden">
+        <div
+          className={`relative aspect-square overflow-hidden rounded-xl ${
+            context?.colorSwitch ? "bg-white" : "bg-black"
+          }`}
+        >
           {detalles?.imageURL && (
             <Image
               src={detalles?.imageURL}
@@ -72,6 +85,7 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
               className="object-contain rounded-md transition-transform duration-300"
             />
           )}
+
           <div className="absolute z-0 top-0 left-0 w-full h-full flex">
             <Image
               src={"/images/borderblue.png"}
@@ -81,8 +95,27 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
               alt="border"
             />
           </div>
+          <div
+            className="absolute top-1 right-2 cursor-pointer flex w-fit h-fit"
+            onClick={(e) => {
+              e.stopPropagation();
+              context?.setColorSwitch((prev) => !prev);
+            }}
+          >
+            <div className="relative w-4 h-4 flex">
+              <Image
+                src={`/images/${
+                  context?.colorSwitch ? "blackswitch" : "whiteswitch"
+                }.png`}
+                draggable={false}
+                objectFit="contain"
+                fill
+                alt="switch"
+              />
+            </div>
+          </div>
           <div className="absolute bottom-2 left-2 right-2">
-            <div className="flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-2 text-xs flex-wrap">
               <div className="text-xs text-verde font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro/70 rounded-sm">
                 <div className="absolute z-0 top-0 left-0 w-full h-full flex">
                   <Image
@@ -107,6 +140,20 @@ export const LibraryCard = ({ data, onClick, dict }: LibraryCardProps) => {
                 </div>
                 {data?.scm}
               </div>
+              {"futures" in data && data.futures?.isActive && (
+                <div className="text-xs text-oro font-chicago relative lowercase cursor-pointer flex px-3 py-1 bg-offNegro/70 rounded-sm">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  {dict?.futures}
+                </div>
+              )}
             </div>
           </div>
         </div>

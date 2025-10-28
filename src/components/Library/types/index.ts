@@ -12,7 +12,6 @@ export interface AdvancedFiltersProps {
   dict: any;
 }
 
-
 export interface SearchBarProps {
   searchText: string;
   onSearch: (query: string) => void;
@@ -35,4 +34,41 @@ export interface LibraryFilters {
 export interface CoreContractAddresses {
   Factory: string;
   TestToken: string;
+  SupplyCoord: string;
+  FuturesCoord: string;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+  childValidations: Array<{
+    childContract: string;
+    childId: string;
+    required: bigint;
+    available: bigint;
+    maxEditions: bigint;
+    currentEditions: bigint;
+    reservedSupply: bigint;
+  }>;
+}
+
+export interface ChildReferenceInput {
+  childContract: string;
+  childId: string;
+  amount: string;
+  isTemplate?: boolean;
+}
+
+export interface FuturesCreditsValidationResult {
+  isValid: boolean;
+  errors: string[];
+  creditChecks: Array<{
+    childContract: string;
+    childId: string;
+    required: {
+      digital: bigint;
+      physical: bigint;
+    };
+    available: bigint;
+  }>;
 }

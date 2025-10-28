@@ -5,13 +5,14 @@ import { ApprovalItemCard } from "./ApprovalItemCard";
 import { MarketsApprovalTabProps } from "@/components/Account/types";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import { AuthorizedTemplates, Template } from "@/components/Item/types";
 
 export const TemplatesApprovalTab = ({
   itemData,
   itemType,
   dict,
 }: MarketsApprovalTabProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
     templates,
@@ -95,25 +96,27 @@ export const TemplatesApprovalTab = ({
               </div>
             </div>
           }
-          height="100%"
-          style={{ height: "100%" }}
+          height={500}
+          className="overflow-y-auto"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-4">
-            {templates.map((template: any) => {
+            {templates.map((template, i) => {
               const isApproved =
                 itemData.authorizedTemplates?.some(
-                  (at: any) =>
+                  (at: AuthorizedTemplates | Template) =>
                     at.templateContract?.toLowerCase() ===
                     template.templateContract?.toLowerCase()
                 ) || false;
 
+              const hasBothAvailability = template.availability === "2";
+
               return (
                 <ApprovalItemCard
-                  key={template.templateContract}
+                  key={i}
                   item={template}
                   isApproved={isApproved}
                   isActive={template.status !== "2"}
-                  onApprove={() => approveTemplate(template)}
+                  onApprove={() => approveTemplate(template, false)}
                   onRevoke={() => revokeTemplate(template)}
                   itemType="template"
                   loading={
@@ -121,6 +124,16 @@ export const TemplatesApprovalTab = ({
                     revoking === template.templateContract
                   }
                   dict={dict}
+                  onApprovePhysical={
+                    hasBothAvailability
+                      ? () => approveTemplate(template, true)
+                      : undefined
+                  }
+                  onApproveDigital={
+                    hasBothAvailability
+                      ? () => approveTemplate(template, false)
+                      : undefined
+                  }
                 />
               );
             })}

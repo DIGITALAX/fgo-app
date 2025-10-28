@@ -2,8 +2,8 @@ import { graphFGOClient } from "@/lib/subgraph/clients/graphql";
 import { gql } from "@apollo/client";
 
 const PARENTS = `
-query($parentContract: String!) {
-  parents(where: {parentContract: $parentContract}, orderBy: blockTimestamp, orderDirection: desc) {
+query($parentContract: String!, $first: Int!, $skip: Int!) {
+  parents(where: {parentContract: $parentContract}, orderBy: blockTimestamp, orderDirection: desc, first: $first, skip: $skip) {
     designId
     parentContract
     designerProfile {
@@ -25,11 +25,13 @@ query($parentContract: String!) {
 }
 `;
 
-export const getParents = async (parentContract: string): Promise<any> => {
+export const getParents = async (parentContract: string, first: number = 20, skip: number = 0): Promise<any> => {
   const queryPromise = graphFGOClient.query({
     query: gql(PARENTS),
     variables: {
       parentContract,
+      first,
+      skip,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",
@@ -50,8 +52,8 @@ export const getParents = async (parentContract: string): Promise<any> => {
 };
 
 const CHILDREN = `
-query($childContract: String!) {
-  childs(where: {childContract: $childContract}, orderBy: blockTimestamp, orderDirection: desc) {
+query($childContract: String!, $first: Int!, $skip: Int!) {
+  childs(where: {childContract: $childContract}, orderBy: blockTimestamp, orderDirection: desc, first: $first, skip: $skip) {
     createdAt
     uri
     status
@@ -59,6 +61,41 @@ query($childContract: String!) {
     physicalPrice
     digitalPrice
     supplyCount
+    totalPrepaidAmount
+    totalPrepaidUsed
+    totalReservedSupply
+    futures {
+      supplier
+      totalAmount
+      soldAmount
+      pricePerUnit
+      deadline
+      isSettled
+      isActive
+      purchases {
+        amount
+        totalCost
+        buyer
+        blockNumber
+        blockTimestamp
+        transactionHash
+      }
+      blockNumber
+      blockTimestamp
+      transactionHash
+      settlements {
+        future
+        buyer
+        credits
+        blockNumber
+        blockTimestamp
+        transactionHash
+      }
+      closed
+      closedBlockNumber
+      closedBlockTimestamp
+      closedTransactionHash
+    }
     childId
     usageCount
     availability
@@ -66,7 +103,7 @@ query($childContract: String!) {
     childContract
     supplier
     supplierProfile {
-      uri 
+      uri
       metadata {
         title
       }
@@ -79,11 +116,13 @@ query($childContract: String!) {
 }
 `;
 
-export const getChildren = async (childContract: string): Promise<any> => {
+export const getChildren = async (childContract: string, first: number = 20, skip: number = 0): Promise<any> => {
   const queryPromise = graphFGOClient.query({
     query: gql(CHILDREN),
     variables: {
       childContract,
+      first,
+      skip,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",
@@ -104,8 +143,8 @@ export const getChildren = async (childContract: string): Promise<any> => {
 };
 
 const TEMPLATES = `
-query($templateContract: String!) {
-  templates(where: {templateContract: $templateContract}, orderBy: blockTimestamp, orderDirection: desc) {
+query($templateContract: String!, $first: Int!, $skip: Int!) {
+  templates(where: {templateContract: $templateContract}, orderBy: blockTimestamp, orderDirection: desc, first: $first, skip: $skip) {
     createdAt
     uri
     templateId
@@ -120,7 +159,7 @@ query($templateContract: String!) {
     digitalPrice
     supplyCount
     supplierProfile {
-      uri 
+      uri
       metadata {
         title
       }
@@ -133,11 +172,13 @@ query($templateContract: String!) {
 }
 `;
 
-export const getTemplates = async (templateContract: string): Promise<any> => {
+export const getTemplates = async (templateContract: string, first: number = 20, skip: number = 0): Promise<any> => {
   const queryPromise = graphFGOClient.query({
     query: gql(TEMPLATES),
     variables: {
       templateContract,
+      first,
+      skip,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",
@@ -201,11 +242,26 @@ query($designId: Int!, $parentContract: String!) {
     maxPhysicalEditions
     currentDigitalEditions
     currentPhysicalEditions
+    supplyRequests {
+      id
+      existingChildId
+      quantity
+      preferredMaxPrice
+      deadline
+      existingChildContract
+      isPhysical
+      fulfilled
+      customSpec
+      placementURI
+    }
     childReferences {
       childContract
       childId
       amount
+      placementURI
       isTemplate
+      prepaidAmount
+      prepaidUsed
       childTemplate {
         uri
         metadata {
@@ -255,6 +311,9 @@ query($designId: Int!, $parentContract: String!) {
       childContract
       childId
       uri
+      futures {
+        id
+      }
       metadata {
         image
         title
@@ -263,6 +322,7 @@ query($designId: Int!, $parentContract: String!) {
     authorizedTemplates {
       templateContract
       templateId
+      availability
       uri
       metadata {
         title
@@ -364,6 +424,7 @@ query($templateId: Int!, $templateContract: String!) {
     physicalPrice
     version
     maxPhysicalEditions
+    maxDigitalEditions
     currentPhysicalEditions
     uriVersion
     usageCount
@@ -396,9 +457,11 @@ query($templateId: Int!, $templateContract: String!) {
     childReferences {
       childContract
       childId
-      uri 
+      placementURI
       amount
       isTemplate
+      prepaidAmount
+      prepaidUsed
       childTemplate {
         uri
         metadata {
@@ -423,6 +486,7 @@ query($templateId: Int!, $templateContract: String!) {
       parentContract
       designId
       uri
+      availability
       metadata {
         title
         image
@@ -432,6 +496,7 @@ query($templateId: Int!, $templateContract: String!) {
       templateContract
       templateId
       uri
+      availability
       metadata {
         title
         image
@@ -446,8 +511,10 @@ query($templateId: Int!, $templateContract: String!) {
       approved
       approvedAmount
       timestamp
+      isPhysical
       parent {
         uri 
+        availability
         metadata {
           image
           title
@@ -463,8 +530,10 @@ query($templateId: Int!, $templateContract: String!) {
       approved
       approvedAmount
       timestamp
+      isPhysical
       template {
-        uri 
+        uri
+        availability
         metadata {
           image
           title
@@ -482,6 +551,9 @@ query($templateId: Int!, $templateContract: String!) {
       childContract
       childId
       uri
+      futures {
+        id
+      }
       metadata {
         title
         image
@@ -551,6 +623,41 @@ query($childId: Int!, $childContract: String!) {
     childType
     scm
     title
+    totalPrepaidAmount
+    totalPrepaidUsed
+    totalReservedSupply
+    futures {
+      supplier
+      totalAmount
+      soldAmount
+      pricePerUnit
+      deadline
+      isSettled
+      isActive
+      purchases {
+        amount
+        totalCost
+        buyer
+        blockNumber
+        blockTimestamp
+        transactionHash
+      }
+      blockNumber
+      blockTimestamp
+      transactionHash
+      settlements {
+        future
+        buyer
+        credits
+        blockNumber
+        blockTimestamp
+        transactionHash
+      }
+      closed
+      closedBlockNumber
+      closedBlockTimestamp
+      closedTransactionHash
+    }
     symbol
     digitalPrice
     physicalPrice
@@ -593,6 +700,7 @@ query($childId: Int!, $childContract: String!) {
       parentContract
       designId
       uri
+      availability
       metadata {
         title
         image
@@ -602,6 +710,7 @@ query($childId: Int!, $childContract: String!) {
       templateContract
       templateId
       uri
+      availability
       metadata {
         title
         image
@@ -616,8 +725,10 @@ query($childId: Int!, $childContract: String!) {
       approved
       approvedAmount
       timestamp
+      isPhysical
       parent {
         uri 
+        availability
         metadata {
           image
           title
@@ -633,8 +744,10 @@ query($childId: Int!, $childContract: String!) {
       approved
       approvedAmount
       timestamp
+      isPhysical
       template {
-        uri 
+        uri
+        availability
         metadata {
           image
           title

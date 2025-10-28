@@ -2,6 +2,7 @@ import { CreateItemModalProps } from "../../types";
 import { useCreateItemForm } from "../../hooks/useCreateItemForm";
 import { MetadataForm } from "../MetadataForm";
 import { ChildSelectionModal } from "./children/ChildSelectionModal";
+import { SupplyRequestModal } from "./parents/SupplyRequestModal";
 import { FulfillmentWorkflowModal } from "./FulfillmentWorkflowModal";
 import { useState, useEffect } from "react";
 import { Child } from "@/components/Item/types";
@@ -20,14 +21,18 @@ export const CreateItemModal = ({
   editItem,
   dict,
 }: CreateItemModalProps) => {
-  const [isChildSelectionOpen, setIsChildSelectionOpen] = useState(false);
-  const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState(false);
-  const [isCancelled, setIsCancelled] = useState(false);
+  const [isChildSelectionOpen, setIsChildSelectionOpen] = useState<boolean>(false);
+  const [isSupplyRequestModalOpen, setIsSupplyRequestModalOpen] = useState<boolean>(false);
+  const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState<boolean>(false);
+  const [isCancelled, setIsCancelled] = useState<boolean>(false);
   const [editingPlacementIndex, setEditingPlacementIndex] = useState<
     number | null
   >(null);
+  const [editingSupplyRequestIndex, setEditingSupplyRequestIndex] = useState<
+    number | null
+  >(null);
   const [isAvailabilityDropdownOpen, setIsAvailabilityDropdownOpen] =
-    useState(false);
+    useState<boolean>(false);
 
   const {
     formData,
@@ -40,7 +45,12 @@ export const CreateItemModal = ({
     addChildReference,
     removeChildReference,
     updateChildReference,
+    addSupplyRequest,
+    removeSupplyRequest,
+    updateSupplyRequest,
     handleWorkflowChange,
+    handleFuturesToggle,
+    handleFuturesInputChange,
     resetForm,
     isFormValid,
   } = useCreateItemForm(editItem, isEditMode);
@@ -64,7 +74,27 @@ export const CreateItemModal = ({
     setIsChildSelectionOpen(false);
   };
 
+  const handleEditSupplyRequest = (index: number) => {
+    setEditingSupplyRequestIndex(index);
+    setIsSupplyRequestModalOpen(true);
+  };
+
+  const handleUpdateSupplyRequest = (updatedRequest: any) => {
+    if (editingSupplyRequestIndex !== null) {
+      updateSupplyRequest(editingSupplyRequestIndex, updatedRequest);
+      setEditingSupplyRequestIndex(null);
+    }
+    setIsSupplyRequestModalOpen(false);
+  };
+
   if (!isOpen) return null;
+
+  const hasDigitalFuturesChild = formData.childReferences?.some((ref) => {
+    if (ref.child && "futures" in ref.child) {
+      return ref.child.futures?.isActive && formData.availability !== 1;
+    }
+    return false;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,11 +132,16 @@ export const CreateItemModal = ({
     { value: 0, label: dict?.digitalOnly },
     { value: 1, label: dict?.physicalOnly },
     { value: 2, label: dict?.digitalPhysicalBoth },
-  ];
+  ].filter((opt) => {
+    if (mode === "child" && formData.futures?.isFutures && opt.value === 2) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative w-full max-w-4xl bg-black" style={{ maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
         <div className="absolute z-0 top-0 left-0 w-full h-full flex">
           <Image
             src={"/images/borderblue.png"}
@@ -117,7 +152,7 @@ export const CreateItemModal = ({
           />
         </div>
 
-        <div className="relative z-10 p-6 flex-shrink-0">
+        <div className="relative z-10 p-6" style={{ flexShrink: 0 }}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-awk uppercase text-oro">
               {isEditMode
@@ -151,7 +186,7 @@ export const CreateItemModal = ({
           </div>
         </div>
 
-        <div className="relative z-10 flex-1 overflow-y-auto">
+        <div className="relative z-10" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {!(mode === "parent" && isEditMode) && (
               <div>
@@ -343,6 +378,60 @@ export const CreateItemModal = ({
                           className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
                           placeholder="0"
                           min="0"
+                          disabled={loading}
+                          required
+                        />
+                      </FancyBorder>
+                    </div>
+                  )}
+
+                {mode === "child" &&
+                  formData.futures?.isFutures &&
+                  formData.availability === 0 && (
+                    <div>
+                      <label className="block text-sm font-chicago text-gris mb-2">
+                        {dict?.futuresMaxDigital} *
+                      </label>
+                      <FancyBorder
+                        color="white"
+                        type="circle"
+                        className="relative"
+                      >
+                        <input
+                          type="number"
+                          name="maxDigitalEditions"
+                          value={formData.futures.maxDigitalEditions}
+                          onChange={handleFuturesInputChange}
+                          className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                          placeholder="0"
+                          min="1"
+                          disabled={loading}
+                          required
+                        />
+                      </FancyBorder>
+                    </div>
+                  )}
+
+                {mode === "template" &&
+                  hasDigitalFuturesChild &&
+                  !isEditMode && (
+                    <div>
+                      <label className="block text-sm font-chicago text-gris mb-2">
+                        {dict?.maxDigitalEditions} *
+                      </label>
+                      <FancyBorder
+                        color="white"
+                        type="circle"
+                        className="relative"
+                      >
+                        <input
+                          type="number"
+                          name="maxDigitalEditions"
+                          value={formData.maxDigitalEditions || "0"}
+                          onChange={handleInputChange}
+                          className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                          placeholder="0"
+                          min="1"
                           disabled={loading}
                           required
                         />
@@ -543,10 +632,77 @@ export const CreateItemModal = ({
                           </span>
                         </label>
                       )}
+                    {mode === "child" && !isEditMode && (
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.futures?.isFutures || false}
+                          onChange={handleFuturesToggle}
+                          className="rounded border-white text-oro focus:ring-oro focus:ring-offset-black"
+                          disabled={loading}
+                        />
+                        <span className="ml-2 text-sm text-gris font-chicago">
+                          {dict?.enableFutures}
+                        </span>
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+
+            {mode === "child" && formData.futures?.isFutures && (
+              <div>
+                <h3 className="text-xl font-awk uppercase text-oro mb-4">
+                  {dict?.futuresSettings}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-chicago text-gris mb-2">
+                      {dict?.deadline} *
+                    </label>
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="number"
+                        name="deadline"
+                        value={formData.futures.deadline}
+                        onChange={handleFuturesInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder={dict?.deadlinePlaceholder}
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-chicago text-gris mb-2">
+                      {dict?.pricePerUnit} *
+                    </label>
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="number"
+                        name="pricePerUnit"
+                        value={formData.futures.pricePerUnit}
+                        onChange={handleFuturesInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder={dict?.pricePerUnitPlaceholder}
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {(mode === "parent" || (mode === "template" && !isEditMode)) && (
               <div>
@@ -640,6 +796,98 @@ export const CreateItemModal = ({
                         <p className="text-white text-sm font-chicago">
                           {dict?.noChildrenAdded}{" "}
                           {mode === "parent" ? dict?.design : dict?.template}.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {mode === "parent" && !isEditMode && (
+              <div>
+                <h3 className="text-xl font-awk uppercase text-oro mb-4">
+                  {dict?.supplyRequests || "Supply Requests"}
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gris font-chicago">
+                      {dict?.addSupplyRequestDescription || "Request custom components from suppliers"}
+                    </p>
+                    <div
+                      onClick={() =>
+                        !loading && setIsSupplyRequestModalOpen(true)
+                      }
+                      className={`relative cursor-pointer hover:opacity-80 transition-opacity ${
+                        loading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro">
+                        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                          <Image
+                            src={"/images/borderoro2.png"}
+                            draggable={false}
+                            objectFit="fill"
+                            fill
+                            alt="border"
+                          />
+                        </div>
+                        <span className="relative z-10">
+                          {dict?.addSupplyRequest || "Add Supply Request"} ({formData.supplyRequests.length})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {formData.supplyRequests.length > 0 ? (
+                    <div className="space-y-3">
+                      {formData.supplyRequests.map((request, index) => (
+                        <div key={index} className="relative">
+                          <div className="relative z-10 p-4">
+                            <div className="flex items-center mb-3">
+                              <div className="text-sm">
+                                <div className="text-gris font-chicago">
+                                  {request.isPhysical ? dict?.physical || "Physical" : dict?.digital || "Digital"}
+                                  {request.child && ` - Child ID: ${request.existingChildId}`}
+                                </div>
+                                <div className="text-oro font-chicago text-xs">
+                                  {dict?.quantity || "Quantity"}: {request.quantity} | {dict?.maxPrice || "Max Price"}: {request.preferredMaxPrice}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                              <div className="text-sm text-gris font-chicago truncate">
+                                {request.customSpec.substring(0, 50)}...
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditSupplyRequest(index)}
+                                  className="text-xs text-gris hover:text-oro font-chicago"
+                                  disabled={loading}
+                                >
+                                  {dict?.edit}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeSupplyRequest(index)}
+                                  className="text-xs text-fresa hover:text-oro font-chicago"
+                                  disabled={loading}
+                                >
+                                  {dict?.remove}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <div className="relative z-10 p-4 text-center">
+                        <p className="text-white text-sm font-chicago">
+                          {dict?.noSupplyRequestsAdded || "No supply requests added"}
                         </p>
                       </div>
                     </div>
@@ -805,6 +1053,28 @@ export const CreateItemModal = ({
         editingPlacement={
           editingPlacementIndex !== null
             ? formData.childReferences[editingPlacementIndex]
+            : undefined
+        }
+        dict={dict}
+      />
+
+      <SupplyRequestModal
+        isOpen={isSupplyRequestModalOpen}
+        onClose={() => {
+          setIsSupplyRequestModalOpen(false);
+          setEditingSupplyRequestIndex(null);
+        }}
+        onSelect={
+          editingSupplyRequestIndex !== null
+            ? handleUpdateSupplyRequest
+            : (request) => {
+                addSupplyRequest(request);
+                setIsSupplyRequestModalOpen(false);
+              }
+        }
+        editingRequest={
+          editingSupplyRequestIndex !== null
+            ? formData.supplyRequests[editingSupplyRequestIndex]
             : undefined
         }
         dict={dict}

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ChildContractDetailViewProps } from "@/components/Account/types";
 import Image from "next/image";
-import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export const ChildContractDetailView = ({
   childContract,
@@ -16,8 +16,8 @@ export const ChildContractDetailView = ({
   onBack,
   dict,
 }: ChildContractDetailViewProps) => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const { address } = useAccount();
 
   const network = getCurrentNetwork();
@@ -29,6 +29,8 @@ export const ChildContractDetailView = ({
     childItems,
     loading: itemsLoading,
     error: itemsError,
+    hasMore,
+    loadMore,
     refetch,
     createChild,
     createLoading,
@@ -206,7 +208,33 @@ export const ChildContractDetailView = ({
           </div>
         )}
 
-        {itemsLoading ? (
+        {childItems.length > 0 ? (
+          <InfiniteScroll
+            dataLength={childItems.length}
+            next={loadMore}
+            hasMore={hasMore}
+            loader={
+              <div className="w-full flex items-center justify-center py-4">
+                <div className="relative w-fit animate-spin h-fit flex">
+                  <div className="relative w-6 h-6 flex">
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      src={"/images/scissors.png"}
+                      draggable={false}
+                      alt="loader"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+          >
+            {childItems.map((child) => (
+              <LibraryCard key={child.childId} data={child} dict={dict} />
+            ))}
+          </InfiniteScroll>
+        ) : itemsLoading ? (
           <div className="w-full h-full flex items-center justify-center py-12">
             <div className="relative w-fit animate-spin h-fit flex">
               <div className="relative w-6 h-6 flex">
@@ -219,12 +247,6 @@ export const ChildContractDetailView = ({
                 />
               </div>
             </div>
-          </div>
-        ) : childItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {childItems.map((child) => (
-              <LibraryCard key={child.childId} data={child} dict={dict} />
-            ))}
           </div>
         ) : (
           <div className="relative">
