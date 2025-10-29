@@ -9,6 +9,9 @@ query($first: Int!, $skip: Int!) {
     status
     supplier
     scm
+    futures {
+      pricePerUnit
+    }
     infraCurrency
     physicalPrice
     digitalPrice
@@ -118,6 +121,9 @@ const buildAdvancedQuery = (filters: any) => {
         infraCurrency
         supplier
         scm
+        futures {
+          pricePerUnit
+        }
         availability
         supplierProfile {
           uri 

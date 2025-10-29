@@ -57,34 +57,37 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {processedAuthorizedChildren.map((child, index: number) => {
-
               return (
-              <button
-                key={index}
-                onClick={() =>
-                  handleChildClick(child.childContract, child.childId,  child.futures?.id ? true : false)
-                }
-                className="p-2 gap-2 flex flex-col bg-black/50 overflow-hidden hover:opacity-70"
-              >
-                {child.metadata?.image && (
-                  <div className="relative w-full h-20">
-                    <Image
-                      draggable={false}
-                      fill
-                      sizes="300px"
-                      src={getImageUrl(child.metadata.image)}
-                      alt={
-                        child.metadata?.title ||
-                        `${dict?.child} ${child.childId}`
-                      }
-                      className="object-contain"
-                    />
+                <button
+                  key={index}
+                  onClick={() =>
+                    handleChildClick(
+                      child.childContract,
+                      child.childId,
+                      child.futures?.id ? true : false
+                    )
+                  }
+                  className="p-2 gap-2 flex flex-col bg-black/50 overflow-hidden hover:opacity-70"
+                >
+                  {child.metadata?.image && (
+                    <div className="relative w-full h-20">
+                      <Image
+                        draggable={false}
+                        fill
+                        sizes="300px"
+                        src={getImageUrl(child.metadata.image)}
+                        alt={
+                          child.metadata?.title ||
+                          `${dict?.child} ${child.childId}`
+                        }
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
+                  <div className="text-oro font-agency text-sm underline">
+                    {child.metadata?.title || `${dict?.child} ${child.childId}`}
                   </div>
-                )}
-                <div className="text-oro font-agency text-sm underline">
-                  {child.metadata?.title || `${dict?.child} ${child.childId}`}
-                </div>
-              </button>
+                </button>
               );
             })}
           </div>
@@ -98,7 +101,13 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedParents.map((parent, index: number) => (
-              <div key={index} className="bg-black/50 overflow-hidden">
+              <button
+                key={index}
+                className="bg-black/50 cursor-pointeer overflow-hidden hover:opacity-70"
+                onClick={() =>
+                  handleParentClick(parent.parentContract, parent.designId)
+                }
+              >
                 {parent.metadata?.image && (
                   <div className="relative w-full h-32 w-32">
                     <Image
@@ -108,7 +117,7 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                       src={getImageUrl(parent.metadata.image)}
                       alt={
                         parent.metadata?.title ||
-                        `${dict?.parent} ${parent.parentId}`
+                        `${dict?.parent} ${parent.designId}`
                       }
                       className="object-contain"
                     />
@@ -116,24 +125,22 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                 )}
                 <div className="p-4 space-y-2">
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        handleParentClick(parent.parentContract, parent.parentId)
-                      }
-                      className="text-oro hover:text-oro/80 font-agency text-sm underline"
-                    >
+                    <div className="text-oro hover:text-oro/80 font-agency text-sm underline">
                       {parent.metadata?.title ||
-                        `${dict?.parent} ${parent.parentId}`}
-                    </button>
-                    <span className={`px-2 py-0.5 text-xs font-chicago rounded ${parent.isPhysical ? "bg-ama/20 text-ama" : "bg-verde/20 text-verde"}`}>
+                        `${dict?.parent} ${parent.designId}`}
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 text-xs font-chicago rounded ${
+                        parent.isPhysical
+                          ? "bg-ama/20 text-ama"
+                          : "bg-verde/20 text-verde"
+                      }`}
+                    >
                       {parent.isPhysical ? dict?.physical : dict?.digital}
                     </span>
                   </div>
-                  <p className="text-white text-xs font-slim break-all">
-                    {parent.parentContract}
-                  </p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -146,7 +153,16 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {processedAuthorizedTemplates.map((template, index: number) => (
-              <div key={index} className="bg-black/50 overflow-hidden">
+              <button
+                onClick={() =>
+                  handleTemplateClick(
+                    template.templateContract,
+                    template.templateId
+                  )
+                }
+                key={index}
+                className="bg-black/50 overflow-hidden hover:opacity-70"
+              >
                 {template.metadata?.image && (
                   <div className="relative w-full h-32">
                     <Image
@@ -164,27 +180,22 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                 )}
                 <div className="p-4 space-y-2">
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        handleTemplateClick(
-                          template.templateContract,
-                          template.templateId
-                        )
-                      }
-                      className="text-oro hover:text-oro/80 font-agency text-sm underline"
-                    >
+                    <div className="text-oro hover:text-oro/80 font-agency text-sm underline">
                       {template.metadata?.title ||
                         `${dict?.template} ${template.templateId}`}
-                    </button>
-                    <span className={`px-2 py-0.5 text-xs font-chicago rounded ${template.isPhysical ? "bg-ama/20 text-ama" : "bg-verde/20 text-verde"}`}>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 text-xs font-chicago rounded ${
+                        template.isPhysical
+                          ? "bg-ama/20 text-ama"
+                          : "bg-verde/20 text-verde"
+                      }`}
+                    >
                       {template.isPhysical ? dict?.physical : dict?.digital}
                     </span>
                   </div>
-                  <p className="text-white text-xs font-slim break-all">
-                    {template.templateContract}
-                  </p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

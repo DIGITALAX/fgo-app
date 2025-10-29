@@ -10,15 +10,15 @@ import { ItemAuthorized } from "@/components/Item/modules/ItemAuthorized";
 import { ItemBlockchainInfo } from "@/components/Item/modules/ItemBlockchainInfo";
 import Image from "next/image";
 import { FuturesSection } from "./FuturesSection";
-import { useChildDetails } from "@/components/Item/hooks/useChildDetails";
 
 export const Future = ({ dict }: { dict: any }) => {
   const { contract, id } = useParams();
-  const { isLoading, error, child } = useChildDetails(
+  const { isLoading, error, child } = useFuture(
     contract as string,
     Number(id),
     dict
   );
+
 
   if (isLoading) {
     return (

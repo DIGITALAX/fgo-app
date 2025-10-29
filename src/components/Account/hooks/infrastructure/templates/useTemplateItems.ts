@@ -248,7 +248,6 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
             formData.authorizedMarkets as any as `0x${string}`[],
           futures: {
             deadline: BigInt("0"),
-            pricePerUnit: BigInt("0"),
             maxDigitalEditions: BigInt("0"),
             isFutures: false,
           },

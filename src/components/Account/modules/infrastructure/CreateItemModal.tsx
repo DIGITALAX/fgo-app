@@ -21,9 +21,12 @@ export const CreateItemModal = ({
   editItem,
   dict,
 }: CreateItemModalProps) => {
-  const [isChildSelectionOpen, setIsChildSelectionOpen] = useState<boolean>(false);
-  const [isSupplyRequestModalOpen, setIsSupplyRequestModalOpen] = useState<boolean>(false);
-  const [isWorkflowModalOpen, setIsWorkflowModalOpen] = useState<boolean>(false);
+  const [isChildSelectionOpen, setIsChildSelectionOpen] =
+    useState<boolean>(false);
+  const [isSupplyRequestModalOpen, setIsSupplyRequestModalOpen] =
+    useState<boolean>(false);
+  const [isWorkflowModalOpen, setIsWorkflowModalOpen] =
+    useState<boolean>(false);
   const [isCancelled, setIsCancelled] = useState<boolean>(false);
   const [editingPlacementIndex, setEditingPlacementIndex] = useState<
     number | null
@@ -53,7 +56,7 @@ export const CreateItemModal = ({
     handleFuturesInputChange,
     resetForm,
     isFormValid,
-  } = useCreateItemForm(editItem, isEditMode);
+  } = useCreateItemForm(dict, editItem, isEditMode);
 
   useEffect(() => {
     if (!isOpen) {
@@ -141,7 +144,10 @@ export const CreateItemModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-4xl bg-black" style={{ maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+      <div
+        className="relative w-full max-w-4xl bg-black"
+        style={{ maxHeight: "90vh", display: "flex", flexDirection: "column" }}
+      >
         <div className="absolute z-0 top-0 left-0 w-full h-full flex">
           <Image
             src={"/images/borderblue.png"}
@@ -186,7 +192,10 @@ export const CreateItemModal = ({
           </div>
         </div>
 
-        <div className="relative z-10" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        <div
+          className="relative z-10"
+          style={{ flex: 1, minHeight: 0, overflowY: "auto" }}
+        >
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {!(mode === "parent" && isEditMode) && (
               <div>
@@ -678,28 +687,6 @@ export const CreateItemModal = ({
                       />
                     </FancyBorder>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-chicago text-gris mb-2">
-                      {dict?.pricePerUnit} *
-                    </label>
-                    <FancyBorder
-                      color="white"
-                      type="circle"
-                      className="relative"
-                    >
-                      <input
-                        type="number"
-                        name="pricePerUnit"
-                        value={formData.futures.pricePerUnit}
-                        onChange={handleFuturesInputChange}
-                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
-                        placeholder={dict?.pricePerUnitPlaceholder}
-                        disabled={loading}
-                        required
-                      />
-                    </FancyBorder>
-                  </div>
                 </div>
               </div>
             )}
@@ -812,7 +799,8 @@ export const CreateItemModal = ({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-gris font-chicago">
-                      {dict?.addSupplyRequestDescription || "Request custom components from suppliers"}
+                      {dict?.addSupplyRequestDescription ||
+                        "Request custom components from suppliers"}
                     </p>
                     <div
                       onClick={() =>
@@ -833,7 +821,8 @@ export const CreateItemModal = ({
                           />
                         </div>
                         <span className="relative z-10">
-                          {dict?.addSupplyRequest || "Add Supply Request"} ({formData.supplyRequests.length})
+                          {dict?.addSupplyRequest || "Add Supply Request"} (
+                          {formData.supplyRequests.length})
                         </span>
                       </div>
                     </div>
@@ -847,11 +836,17 @@ export const CreateItemModal = ({
                             <div className="flex items-center mb-3">
                               <div className="text-sm">
                                 <div className="text-gris font-chicago">
-                                  {request.isPhysical ? dict?.physical || "Physical" : dict?.digital || "Digital"}
-                                  {request.child && ` - Child ID: ${request.existingChildId}`}
+                                  {request.isPhysical
+                                    ? dict?.physical || "Physical"
+                                    : dict?.digital || "Digital"}
+                                  {request.child &&
+                                    ` - Child ID: ${request.existingChildId}`}
                                 </div>
                                 <div className="text-oro font-chicago text-xs">
-                                  {dict?.quantity || "Quantity"}: {request.quantity} | {dict?.maxPrice || "Max Price"}: {request.preferredMaxPrice}
+                                  {dict?.quantity || "Quantity"}:{" "}
+                                  {request.quantity} |{" "}
+                                  {dict?.maxPrice || "Max Price"}:{" "}
+                                  {request.preferredMaxPrice}
                                 </div>
                               </div>
                             </div>
@@ -887,7 +882,8 @@ export const CreateItemModal = ({
                     <div className="relative">
                       <div className="relative z-10 p-4 text-center">
                         <p className="text-white text-sm font-chicago">
-                          {dict?.noSupplyRequestsAdded || "No supply requests added"}
+                          {dict?.noSupplyRequestsAdded ||
+                            "No supply requests added"}
                         </p>
                       </div>
                     </div>

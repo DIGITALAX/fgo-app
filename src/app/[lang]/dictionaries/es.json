@@ -542,6 +542,7 @@
   "enableFutures": "Activar Futuros",
   "futuresSettings": "Configuración de Futuros",
   "deadline": "Fecha Límite (Perpetuo = 0)",
+  "perpetual": "perpetuo",
   "deadlinePlaceholder": "Timestamp (debe ser al menos 7 días desde ahora)",
   "pricePerUnit": "Precio por Unidad",
   "pricePerUnitPlaceholder": "Ingrese precio por unidad",

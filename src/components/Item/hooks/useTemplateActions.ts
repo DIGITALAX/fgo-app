@@ -1,14 +1,16 @@
-import { useState, useCallback, useContext } from "react";
+import { useState, useCallback, useContext, useEffect } from "react";
 import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
 import { parseEther } from "viem";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
+import { Template } from "../types";
+import { checkCreate } from "@/lib/helpers/canCreate";
 
 export const useTemplateActions = (
   contractAddress: string,
   templateId: string | number,
-  template: any,
+  template: Template,
   dict: any
 ) => {
   const { address } = useAccount();
@@ -18,18 +20,14 @@ export const useTemplateActions = (
   const [deleting, setDeleting] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
   const [updating, setUpdating] = useState<boolean>(false);
+  const [canCreate, setCanCreate] = useState<boolean>(false);
 
   const isSupplier =
     address && address.toLowerCase() === template?.supplier?.toLowerCase();
   const canDelete =
     parseInt(template?.usageCount || "0") === 0 &&
     parseInt(template?.supplyCount || "0") === 0;
-
   const isReserved = Number(template?.status) === 0;
-  const areAllChildrenAuthorized =
-    template?.childReferences?.length == template?.authorizedChildren?.length;
-  const canCreate = isReserved && areAllChildrenAuthorized;
-
 
   const handleCreateTemplate = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
@@ -37,7 +35,7 @@ export const useTemplateActions = (
       return;
     }
 
-    if (!canCreate) {
+    if (!canCreate || !isReserved) {
       context?.showError(dict?.cannotCreateTemplateStatus);
       return;
     }
@@ -165,16 +163,16 @@ export const useTemplateActions = (
           standaloneAllowed:
             formData.standaloneAllowed !== undefined
               ? formData.standaloneAllowed
-              : template.standaloneAllowed === true,
+              : (template as any).standaloneAllowed === true,
           childUri: templateUri,
           updateReason: "Updated via FGO interface",
           authorizedMarkets:
             formData.authorizedMarkets.length > 0
               ? (formData.authorizedMarkets as `0x${string}`[])
               : ((Array.isArray(template.authorizedMarkets)
-                  ? template.authorizedMarkets
-                  : template.authorizedMarkets
-                  ? template.authorizedMarkets
+                  ? (template as any).authorizedMarkets
+                  : (template as any).authorizedMarkets
+                  ? (template as any).authorizedMarkets
                       .split(",")
                       .map((m: string) => m.trim())
                       .filter((m: string) => m)
@@ -201,6 +199,20 @@ export const useTemplateActions = (
     },
     [walletClient, publicClient, context, template, contractAddress]
   );
+  const creationCheck = async () => {
+    try {
+      const res = await checkCreate(template, dict);
+      setCanCreate(res);
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (isReserved && !canCreate) {
+      creationCheck();
+    }
+  }, [isReserved]);
 
   return {
     isSupplier,

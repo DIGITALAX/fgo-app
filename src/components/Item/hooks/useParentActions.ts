@@ -1,13 +1,15 @@
-import { useState, useCallback, useContext } from "react";
+import { useState, useCallback, useContext, useEffect } from "react";
 import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
 import { parseEther } from "viem";
+import { checkCreate } from "@/lib/helpers/canCreate";
+import { Parent } from "@/components/Account/types";
 
 export const useParentActions = (
   contractAddress: string,
   designId: string | number,
-  parent: any,
+  parent: Parent,
   dict: any
 ) => {
   const { address } = useAccount();
@@ -17,15 +19,12 @@ export const useParentActions = (
   const [deleting, setDeleting] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
   const [updating, setUpdating] = useState<boolean>(false);
+  const [canCreate, setCanCreate] = useState<boolean>(false);
 
   const isDesigner =
     address && address.toLowerCase() === parent?.designer?.toLowerCase();
   const canDelete = parseInt(parent?.totalPurchases || "0") === 0;
-
   const isReserved = Number(parent?.status) === 0;
-  const areAllChildrenAuthorized =
-    parent?.childReferences?.length == parent?.authorizedChildren?.length;
-  const canCreate = isReserved && areAllChildrenAuthorized;
 
   const handleCreateParent = useCallback(async () => {
     if (!walletClient || !publicClient || !context) {
@@ -33,7 +32,7 @@ export const useParentActions = (
       return;
     }
 
-    if (!canCreate) {
+    if (!canCreate || !isReserved) {
       context?.showError(dict?.cannotCreateParentStatus);
       return;
     }
@@ -105,43 +104,66 @@ export const useParentActions = (
     canDelete,
   ]);
 
-  const handleEditSubmit = useCallback(async (formData: any) => {
-    if (!walletClient || !publicClient || !context) return;
+  const handleEditSubmit = useCallback(
+    async (formData: any) => {
+      if (!walletClient || !publicClient || !context) return;
 
-    setUpdating(true);
+      setUpdating(true);
+      try {
+        const updateParams = {
+          designId: BigInt(designId),
+          digitalPrice: parseEther(formData.digitalPrice || "0"),
+          physicalPrice: parseEther(formData.physicalPrice || "0"),
+          maxDigitalEditions: BigInt(formData.maxDigitalEditions || "0"),
+          maxPhysicalEditions: BigInt(formData.maxPhysicalEditions || "0"),
+          authorizedMarkets:
+            formData.authorizedMarkets?.length > 0
+              ? (formData.authorizedMarkets as `0x${string}`[])
+              : ((Array.isArray(parent.authorizedMarkets)
+                  ? parent.authorizedMarkets
+                  : parent.authorizedMarkets
+                  ? (parent as any).authorizedMarkets
+                      .split(",")
+                      .map((m: string) => m.trim())
+                      .filter((m: string) => m)
+                  : []) as `0x${string}`[]),
+        };
+
+        const hash = await walletClient.writeContract({
+          address: contractAddress as `0x${string}`,
+          abi: ABIS.FGOParent,
+          functionName: "updateParent",
+          args: [updateParams],
+        });
+
+        await publicClient.waitForTransactionReceipt({ hash });
+
+        context.showSuccess(dict?.parentUpdatedSuccessfully, hash);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : dict?.failedToUpdateParent;
+        context.showError(errorMessage);
+      } finally {
+        setUpdating(false);
+      }
+    },
+    [walletClient, publicClient, context, contractAddress, designId, parent]
+  );
+
+  const creationCheck = async () => {
     try {
-      const updateParams = {
-        designId: BigInt(designId),
-        digitalPrice: parseEther(formData.digitalPrice || "0"),
-        physicalPrice: parseEther(formData.physicalPrice || "0"),
-        maxDigitalEditions: BigInt(formData.maxDigitalEditions || "0"),
-        maxPhysicalEditions: BigInt(formData.maxPhysicalEditions || "0"),
-        authorizedMarkets: formData.authorizedMarkets?.length > 0 
-          ? (formData.authorizedMarkets as `0x${string}`[])
-          : ((Array.isArray(parent.authorizedMarkets)
-              ? parent.authorizedMarkets
-              : parent.authorizedMarkets
-              ? parent.authorizedMarkets.split(",").map((m: string) => m.trim()).filter((m: string) => m)
-              : []) as `0x${string}`[])
-      };
-
-      const hash = await walletClient.writeContract({
-        address: contractAddress as `0x${string}`,
-        abi: ABIS.FGOParent,
-        functionName: "updateParent",
-        args: [updateParams],
-      });
-
-      await publicClient.waitForTransactionReceipt({ hash });
-
-      context.showSuccess(dict?.parentUpdatedSuccessfully, hash);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : dict?.failedToUpdateParent;
-      context.showError(errorMessage);
-    } finally {
-      setUpdating(false);
+      const res = await checkCreate(parent, dict);
+      setCanCreate(res);
+    } catch (err: any) {
+      console.error(err.message);
     }
-  }, [walletClient, publicClient, context, contractAddress, designId, parent]);
+  };
+
+  useEffect(() => {
+    if (isReserved && !canCreate) {
+      creationCheck();
+    }
+  }, [isReserved]);
 
   return {
     isDesigner,

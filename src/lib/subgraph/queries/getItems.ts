@@ -250,7 +250,7 @@ query($designId: Int!, $parentContract: String!) {
       deadline
       existingChildContract
       isPhysical
-      fulfilled
+      paid
       customSpec
       placementURI
     }
@@ -264,6 +264,8 @@ query($designId: Int!, $parentContract: String!) {
       prepaidUsed
       childTemplate {
         uri
+        status
+        availability
         metadata {
           title
           image
@@ -271,6 +273,8 @@ query($designId: Int!, $parentContract: String!) {
       }
       child {
         uri
+        status
+        availability
         metadata {
           title 
           image
@@ -464,6 +468,8 @@ query($templateId: Int!, $templateContract: String!) {
       prepaidUsed
       childTemplate {
         uri
+        status
+        availability
         metadata {
           title
           image
@@ -471,6 +477,8 @@ query($templateId: Int!, $templateContract: String!) {
       }
       child {
         uri
+        status
+        availability
         metadata {
           title
           image

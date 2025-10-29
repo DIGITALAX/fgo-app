@@ -56,7 +56,7 @@ export const FuturePositionCard = ({
       ? formatDistanceToNow(new Date(Number(position.deadline) * 1000), {
           addSuffix: true,
         })
-      : dict?.unlimited ;
+      : dict?.perpetual ;
 
   const formattedDate = new Date(
     parseInt(position.blockTimestamp) * 1000

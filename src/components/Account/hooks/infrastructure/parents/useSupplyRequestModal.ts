@@ -70,7 +70,10 @@ export const useSupplyRequestModal = ({
     if (child) {
       setConfiguring(child);
     } else {
-      setConfiguring({ childId: "0", childContract: "0x" } as Child);
+      setConfiguring({
+        childId: "0",
+        childContract: "0x0000000000000000000000000000000000000000",
+      } as Child);
     }
   }, []);
 
@@ -165,6 +168,18 @@ export const useSupplyRequestModal = ({
       deadlineDate.getTime() / 1000
     ).toString();
 
+    if (
+      (configuring.childId == "0" &&
+        configuring.childContract !==
+          "0x0000000000000000000000000000000000000000") ||
+      (configuring.childId !== "0" &&
+        configuring.childContract ==
+          "0x0000000000000000000000000000000000000000")
+    ) {
+      configuring.childId = "0";
+      configuring.childContract = "0x0000000000000000000000000000000000000000";
+    }
+
     const supplyRequest: SupplyRequestFormData = {
       existingChildId: configuring.childId || "0",
       existingChildContract:
@@ -200,7 +215,7 @@ export const useSupplyRequestModal = ({
     minDeadline,
   ]);
 
-  const getFilteredItems = useCallback((items: (Child)[]) => {
+  const getFilteredItems = useCallback((items: Child[]) => {
     return items.filter((item) => !("isTemplate" in item && item.isTemplate));
   }, []);
 

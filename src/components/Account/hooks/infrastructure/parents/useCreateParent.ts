@@ -3,9 +3,12 @@ import { usePublicClient, useWalletClient, useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { ABIS } from "@/abis";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
-import { CreateItemFormData } from "../../../types";
+import { CreateItemFormData, Parent } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";
-import { validateDemandForParent, validateFuturesCredits } from "@/lib/helpers/demandValidation";
+import {
+  validateDemandForParent,
+  validateFuturesCredits,
+} from "@/lib/helpers/demandValidation";
 
 export const useCreateParent = (contractAddress: string, dict: any) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -93,12 +96,18 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
 
         const validation = await validateDemandForParent(
           childRefsInput,
-          totalEditions,
+          {
+            maxDigitalEditions: formData.maxDigitalEditions,
+            maxPhysicalEditions: formData.maxPhysicalEditions,
+            availability: String(formData.availability),
+          } as Parent,
           dict
         );
 
         if (!validation.isValid) {
-          const errorMsg = `${dict?.insufficientSupply || "Insufficient supply"}:\n${validation.errors.join("\n")}`;
+          const errorMsg = `${
+            dict?.insufficientSupply
+          }:\n${validation.errors.join("\n")}`;
           setError(errorMsg);
           throw new Error(errorMsg);
         }
@@ -113,7 +122,9 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
           );
 
           if (!futuresValidation.isValid) {
-            const errorMsg = `${dict?.insufficientFuturesCredits || "Insufficient futures credits"}:\n${futuresValidation.errors.join("\n")}`;
+            const errorMsg = `${
+              dict?.insufficientFuturesCredits || "Insufficient futures credits"
+            }:\n${futuresValidation.errors.join("\n")}`;
             setError(errorMsg);
             throw new Error(errorMsg);
           }
@@ -122,7 +133,9 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
 
       const processedSupplyRequests = await Promise.all(
         formData.supplyRequests?.map(async (request) => {
-          const customSpecHash = await uploadJSONToIPFS({ spec: request.customSpec });
+          const customSpecHash = await uploadJSONToIPFS({
+            spec: request.customSpec,
+          });
 
           const placementData = {
             instructions: request.metadata.instructions || "",
@@ -131,21 +144,28 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
           const placementHash = await uploadJSONToIPFS(placementData);
 
           if (request.existingChildId !== "0") {
-            const childRefsInput = [{
-              childContract: request.existingChildContract,
-              childId: request.existingChildId,
-              amount: request.quantity,
-              isTemplate: false,
-            }];
+            const childRefsInput = [
+              {
+                childContract: request.existingChildContract,
+                childId: request.existingChildId,
+                amount: request.quantity,
+                isTemplate: false,
+              },
+            ];
 
             const validation = await validateDemandForParent(
               childRefsInput,
-              totalEditions,
+              {
+                maxDigitalEditions: formData.maxDigitalEditions,
+                maxPhysicalEditions: formData.maxPhysicalEditions,
+                availability: String(formData.availability),
+              } as Parent,
+
               dict
             );
 
             if (!validation.isValid) {
-              const errorMsg = `${dict?.insufficientSupply || "Insufficient supply"} (Supply Request):\n${validation.errors.join("\n")}`;
+              const errorMsg = `${dict?.insufficientSupply}`;
               setError(errorMsg);
               throw new Error(errorMsg);
             }
@@ -153,10 +173,12 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
 
           return {
             existingChildId: BigInt(request.existingChildId || "0"),
-            quantity: BigInt(request.quantity),
-            preferredMaxPrice: parseEther(request.preferredMaxPrice),
-            deadline: BigInt(request.deadline),
-            existingChildContract: (request.existingChildContract || "0x0000000000000000000000000000000000000000") as `0x${string}`,
+            quantity: BigInt(request.quantity ?? 0),
+            preferredMaxPrice: parseEther(request.preferredMaxPrice ?? 0),
+            deadline: BigInt(request.deadline ?? 0),
+            existingChildContract:
+              request.existingChildContract ||
+              ("0x0000000000000000000000000000000000000000" as `0x${string}`),
             isPhysical: request.isPhysical,
             fulfilled: false,
             customSpec: `ipfs://${customSpecHash}`,
@@ -192,6 +214,9 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
         authorizedMarkets:
           formData.authorizedMarkets || ([] as `0x${string}`[]),
         workflow: {
+          estimatedDeliveryDuration: BigInt(
+            formData.fulfillmentWorkflow?.estimatedDeliveryDuration ?? 0
+          ),
           digitalSteps: formData.fulfillmentWorkflow?.digitalSteps || [],
           physicalSteps: formData.fulfillmentWorkflow?.physicalSteps || [],
         },

@@ -14,6 +14,7 @@ import { ItemBlockchainInfo } from "./ItemBlockchainInfo";
 import { ChildReferences } from "./ChildReferences";
 import { ItemAuthorized } from "./ItemAuthorized";
 import { ItemSupplyRequests } from "./ItemSupplyRequests";
+import { Parent } from "@/components/Account/types";
 
 export const ParentDetails = ({
   contractAddress,
@@ -21,7 +22,8 @@ export const ParentDetails = ({
   dict,
 }: ParentDetailsProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState<boolean>(false);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] =
+    useState<boolean>(false);
 
   const { parent, isLoading, error } = useParentDetails(
     contractAddress,
@@ -39,7 +41,7 @@ export const ParentDetails = ({
     handleCreateParent,
     handleDeleteParent,
     handleEditSubmit,
-  } = useParentActions(contractAddress, designId, parent, dict);
+  } = useParentActions(contractAddress, designId, parent as Parent, dict);
 
   if (isLoading) {
     return (
@@ -100,7 +102,9 @@ export const ParentDetails = ({
                   alt="border"
                 />
               </div>
-              <span className="relative z-10">{creating ? dict?.creating : dict?.createParent}</span>
+              <span className="relative z-10">
+                {creating ? dict?.creating : dict?.createParent}
+              </span>
             </button>
           )}
           <button
@@ -122,7 +126,7 @@ export const ParentDetails = ({
             onClick={handleDeleteParent}
             disabled={!canDelete || deleting}
             className={`relative px-3 py-1 bg-offNegro text-fresa font-chicago text-xs uppercase cursor-pointer hover:opacity-70 ${
-              (!canDelete || deleting) ? "cursor-not-allowed opacity-50" : ""
+              !canDelete || deleting ? "cursor-not-allowed opacity-50" : ""
             }`}
             title={!canDelete ? dict?.cannotDeleteParentPurchases : ""}
           >
@@ -135,7 +139,9 @@ export const ParentDetails = ({
                 alt="border"
               />
             </div>
-            <span className="relative z-10">{deleting ? dict?.deleting : dict?.deleteParent}</span>
+            <span className="relative z-10">
+              {deleting ? dict?.deleting : dict?.deleteParent}
+            </span>
           </button>
           <button
             onClick={() => setIsApprovalModalOpen(true)}
@@ -161,7 +167,11 @@ export const ParentDetails = ({
       <ItemRequests item={parent} dict={dict} />
       <ItemAuthorized item={parent} dict={dict} />
       <ChildReferences childData={parent.childReferences || []} dict={dict} />
-      <ItemSupplyRequests supplyRequests={parent.supplyRequests || []} dict={dict} />
+      <ItemSupplyRequests
+        supplyRequests={parent.supplyRequests || []}
+        infraCurrency={parent.infraCurrency}
+        dict={dict}
+      />
       <ItemBlockchainInfo item={parent} dict={dict} />
 
       <CreateItemModal

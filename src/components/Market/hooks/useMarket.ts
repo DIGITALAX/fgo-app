@@ -1,8 +1,17 @@
 import { useState, useCallback, useEffect } from "react";
-import { MarketItem, MarketFilterState, FuturePosition, SupplyRequest } from "../types";
-import { getAllFutures, getAllSupplyRequests, getAllMarketsActive } from "@/lib/subgraph/queries/getMarkets";
+import {
+  MarketItem,
+  MarketFilterState,
+  FuturePosition,
+  SupplyRequest,
+} from "../types";
+import {
+  getAllFutures,
+  getAllSupplyRequests,
+  getAllMarketsActive,
+} from "@/lib/subgraph/queries/getMarkets";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { getIPFSUrl } from "@/lib/helpers/ipfs";
+import { fetchCustomSpec, getIPFSUrl } from "@/lib/helpers/ipfs";
 import { Child, Template } from "@/components/Item/types";
 import { Parent } from "@/components/Account/types";
 
@@ -22,17 +31,6 @@ export const useMarket = (dict: any) => {
 
   const ITEMS_PER_PAGE = 20;
 
-  const fetchCustomSpec = async (ipfsUri: string): Promise<string> => {
-    try {
-      const url = getIPFSUrl(ipfsUri);
-      const response = await fetch(url);
-      const text = await response.text();
-      return text;
-    } catch (err) {
-      return "";
-    }
-  };
-
   const fetchItems = useCallback(
     async (skipCount: number, reset = false) => {
       try {
@@ -41,28 +39,34 @@ export const useMarket = (dict: any) => {
           setError(null);
         }
 
-        const [futuresResult, supplyRequestsResult, marketsActiveResult] = await Promise.all([
-          getAllFutures(ITEMS_PER_PAGE, skipCount),
-          getAllSupplyRequests(ITEMS_PER_PAGE, skipCount),
-          getAllMarketsActive(ITEMS_PER_PAGE, skipCount),
-        ]);
+        const [futuresResult, supplyRequestsResult, marketsActiveResult] =
+          await Promise.all([
+            getAllFutures(ITEMS_PER_PAGE, skipCount),
+            getAllSupplyRequests(ITEMS_PER_PAGE, skipCount),
+            getAllMarketsActive(ITEMS_PER_PAGE, skipCount),
+          ]);
 
         const allItems: MarketItem[] = [];
 
         if (futuresResult?.data?.futurePositions) {
-          const futurePositions: FuturePosition[] = futuresResult.data.futurePositions;
+          const futurePositions: FuturePosition[] =
+            futuresResult.data.futurePositions;
           allItems.push(...futurePositions);
         }
 
         if (supplyRequestsResult?.data?.childSupplyRequests) {
           const supplyRequests: SupplyRequest[] = await Promise.all(
-            supplyRequestsResult.data.childSupplyRequests.map(async (request: any) => {
-              const customSpecText = await fetchCustomSpec(request.customSpec);
-              return {
-                ...request,
-                customSpec: customSpecText,
-              };
-            })
+            supplyRequestsResult.data.childSupplyRequests.map(
+              async (request: any) => {
+                const customSpecText = await fetchCustomSpec(
+                  request.customSpec
+                );
+                return {
+                  ...request,
+                  customSpec: customSpecText,
+                };
+              }
+            )
           );
           allItems.push(...supplyRequests);
         }
@@ -123,55 +127,57 @@ export const useMarket = (dict: any) => {
           );
 
           const templates: Template[] = await Promise.all(
-            (marketsActiveResult.data.templates || []).map(async (item: any) => {
-              const processedItem = await ensureMetadata(item);
-              return {
-                templateId: item.templateId,
-                templateContract: item.templateContract,
-                supplier: item.supplier,
-                supplierProfile: item.supplierProfile,
-                childType: item.childType,
-                infraId: item.infraId,
-                scm: item.scm,
-                title: processedItem.metadata?.title || item.title || "",
-                symbol: item.symbol,
-                digitalPrice: item.digitalPrice,
-                physicalPrice: item.physicalPrice,
-                version: item.version,
-                maxPhysicalEditions: item.maxPhysicalEditions,
-                maxDigitalEditions: item.maxDigitalEditions,
-                currentDigitalEditions: item.currentDigitalEditions,
-                currentPhysicalEditions: item.currentPhysicalEditions,
-                uriVersion: item.uriVersion,
-                usageCount: item.usageCount,
-                supplyCount: item.supplyCount,
-                infraCurrency: item.infraCurrency,
-                uri: item.uri,
-                metadata: processedItem.metadata,
-                status: item.status,
-                availability: item.availability,
-                isImmutable: item.isImmutable,
-                digitalMarketsOpenToAll: item.digitalMarketsOpenToAll,
-                physicalMarketsOpenToAll: item.physicalMarketsOpenToAll,
-                digitalReferencesOpenToAll: item.digitalReferencesOpenToAll,
-                physicalReferencesOpenToAll: item.physicalReferencesOpenToAll,
-                standaloneAllowed: item.standaloneAllowed,
-                authorizedMarkets: item.authorizedMarkets || [],
-                childReferences: item.childReferences || [],
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
-                blockNumber: item.blockNumber,
-                blockTimestamp: item.blockTimestamp,
-                transactionHash: item.transactionHash,
-                authorizedParents: item.authorizedParents || [],
-                authorizedTemplates: item.authorizedTemplates || [],
-                parentRequests: item.parentRequests || [],
-                templateRequests: item.templateRequests || [],
-                marketRequests: item.marketRequests || [],
-                authorizedChildren: item.authorizedChildren || [],
-                physicalRights: item.physicalRights || [],
-              } as Template;
-            })
+            (marketsActiveResult.data.templates || []).map(
+              async (item: any) => {
+                const processedItem = await ensureMetadata(item);
+                return {
+                  templateId: item.templateId,
+                  templateContract: item.templateContract,
+                  supplier: item.supplier,
+                  supplierProfile: item.supplierProfile,
+                  childType: item.childType,
+                  infraId: item.infraId,
+                  scm: item.scm,
+                  title: processedItem.metadata?.title || item.title || "",
+                  symbol: item.symbol,
+                  digitalPrice: item.digitalPrice,
+                  physicalPrice: item.physicalPrice,
+                  version: item.version,
+                  maxPhysicalEditions: item.maxPhysicalEditions,
+                  maxDigitalEditions: item.maxDigitalEditions,
+                  currentDigitalEditions: item.currentDigitalEditions,
+                  currentPhysicalEditions: item.currentPhysicalEditions,
+                  uriVersion: item.uriVersion,
+                  usageCount: item.usageCount,
+                  supplyCount: item.supplyCount,
+                  infraCurrency: item.infraCurrency,
+                  uri: item.uri,
+                  metadata: processedItem.metadata,
+                  status: item.status,
+                  availability: item.availability,
+                  isImmutable: item.isImmutable,
+                  digitalMarketsOpenToAll: item.digitalMarketsOpenToAll,
+                  physicalMarketsOpenToAll: item.physicalMarketsOpenToAll,
+                  digitalReferencesOpenToAll: item.digitalReferencesOpenToAll,
+                  physicalReferencesOpenToAll: item.physicalReferencesOpenToAll,
+                  standaloneAllowed: item.standaloneAllowed,
+                  authorizedMarkets: item.authorizedMarkets || [],
+                  childReferences: item.childReferences || [],
+                  createdAt: item.createdAt,
+                  updatedAt: item.updatedAt,
+                  blockNumber: item.blockNumber,
+                  blockTimestamp: item.blockTimestamp,
+                  transactionHash: item.transactionHash,
+                  authorizedParents: item.authorizedParents || [],
+                  authorizedTemplates: item.authorizedTemplates || [],
+                  parentRequests: item.parentRequests || [],
+                  templateRequests: item.templateRequests || [],
+                  marketRequests: item.marketRequests || [],
+                  authorizedChildren: item.authorizedChildren || [],
+                  physicalRights: item.physicalRights || [],
+                } as Template;
+              }
+            )
           );
 
           const parents: Parent[] = await Promise.all(
@@ -204,7 +210,9 @@ export const useMarket = (dict: any) => {
           setItems((prev) => [...prev, ...allItems]);
         }
       } catch (err: any) {
-        setError(err?.message || dict?.errorLoadingMarkets || "Failed to load markets");
+        setError(
+          err?.message || dict?.errorLoadingMarkets || "Failed to load markets"
+        );
       } finally {
         setIsLoading(false);
       }

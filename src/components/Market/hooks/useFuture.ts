@@ -4,7 +4,11 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { Child } from "@/components/Item/types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 
-export const useFuture = (contractAddress: string, childId: number, dict: any) => {
+export const useFuture = (
+  contractAddress: string,
+  childId: number,
+  dict: any
+) => {
   const [child, setChild] = useState<Child | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +25,6 @@ export const useFuture = (contractAddress: string, childId: number, dict: any) =
         }
 
         const childData = result.data.childs[0];
-
         const processedItem = await ensureMetadata(childData);
 
         setChild({

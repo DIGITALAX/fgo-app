@@ -5,7 +5,7 @@ import { LibraryCard } from "@/components/Library/modules/LibraryCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
-import { Child } from "@/components/Item/types";
+import { Child, Template } from "@/components/Item/types";
 
 export const SupplyRequestModal = ({
   isOpen,
@@ -57,8 +57,13 @@ export const SupplyRequestModal = ({
     searchText,
     handleSearch,
   } = useChildSelection(dict);
-
-  const filteredItems = getFilteredItems(items as Child[]);
+  const filteredItems = getFilteredItems(
+    items.filter(
+      (item) =>
+        !(item as Child)?.futures?.pricePerUnit &&
+        !(item as Template).templateId
+    ) as Child[]
+  );
 
   if (!isOpen) return null;
 
@@ -118,11 +123,7 @@ export const SupplyRequestModal = ({
                 >
                   <div className="absolute z-0 top-0 left-0 w-full h-full flex">
                     <Image
-                      src={
-                        isPhysical
-                          ? "/images/borderoro2.png"
-                          : "/images/borderwhite.png"
-                      }
+                      src={"/images/borderoro2.png"}
                       draggable={false}
                       objectFit="fill"
                       fill
@@ -141,11 +142,7 @@ export const SupplyRequestModal = ({
                 >
                   <div className="absolute z-0 top-0 left-0 w-full h-full flex">
                     <Image
-                      src={
-                        !isPhysical
-                          ? "/images/borderoro2.png"
-                          : "/images/borderwhite.png"
-                      }
+                      src={"/images/borderoro2.png"}
                       draggable={false}
                       objectFit="fill"
                       fill
@@ -322,7 +319,7 @@ export const SupplyRequestModal = ({
                 <div className="text-sm text-oro font-chicago relative uppercase flex items-center justify-center px-4 py-2 bg-offNegro">
                   <div className="absolute z-0 top-0 left-0 w-full h-full flex">
                     <Image
-                      src={"/images/borderoro.png"}
+                      src={"/images/borderoro2.png"}
                       draggable={false}
                       objectFit="fill"
                       fill
@@ -339,15 +336,6 @@ export const SupplyRequestModal = ({
                 className="relative cursor-pointer hover:opacity-80 transition-opacity flex-1"
               >
                 <div className="text-sm text-gris font-chicago relative uppercase flex items-center justify-center px-4 py-2 bg-offNegro">
-                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                    <Image
-                      src={"/images/borderwhite.png"}
-                      draggable={false}
-                      objectFit="fill"
-                      fill
-                      alt="border"
-                    />
-                  </div>
                   <span className="relative z-10">{dict?.cancel}</span>
                 </div>
               </div>
@@ -360,7 +348,7 @@ export const SupplyRequestModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-4xl max-h-[90vh] h-full flex flex-col overflow-hidden">
         <div className="absolute z-0 top-0 left-0 w-full h-full flex">
           <Image
             src={"/images/borderblue.png"}
@@ -370,7 +358,7 @@ export const SupplyRequestModal = ({
             alt="border"
           />
         </div>
-        <div className="relative z-10 p-6 flex flex-col h-full">
+        <div className="relative z-10 p-6 flex flex-col h-full overflow-hidden">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-awk uppercase text-oro">
               {dict?.selectChild} ({dict?.optional})
@@ -400,8 +388,8 @@ export const SupplyRequestModal = ({
           </FancyBorder>
 
           <div
-            id="scrollableDiv"
-            className="flex-1 overflow-y-auto pr-2"
+            id="supplyRequestScroll"
+            className="flex-1 min-h-0 overflow-y-auto pr-2"
             style={{ scrollbarWidth: "thin" }}
           >
             <InfiniteScroll
@@ -413,7 +401,7 @@ export const SupplyRequestModal = ({
                   {dict?.loadingMore}
                 </p>
               }
-              scrollableTarget="scrollableDiv"
+              scrollableTarget="supplyRequestScroll"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredItems.map((item, i) => (
@@ -444,7 +432,7 @@ export const SupplyRequestModal = ({
               <div className="text-sm text-oro font-chicago relative uppercase flex items-center justify-center px-4 py-2 bg-offNegro">
                 <div className="absolute z-0 top-0 left-0 w-full h-full flex">
                   <Image
-                    src={"/images/borderoro.png"}
+                    src={"/images/borderoro2.png"}
                     draggable={false}
                     objectFit="fill"
                     fill
@@ -461,15 +449,6 @@ export const SupplyRequestModal = ({
               className="relative cursor-pointer hover:opacity-80 transition-opacity flex-1"
             >
               <div className="text-sm text-gris font-chicago relative uppercase flex items-center justify-center px-4 py-2 bg-offNegro">
-                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                  <Image
-                    src={"/images/borderwhite.png"}
-                    draggable={false}
-                    objectFit="fill"
-                    fill
-                    alt="border"
-                  />
-                </div>
                 <span className="relative z-10">{dict?.cancel}</span>
               </div>
             </div>

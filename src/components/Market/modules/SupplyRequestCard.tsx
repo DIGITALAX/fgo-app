@@ -6,8 +6,7 @@ import { formatPrice } from "@/lib/helpers/price";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
-
-const TEST_TOKEN_ADDRESS = "0xE5E9D4C119a28302EDa029155bF00efd35E06c93";
+import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
 
 export const SupplyRequestCard = ({
   supplyRequest,
@@ -15,12 +14,16 @@ export const SupplyRequestCard = ({
 }: SupplyRequestCardProps) => {
   const [formattedPrice, setFormattedPrice] = useState<string>("");
   const router = useRouter();
+  const network = getCurrentNetwork();
+  const { TestToken: testTokenAddress } = getCoreContractAddresses(
+    network.chainId
+  );
 
   useEffect(() => {
     const loadPrice = async () => {
       const price = await formatPrice(
         supplyRequest.preferredMaxPrice,
-        TEST_TOKEN_ADDRESS
+        testTokenAddress
       );
       setFormattedPrice(price);
     };
@@ -62,9 +65,7 @@ export const SupplyRequestCard = ({
               {dict?.supplyRequest}
             </div>
             <h4 className="font-agency text-base leading-tight">
-              {supplyRequest.isPhysical
-                ? dict?.physical
-                : dict?.digital}
+              {supplyRequest.isPhysical ? dict?.physical : dict?.digital}
             </h4>
           </div>
           <div className="flex">
@@ -78,7 +79,7 @@ export const SupplyRequestCard = ({
                   alt="border"
                 />
               </div>
-              {supplyRequest.paid ? dict?.paid : dict?.open }
+              {supplyRequest.paid ? dict?.paid : dict?.open}
             </div>
           </div>
         </div>
@@ -96,7 +97,7 @@ export const SupplyRequestCard = ({
           {supplyRequest.customSpec && (
             <div className="relative z-10 p-4 w-full h-full overflow-y-auto">
               <div className="text-xs font-chicago text-gris mb-2 uppercase">
-                {dict?.customSpec }:
+                {dict?.customSpec}:
               </div>
               <div className="text-xs font-chicago text-white whitespace-pre-wrap">
                 {supplyRequest.customSpec}

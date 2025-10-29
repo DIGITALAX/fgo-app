@@ -87,7 +87,8 @@ export const Success = ({ dict }: { dict: any }) => {
                     alt="border"
                   />
                 </div>
-                <span className="relative z-10">{dict?.close}</span>
+                <span 
+                  onClick={context.hideSuccess} className="cursor-pointer relative z-10">{dict?.close}</span>
               </div>
             </button>
           </div>

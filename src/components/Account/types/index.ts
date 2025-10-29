@@ -227,7 +227,6 @@ export interface CreateItemFormData {
   futures?: {
     isFutures: boolean;
     deadline: string;
-    pricePerUnit: string;
     maxDigitalEditions: string;
   };
 }
@@ -539,7 +538,7 @@ export interface ChildSupplyRequest {
   deadline: string;
   existingChildContract: string;
   isPhysical: boolean;
-  fulfilled: boolean;
+  paid: boolean;
   customSpec: string;
   placementURI: string;
 }

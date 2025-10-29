@@ -60,6 +60,7 @@ export const useChildSelection = (dict: any) => {
                 version: "",
                 metadata: { title: "", image: "", description: "", link: "" },
               },
+              futures: item.futures,
               childType: item.childType || "Unknown",
               scm: item.scm || "Unknown",
               title:

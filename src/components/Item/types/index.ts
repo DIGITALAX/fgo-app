@@ -14,6 +14,7 @@ export interface TemplateDetailsProps {
 export interface ItemSupplyRequestsProps {
   supplyRequests: ChildSupplyRequest[];
   dict: any;
+  infraCurrency?: string;
 }
 
 export interface ChildDetailsProps {
@@ -166,7 +167,7 @@ export interface Attachment {
 
 export interface AuthorizedParents {
   parentContract: string;
-  parentId: string;
+  designId: string;
   uri: string;
   isPhysical: boolean;
   metadata: {
@@ -192,17 +193,7 @@ export interface ApprovalAmountInputProps {
   onReject: () => void;
   loading: boolean;
   rejecting: boolean;
-  isSupplier: boolean;
   dict: any;
-  hasBothAvailability?: boolean;
-  onApprovePhysical?: (amount: string) => void;
-  onApproveDigital?: (amount: string) => void;
-  onRejectPhysical?: () => void;
-  onRejectDigital?: () => void;
-  loadingPhysical?: boolean;
-  loadingDigital?: boolean;
-  rejectingPhysical?: boolean;
-  rejectingDigital?: boolean;
 }
 
 export interface ParentRequests {
@@ -260,6 +251,7 @@ export interface AuthorizedChildren {
   futures: {
     id: string;
   };
+  isTemplate: boolean;
   metadata: {
     title: string;
     image: string;

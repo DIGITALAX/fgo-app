@@ -37,11 +37,8 @@ export const uploadJSONToIPFS = async (json: object): Promise<string> => {
 export const fetchMetadataFromIPFS = async (uri: string): Promise<any> => {
   try {
     let metadataUrl = uri;
-    if (uri.startsWith("ipfs://")) {
-      metadataUrl = `${INFURA_GATEWAY}${uri.replace(
-        "ipfs://",
-        ""
-      )}`;
+    if (uri?.startsWith("ipfs://")) {
+      metadataUrl = `${INFURA_GATEWAY}${uri.replace("ipfs://", "")}`;
     }
 
     const response = await fetch(metadataUrl);
@@ -57,8 +54,25 @@ export const fetchMetadataFromIPFS = async (uri: string): Promise<any> => {
 };
 
 export const getIPFSUrl = (ipfsHash: string): string => {
-  if (ipfsHash.startsWith("ipfs://")) {
+  if (ipfsHash?.startsWith("ipfs://")) {
     return `${INFURA_GATEWAY}${ipfsHash.replace("ipfs://", "")}`;
   }
   return ipfsHash;
+};
+
+export const fetchCustomSpec = async (ipfsUri: string): Promise<string> => {
+  try {
+    const url = getIPFSUrl(ipfsUri);
+    const response = await fetch(url);
+    const json = await response.json();
+
+    if (json) {
+      return json?.spec;
+    } else {
+      const text = await response.text();
+      return text;
+    }
+  } catch (err) {
+    return "";
+  }
 };

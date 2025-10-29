@@ -37,7 +37,7 @@ export const TemplateDetails = ({
     handleCreateTemplate,
     handleDeleteTemplate,
     handleEditSubmit,
-  } = useTemplateActions(contractAddress, templateId, template, dict);
+  } = useTemplateActions(contractAddress, templateId, template!, dict);
 
   if (isLoading) {
     return (

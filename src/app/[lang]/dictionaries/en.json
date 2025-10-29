@@ -542,6 +542,7 @@
   "enableFutures": "Enable Futures",
   "futuresSettings": "Futures Settings",
   "deadline": "Deadline (Perpetual = 0)",
+  "perpetual": "perpetual",
   "deadlinePlaceholder": "Timestamp (must be at least 7 days from now)",
   "pricePerUnit": "Price Per Unit",
   "pricePerUnitPlaceholder": "Enter price per unit",

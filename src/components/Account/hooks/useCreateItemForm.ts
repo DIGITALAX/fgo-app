@@ -3,7 +3,6 @@ import {
   CreateItemFormData,
   ChildReference,
   Workflow,
-  MarketContract,
   SupplyRequestFormData,
 } from "../types";
 import { Child, Template } from "@/components/Item/types";
@@ -62,6 +61,7 @@ const parsePlacementFromURI = async (
 };
 
 export const useCreateItemForm = (
+  dict: any,
   editItem?: Child | Template | Parent,
   isEditMode?: boolean
 ) => {
@@ -96,7 +96,7 @@ export const useCreateItemForm = (
           version: "1",
           maxPhysicalEditions: parent.maxPhysicalEditions || "0",
           maxDigitalEditions: parent.maxDigitalEditions || "0",
-          availability: parseAvailability(parent.availability),
+          availability: parseAvailability(parent.availability, dict),
           printType: (parent as any).printType || "0",
           isImmutable: false,
           digitalMarketsOpenToAll: parent.digitalMarketsOpenToAll === true,
@@ -144,7 +144,7 @@ export const useCreateItemForm = (
           version: childOrTemplate.version,
           maxPhysicalEditions: childOrTemplate.maxPhysicalEditions,
           maxDigitalEditions: "0",
-          availability: parseAvailability(childOrTemplate.availability),
+          availability: parseAvailability(childOrTemplate.availability, dict),
           isImmutable: childOrTemplate.isImmutable,
           digitalMarketsOpenToAll: childOrTemplate.digitalMarketsOpenToAll,
           physicalMarketsOpenToAll: childOrTemplate.physicalMarketsOpenToAll,
@@ -461,7 +461,6 @@ export const useCreateItemForm = (
           futures: {
             isFutures: true,
             deadline: "0",
-            pricePerUnit: "0",
             maxDigitalEditions: "0",
           },
           availability: prev.availability === 2 ? 0 : prev.availability,
@@ -474,11 +473,7 @@ export const useCreateItemForm = (
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      if (
-        name === "deadline" ||
-        name === "pricePerUnit" ||
-        name === "maxDigitalEditions"
-      ) {
+      if (name === "deadline" || name === "maxDigitalEditions") {
         if (validateNumberInput(value, "edition")) {
           setFormData((prev) => ({
             ...prev,
@@ -523,8 +518,6 @@ export const useCreateItemForm = (
     (!formData.futures?.isFutures ||
       (formData.futures.deadline &&
         parseInt(formData.futures.deadline) > 0 &&
-        formData.futures.pricePerUnit &&
-        parseInt(formData.futures.pricePerUnit) > 0 &&
         (formData.availability === 1
           ? formData.maxPhysicalEditions &&
             parseInt(formData.maxPhysicalEditions) > 0

@@ -1,10 +1,9 @@
 import { useState, useCallback, useContext } from "react";
-import { useAccount, useWalletClient, usePublicClient } from "wagmi";
+import { useWalletClient, usePublicClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
 
 export const useApprovalActions = (contractAddress: string, itemId: string, contractType: "child" | "template" | "parent", dict: any) => {
-  const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const context = useContext(AppContext);

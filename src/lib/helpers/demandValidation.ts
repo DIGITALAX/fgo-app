@@ -8,7 +8,7 @@ import {
   FuturesCreditsValidationResult,
 } from "@/components/Library/types";
 import { getFGOUser } from "@/lib/subgraph/queries/getFGOUser";
-
+import { Parent } from "@/components/Account/types";
 
 const formatMessage = (
   dict: any,
@@ -16,7 +16,7 @@ const formatMessage = (
   fallback: string,
   params: Record<string, string | number | bigint> = {}
 ) => {
-  const template = (dict && typeof dict[key] === "string") ? dict[key] : fallback;
+  const template = dict && typeof dict[key] === "string" ? dict[key] : fallback;
 
   return Object.entries(params).reduce((acc, [paramKey, paramValue]) => {
     const pattern = new RegExp(`\\{${paramKey}\\}`, "g");
@@ -29,18 +29,20 @@ const getChildData = async (
   childId: string,
   publicClient: any
 ) => {
-  const childData = await publicClient.readContract({
+  const childData: any = await publicClient.readContract({
     address: childContract as `0x${string}`,
     abi: ABIS.FGOChild,
-    functionName: "getChild",
+    functionName: "getChildMetadata",
     args: [BigInt(childId)],
   });
 
   return {
-    maxPhysicalEditions: BigInt(childData[6]),
-    currentPhysicalEditions: BigInt(childData[7]),
-    currentDigitalEditions: BigInt(childData[8]),
-    totalReservedSupply: BigInt(childData[9]),
+    maxPhysicalEditions: BigInt(childData.maxPhysicalEditions ?? 0),
+    currentPhysicalEditions: BigInt(childData.currentPhysicalEditions ?? 0),
+    currentDigitalEditions: BigInt(childData.currentDigitalEditions ?? 0),
+    totalReservedSupply: BigInt(childData.totalReservedSupply ?? 0),
+    maxDigitalEditions: BigInt(childData.maxDigitalEditions ?? 0),
+    availability: Number(childData.availability ?? 0),
   };
 };
 
@@ -67,11 +69,50 @@ const getTemplateData = async (
   };
 };
 
+const toBigIntValue = (
+  value: string | number | bigint | undefined | null
+): bigint => {
+  if (value === undefined || value === null) return BigInt(0);
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") return BigInt(value);
+  const trimmed = value.toString().trim();
+  if (trimmed === "") return BigInt(0);
+  return BigInt(trimmed);
+};
+
+const getChannelLabel = (dict: any, channel: "digital" | "physical") => {
+  if (!dict) {
+    return channel === "digital" ? "Digital" : "Physical";
+  }
+
+  return channel === "digital"
+    ? dict?.digital ?? "Digital"
+    : dict?.physical ?? "Physical";
+};
+
 export const validateDemandForParent = async (
   childReferences: ChildReferenceInput[],
-  parentEditions: bigint,
-  dict: any
+  parent: Parent,
+  dict?: any
 ): Promise<ValidationResult> => {
+  let parentDigitalEditions =
+    typeof parent.maxDigitalEditions === "bigint"
+      ? parent.maxDigitalEditions
+      : toBigIntValue((parent.maxDigitalEditions as any)?.digital);
+
+  let parentPhysicalEditions =
+    typeof parent.maxPhysicalEditions === "bigint"
+      ? parent.maxPhysicalEditions
+      : toBigIntValue((parent.maxPhysicalEditions as any)?.physical);
+
+  if (parentDigitalEditions < BigInt(0)) parentDigitalEditions = BigInt(0);
+  if (parentPhysicalEditions < BigInt(0)) parentPhysicalEditions = BigInt(0);
+
+  const parentNeedsDigital =
+    Number(parent.availability) === 0 || Number(parent.availability) === 2;
+  const parentNeedsPhysical =
+    Number(parent.availability) === 1 || Number(parent.availability) === 2;
+
   const result: ValidationResult = {
     isValid: true,
     errors: [],
@@ -89,7 +130,9 @@ export const validateDemandForParent = async (
       if (ref.isTemplate) {
         const templateValidation = await validateDemandForTemplate(
           [ref],
-          parentEditions,
+          parentDigitalEditions > BigInt(0)
+            ? parentDigitalEditions
+            : parentPhysicalEditions,
           dict
         );
 
@@ -105,42 +148,107 @@ export const validateDemandForParent = async (
           publicClient
         );
 
-        const amountPerParent = BigInt(ref.amount);
-        const totalRequired = amountPerParent * parentEditions;
-        const currentEditions =
-          childData.currentPhysicalEditions + childData.currentDigitalEditions;
-        const available =
+        const amountPerParent = toBigIntValue(ref.amount);
+        const childAvailability = childData.availability;
+
+        const digitalAvailableRaw =
+          childData.maxDigitalEditions - childData.currentDigitalEditions;
+        const digitalAvailable =
+          digitalAvailableRaw < BigInt(0) ? BigInt(0) : digitalAvailableRaw;
+
+        const physicalAvailableRaw =
           childData.maxPhysicalEditions -
-          currentEditions -
+          childData.currentPhysicalEditions -
           childData.totalReservedSupply;
+        const physicalAvailable =
+          physicalAvailableRaw < BigInt(0) ? BigInt(0) : physicalAvailableRaw;
 
-        result.childValidations.push({
-          childContract: ref.childContract,
-          childId: ref.childId,
-          required: totalRequired,
-          available,
-          maxEditions: childData.maxPhysicalEditions,
-          currentEditions,
-          reservedSupply: childData.totalReservedSupply,
-        });
+        if (parentNeedsDigital) {
+          const childSupportsDigital =
+            childAvailability === 0 || childAvailability === 2;
+          const requiredDigital = amountPerParent * parentDigitalEditions;
 
-        if (totalRequired > available) {
-          result.isValid = false;
-          result.errors.push(
-            formatMessage(
-              dict,
-              "demandChildInsufficient",
-              `Child ${ref.childId}: Requires ${totalRequired} but only ${available} available (max: ${childData.maxPhysicalEditions}, current: ${currentEditions}, reserved: ${childData.totalReservedSupply})`,
-              {
-                childId: ref.childId,
-                required: totalRequired,
-                available,
-                max: childData.maxPhysicalEditions,
-                current: currentEditions,
-                reserved: childData.totalReservedSupply,
-              }
-            )
-          );
+          if (requiredDigital > BigInt(0)) {
+            result.childValidations.push({
+              childContract: ref.childContract,
+              childId: ref.childId,
+              required: requiredDigital,
+              available: digitalAvailable,
+              maxEditions: childData.maxDigitalEditions,
+              currentEditions: childData.currentDigitalEditions,
+              reservedSupply: BigInt(0),
+              channel: "digital",
+            });
+          }
+
+          if (!childSupportsDigital || requiredDigital > digitalAvailable) {
+            result.isValid = false;
+            result.errors.push(
+              formatMessage(
+                dict,
+                "demandChildInsufficient",
+                `Child ${ref.childId} (${getChannelLabel(
+                  dict,
+                  "digital"
+                )}): Requires ${requiredDigital} but only ${digitalAvailable} available (max: ${
+                  childData.maxDigitalEditions
+                }, current: ${childData.currentDigitalEditions}, reserved: 0)`,
+                {
+                  childId: ref.childId,
+                  required: requiredDigital,
+                  available: digitalAvailable,
+                  max: childData.maxDigitalEditions,
+                  current: childData.currentDigitalEditions,
+                  reserved: BigInt(0),
+                }
+              )
+            );
+          }
+        }
+
+        if (parentNeedsPhysical) {
+          const childSupportsPhysical =
+            childAvailability === 1 || childAvailability === 2;
+          const requiredPhysical = amountPerParent * parentPhysicalEditions;
+
+          if (requiredPhysical > BigInt(0)) {
+            result.childValidations.push({
+              childContract: ref.childContract,
+              childId: ref.childId,
+              required: requiredPhysical,
+              available: physicalAvailable,
+              maxEditions: childData.maxPhysicalEditions,
+              currentEditions: childData.currentPhysicalEditions,
+              reservedSupply: childData.totalReservedSupply,
+              channel: "physical",
+            });
+          }
+
+          if (!childSupportsPhysical || requiredPhysical > physicalAvailable) {
+            result.isValid = false;
+            result.errors.push(
+              formatMessage(
+                dict,
+                "demandChildInsufficient",
+                `Child ${ref.childId} (${getChannelLabel(
+                  dict,
+                  "physical"
+                )}): Requires ${requiredPhysical} but only ${physicalAvailable} available (max: ${
+                  childData.maxPhysicalEditions
+                }, current: ${childData.currentPhysicalEditions}, reserved: ${
+                  childData.totalReservedSupply
+                })`,
+                {
+                  childId: ref.childId,
+                  required: requiredPhysical,
+                  available: physicalAvailable,
+                  max: childData.maxPhysicalEditions,
+                  current: childData.currentPhysicalEditions,
+                  reserved: childData.totalReservedSupply,
+                }
+              )
+            );
+          }
         }
       }
     } catch (error) {
@@ -251,7 +359,8 @@ export const validateDemandForTemplate = async (
           const totalNestedRequired =
             amountPerNestedChild * totalTemplateRequired;
           const nestedCurrentEditions =
-            childData.currentPhysicalEditions + childData.currentDigitalEditions;
+            childData.currentPhysicalEditions +
+            childData.currentDigitalEditions;
           const nestedAvailable =
             childData.maxPhysicalEditions -
             nestedCurrentEditions -
@@ -340,7 +449,7 @@ export const validateFuturesCredits = async (
       const childData = await publicClient.readContract({
         address: ref.childContract as `0x${string}`,
         abi: ABIS.FGOChild,
-        functionName: "getChild",
+        functionName: "getChildMetadata",
         args: [BigInt(ref.childId)],
       });
 
@@ -354,8 +463,7 @@ export const validateFuturesCredits = async (
       const credit = futuresCredits.find(
         (fc: any) =>
           fc.child.childContract.toLowerCase() ===
-            ref.childContract.toLowerCase() &&
-          fc.child.childId === ref.childId
+            ref.childContract.toLowerCase() && fc.child.childId === ref.childId
       );
 
       if (!credit) {
@@ -379,12 +487,9 @@ export const validateFuturesCredits = async (
       const available = BigInt(
         BigInt(credit.credits) - BigInt(credit.consumed)
       );
-  
 
-      const requiredDigital =
-        availability === 1 ? BigInt(0) : totalRequired;
-      const requiredPhysical =
-        availability === 0 ? BigInt(0) : totalRequired;
+      const requiredDigital = availability === 1 ? BigInt(0) : totalRequired;
+      const requiredPhysical = availability === 0 ? BigInt(0) : totalRequired;
 
       result.creditChecks.push({
         childContract: ref.childContract,

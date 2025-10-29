@@ -99,7 +99,7 @@ export const getAllSupplyRequests = async (
 
 const SUPPLY_REQUEST = `
 query($id: String!) {
-  childSupplyRequests(id: $id) {
+  childSupplyRequests(where: {id: $id}) {
     existingChildId
     existingChild {
       childId
@@ -182,7 +182,7 @@ export const getSupplyRequest = async (id: string): Promise<any> => {
   const queryPromise = graphFGOClient.query({
     query: gql(SUPPLY_REQUEST),
     variables: {
-     id
+      id,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",
@@ -203,7 +203,7 @@ export const getSupplyRequest = async (id: string): Promise<any> => {
 
 const ALL_MARKETS_ACTIVE = `
 query($first: Int!, $skip: Int!) {
-  childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: { and: [ { status: 2 }, { standAlone: true }, { authorizedMarkets_not: [] }] }) {
+  childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {  status: 2, standaloneAllowed: true, authorizedMarkets_not: []  }) {
      createdAt
     uri
     status
@@ -227,7 +227,7 @@ query($first: Int!, $skip: Int!) {
       image
     }
   }
-  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: { and: [ { status: 2 }, { standAlone: true }, { authorizedMarkets_not: [] }] }) {
+  templates(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {  status: 2, standaloneAllowed: true, authorizedMarkets_not: [] }) {
     createdAt
     uri
     templateId
@@ -251,7 +251,7 @@ query($first: Int!, $skip: Int!) {
       image
     }
   }
-  parents(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: { and: [ { status: 2 }, { authorizedMarkets_not: [] }] }) {
+  parents(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: {  status: 2, authorizedMarkets_not: [] }) {
     designId
     parentContract
     designerProfile {
@@ -300,12 +300,13 @@ export const getAllMarketsActive = async (
   }
 };
 
-
-
 const SUPPLIER_CHILDREN = `
-query($first: Int!, $skip: Int!, supplier: String!) {
+query($first: Int!, $skip: Int!, $supplier: String!) {
   childs(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: { supplier: $supplier }) {
     createdAt
+    futures {
+      pricePerUnit
+    }
     uri
     status
     supplier
@@ -341,7 +342,7 @@ export const getSupplierChildren = async (
     variables: {
       first,
       skip,
-      supplier
+      supplier,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",

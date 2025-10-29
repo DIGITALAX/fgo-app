@@ -282,15 +282,11 @@ export const useChildItems = (
           futures: formData.futures?.isFutures
             ? {
                 deadline: BigInt(formData.futures.deadline),
-                pricePerUnit: parseEther(formData.futures.pricePerUnit),
-                maxDigitalEditions: BigInt(
-                  formData.futures.maxDigitalEditions
-                ),
+                maxDigitalEditions: BigInt(formData.futures.maxDigitalEditions),
                 isFutures: true,
               }
             : {
                 deadline: BigInt("0"),
-                pricePerUnit: BigInt("0"),
                 maxDigitalEditions: BigInt("0"),
                 isFutures: false,
               },
@@ -301,7 +297,6 @@ export const useChildItems = (
         if (abortController?.signal.aborted) {
           throw new Error(dict?.operationCancelled);
         }
-
         const hash = await walletClient.writeContract({
           address: contractAddress as `0x${string}`,
           abi: getABI("FGOChild"),

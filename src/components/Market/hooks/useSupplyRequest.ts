@@ -3,7 +3,7 @@ import { ensureMetadata } from "@/lib/helpers/metadata";
 import { SupplierChild, SupplyRequest } from "../types";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { getSupplyRequest } from "@/lib/subgraph/queries/getMarkets";
-import { getIPFSUrl } from "@/lib/helpers/ipfs";
+import { fetchCustomSpec, getIPFSUrl } from "@/lib/helpers/ipfs";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
@@ -12,10 +12,9 @@ import { BaseError, isAddress } from "viem";
 import { validateDemandForParent } from "@/lib/helpers/demandValidation";
 
 export const useSupplyRequest = (id: string, dict: any) => {
-  const [supplyRequest, setSupplyRequest] = useState<SupplyRequest>(
-  );
+  const [supplyRequest, setSupplyRequest] = useState<SupplyRequest>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null >(null);
+  const [error, setError] = useState<string | null>(null);
   const [approvingProposalId, setApprovingProposalId] = useState<string | null>(
     null
   );
@@ -23,9 +22,9 @@ export const useSupplyRequest = (id: string, dict: any) => {
   const [approvedProposals, setApprovedProposals] = useState<string[]>([]);
   const [proposingChildId, setProposingChildId] = useState<string | null>(null);
   const [isProposeModalOpen, setIsProposeModalOpen] = useState<boolean>(false);
-  const [cancellingProposalId, setCancellingProposalId] = useState<string | null>(
-    null
-  );
+  const [cancellingProposalId, setCancellingProposalId] = useState<
+    string | null
+  >(null);
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -145,15 +144,24 @@ export const useSupplyRequest = (id: string, dict: any) => {
 
       const childSupplyRequestData = result.data.childSupplyRequests[0];
 
-      const existingChildProcessed = await ensureMetadata(
-        childSupplyRequestData.existingChild
-      );
-      const matchedChildProcessed = await ensureMetadata(
-        childSupplyRequestData.matchedChild
-      );
-      const parentProcessed = await ensureMetadata(
-        childSupplyRequestData.parent
-      );
+      let existingChildProcessed = childSupplyRequestData.existingChild;
+      if (existingChildProcessed) {
+        existingChildProcessed = await ensureMetadata(
+          childSupplyRequestData.existingChild
+        );
+      }
+
+      let matchedChildProcessed = childSupplyRequestData.matchedChild;
+      if (matchedChildProcessed) {
+        matchedChildProcessed = await ensureMetadata(
+          childSupplyRequestData.matchedChild
+        );
+      }
+
+      let parentProcessed = childSupplyRequestData.parent;
+      if (parentProcessed) {
+        parentProcessed = await ensureMetadata(childSupplyRequestData.parent);
+      }
 
       const proposals = await Promise.all(
         childSupplyRequestData.proposals.map(async (p: any) => {
@@ -172,16 +180,13 @@ export const useSupplyRequest = (id: string, dict: any) => {
         })
       );
 
-      const url = getIPFSUrl(childSupplyRequestData.customSpec);
-      const response = await fetch(url);
-
       setSupplyRequest({
         id,
-        existingChildId: childSupplyRequestData.existingChildId,
-        existingChild: {
+        existingChildId: childSupplyRequestData?.existingChildId,
+        existingChild: existingChildProcessed && {
           ...existingChildProcessed,
           availability: getAvailabilityLabel(
-            existingChildProcessed.availability || 0,
+            existingChildProcessed?.availability || 0,
             dict
           ),
         },
@@ -191,20 +196,20 @@ export const useSupplyRequest = (id: string, dict: any) => {
         existingChildContract: childSupplyRequestData.existingChildContract,
         isPhysical: childSupplyRequestData.isPhysical,
         expired: childSupplyRequestData.expired,
-        customSpec: await response.text(),
+        customSpec: await fetchCustomSpec(childSupplyRequestData.customSpec),
         placementURI: childSupplyRequestData.placementURI,
-        parent: {
+        parent: parentProcessed && {
           ...parentProcessed,
           availability: getAvailabilityLabel(
-            parentProcessed.availability || 0,
+            parentProcessed?.availability || 0,
             dict
           ),
         },
         proposals: proposals,
-        matchedChild: {
+        matchedChild: matchedChildProcessed && {
           ...matchedChildProcessed,
           availability: getAvailabilityLabel(
-            matchedChildProcessed.availability || 0,
+            matchedChildProcessed?.availability || 0,
             dict
           ),
         },
@@ -298,7 +303,9 @@ export const useSupplyRequest = (id: string, dict: any) => {
       const parent = supplyRequest.parent;
 
       if (!parent) {
-        context?.showError(dict?.supplyRequestParentNotFound || dict?.unknownError);
+        context?.showError(
+          dict?.supplyRequestParentNotFound || dict?.unknownError
+        );
         return;
       }
 
@@ -326,8 +333,8 @@ export const useSupplyRequest = (id: string, dict: any) => {
       const requestIsPhysical = Boolean(supplyRequest.isPhysical);
 
       const supportsRequest = requestIsPhysical
-        ? childAvailability === 0 || childAvailability === 2
-        : childAvailability === 0 || childAvailability === 1;
+        ? childAvailability === 1 || childAvailability === 2
+        : childAvailability === 0 || childAvailability === 2;
 
       if (!supportsRequest) {
         context?.showError(dict?.supplyRequestAvailabilityMismatch);
@@ -343,7 +350,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
             isTemplate: false,
           },
         ],
-        parentEditionCount,
+        parent,
         dict
       );
 
@@ -500,31 +507,23 @@ export const useSupplyRequest = (id: string, dict: any) => {
       if (
         supplyRequest.parent.designer.toLowerCase() !== address.toLowerCase()
       ) {
-        context?.showError(
-          dict?.supplyRequestNotDesigner 
-        );
+        context?.showError(dict?.supplyRequestNotDesigner);
         return;
       }
 
       if (supplyRequest.paid) {
-        context?.showError(
-          dict?.supplyRequestAlreadyPaid
-        );
+        context?.showError(dict?.supplyRequestAlreadyPaid);
         return;
       }
 
       if (supplyRequest.expired || isDeadlinePassed(supplyRequest.deadline)) {
-        context?.showError(
-          dict?.supplyRequestDeadlinePassed
-        );
+        context?.showError(dict?.supplyRequestDeadlinePassed);
         return;
       }
 
       const totalCost = getTotalCostForProposal(proposal);
       if (totalCost === BigInt(0)) {
-        context?.showError(
-          dict?.supplyRequestInvalidPrice
-        );
+        context?.showError(dict?.supplyRequestInvalidPrice);
         return;
       }
 
@@ -533,7 +532,6 @@ export const useSupplyRequest = (id: string, dict: any) => {
         context?.showError(dict?.supplyRequestInvalidToken);
         return;
       }
-
       try {
         const balance = await publicClient.readContract({
           address: tokenAddress as `0x${string}`,
@@ -543,9 +541,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
         });
 
         if (BigInt(Number(balance)) < totalCost) {
-          context?.showError(
-            dict?.supplyRequestInsufficientBalance
-          );
+          context?.showError(dict?.supplyRequestInsufficientBalance);
           return;
         }
 
@@ -560,9 +556,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
           setApprovedProposals((prev) =>
             prev.includes(proposalId) ? prev : [...prev, proposalId]
           );
-          context?.showSuccess(
-            dict?.supplyRequestAlreadyApproved
-          );
+          context?.showSuccess(dict?.supplyRequestAlreadyApproved);
           return;
         }
 
@@ -629,16 +623,12 @@ export const useSupplyRequest = (id: string, dict: any) => {
       if (
         supplyRequest.parent.designer.toLowerCase() !== address.toLowerCase()
       ) {
-        context?.showError(
-          dict?.supplyRequestNotDesigner
-        );
+        context?.showError(dict?.supplyRequestNotDesigner);
         return;
       }
 
       if (supplyRequest.paid) {
-        context?.showError(
-          dict?.supplyRequestAlreadyPaid
-        );
+        context?.showError(dict?.supplyRequestAlreadyPaid);
         return;
       }
 
@@ -668,9 +658,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
         });
 
         if (BigInt(Number(balance)) < totalCost) {
-          context?.showError(
-            dict?.supplyRequestInsufficientBalance
-          );
+          context?.showError(dict?.supplyRequestInsufficientBalance);
           return;
         }
 
@@ -682,9 +670,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
         });
 
         if (BigInt(Number(allowance)) < totalCost) {
-          context?.showError(
-            dict?.supplyRequestAllowanceRequired
-          );
+          context?.showError(dict?.supplyRequestAllowanceRequired);
           return;
         }
 

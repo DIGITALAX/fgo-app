@@ -229,7 +229,7 @@ export const SupplierChildSelectionModal = ({
                     alt="border"
                   />
                 </div>
-                <span className="relative z-10">{dict?.close}</span>
+                <span className="cursor-pointer relative z-10">{dict?.close}</span>
               </div>
             </button>
           </div>

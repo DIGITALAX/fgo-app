@@ -16,9 +16,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
     getImageUrl,
     processedParentRequests,
     processedTemplateRequests,
-    loading,
   } = useItemRequests(item);
-
   const getItemId = () => {
     if ("childId" in item) return item.childId;
     if ("templateId" in item) return item.templateId;
@@ -95,11 +93,11 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
       {item.marketRequests && item.marketRequests.length > 0 && (
         <div className="space-y-3">
-          <span className="text-oro font-agency">{dict?.marketRequests}</span>
-          <div className="space-y-4">
+          <span className="text-oro font-agency  pb-2">{dict?.marketRequests}</span>
+          <div className="space-y-4 pb-2">
             {item.marketRequests.map((request, index: number) => (
-              <div key={index} className="bg-black/50 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div key={index} className="relative w-full bg-black/50 space-y-3">
+                <div className="pt-4 flex flex-col md:flex-row sm:items-center justify-between gap-4 flex-wrap">
                   <div className="flex-1 space-y-3">
                     <div>
                       <span className="text-oro font-agency text-sm">
@@ -200,11 +198,11 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
       {processedTemplateRequests.length > 0 && (
         <div className="space-y-3">
-          <span className="text-oro font-agency">{dict?.templateRequests}</span>
-          <div className="space-y-4">
+          <span className="text-oro font-agency  pb-2">{dict?.templateRequests}</span>
+          <div className="space-y-4 pb-2">
             {processedTemplateRequests.map((request, index: number) => (
               <div key={index} className="bg-black/50 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex pt-4 flex-col md:flex-row sm:items-center justify-between gap-4 flex-wrap">
                   <div className="flex-1 space-y-3">
                     <button
                       onClick={() =>
@@ -229,7 +227,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                       {request.template?.metadata?.title ||
                         `Template ${request.templateId}`}
                     </button>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                       <div>
                         <span className="text-oro font-agency text-sm">
                           {dict?.requested}:
@@ -243,14 +241,18 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                           {dict?.approved}:
                         </span>
                         <span className="text-white font-slim text-sm ml-1">
-                          {request.approvedAmount || "0"}
+                          {formatAmountDisplay(request.approvedAmount)}
                         </span>
                       </div>
                       <div>
                         <span className="text-oro font-agency text-sm">
                           {dict?.type}:
                         </span>
-                        <span className={`font-chicago text-xs ml-1 ${request.isPhysical ? "text-ama" : "text-verde"}`}>
+                        <span
+                          className={`font-chicago text-xs ml-1 ${
+                            request.isPhysical ? "text-ama" : "text-verde"
+                          }`}
+                        >
                           {request.isPhysical ? dict?.physical : dict?.digital}
                         </span>
                       </div>
@@ -278,105 +280,8 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                   {isOwner &&
                     request.isPending &&
                     (() => {
-                      const templateAvailability = Number(request.template?.availability);
-                      const childAvailability = Number(item.availability);
-
-                      const templateBoth = templateAvailability === 2;
-                      const templateDigital = templateAvailability === 0;
-                      const templatePhysical = templateAvailability === 1;
-
-                      const childBoth = childAvailability === 2;
-                      const childDigital = childAvailability === 0;
-                      const childPhysical = childAvailability === 1;
-
-                      const needsBothApprovals = templateBoth && childBoth;
-
-                      const needsPhysicalOnly = (templatePhysical) || (templateBoth && childPhysical);
-                      const needsDigitalOnly = (templateDigital) || (templateBoth && childDigital);
-
-                      if (needsBothApprovals) {
-                        return (
-                          <ApprovalAmountInput
-                            isSupplier={isOwner}
-                            dict={dict}
-                            requestedAmount={request.requestedAmount}
-                            onApprove={(amount) =>
-                              approveTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                amount,
-                                false
-                              )
-                            }
-                            onReject={() =>
-                              rejectTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                false
-                              )
-                            }
-                            loading={false}
-                            rejecting={false}
-                            hasBothAvailability={true}
-                            onApprovePhysical={(amount) =>
-                              approveTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                amount,
-                                true
-                              )
-                            }
-                            onApproveDigital={(amount) =>
-                              approveTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                amount,
-                                false
-                              )
-                            }
-                            onRejectPhysical={() =>
-                              rejectTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                true
-                              )
-                            }
-                            onRejectDigital={() =>
-                              rejectTemplateRequest(
-                                request.templateContract,
-                                request.templateId,
-                                false
-                              )
-                            }
-                            loadingPhysical={
-                              loadingStates[
-                                `approve-template-${request.templateContract}-${request.templateId}-physical`
-                              ]
-                            }
-                            loadingDigital={
-                              loadingStates[
-                                `approve-template-${request.templateContract}-${request.templateId}-digital`
-                              ]
-                            }
-                            rejectingPhysical={
-                              loadingStates[
-                                `reject-template-${request.templateContract}-${request.templateId}-physical`
-                              ]
-                            }
-                            rejectingDigital={
-                              loadingStates[
-                                `reject-template-${request.templateContract}-${request.templateId}-digital`
-                              ]
-                            }
-                          />
-                        );
-                      }
-
-                      const isPhysical = needsPhysicalOnly;
-
                       return (
                         <ApprovalAmountInput
-                          isSupplier={isOwner}
                           dict={dict}
                           requestedAmount={request.requestedAmount}
                           onApprove={(amount) =>
@@ -384,28 +289,28 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                               request.templateContract,
                               request.templateId,
                               amount,
-                              isPhysical
+                              request.isPhysical
                             )
                           }
                           onReject={() =>
                             rejectTemplateRequest(
                               request.templateContract,
                               request.templateId,
-                              isPhysical
+                              request.isPhysical
                             )
                           }
                           loading={
                             loadingStates[
                               `approve-template-${request.templateContract}-${
                                 request.templateId
-                              }-${isPhysical ? "physical" : "digital"}`
+                              }-${request.isPhysical ? "physical" : "digital"}`
                             ]
                           }
                           rejecting={
                             loadingStates[
                               `reject-template-${request.templateContract}-${
                                 request.templateId
-                              }-${isPhysical ? "physical" : "digital"}`
+                              }-${request.isPhysical ? "physical" : "digital"}`
                             ]
                           }
                         />
@@ -420,11 +325,11 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
 
       {processedParentRequests.length > 0 && (
         <div className="space-y-3">
-          <span className="text-oro font-agency">{dict?.parentRequests}</span>
+          <span className="text-oro font-agency pb-2">{dict?.parentRequests}</span>
           <div className="space-y-4">
             {processedParentRequests.map((request, index: number) => (
               <div key={index} className="bg-black/50 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="pt-4 flex flex-col md:flex-row sm:items-center justify-between gap-4 flex-wrap">
                   <div className="flex-1 space-y-3">
                     <button
                       onClick={() =>
@@ -449,7 +354,7 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                       {request.parent?.metadata?.title ||
                         `Parent ${request.parentId}`}
                     </button>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
                       <div>
                         <span className="text-oro font-agency text-sm">
                           {dict?.requested}:
@@ -463,14 +368,18 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                           {dict?.approved}:
                         </span>
                         <span className="text-white font-slim text-sm ml-1">
-                          {request.approvedAmount || "0"}
+                          {formatAmountDisplay(request.approvedAmount)}
                         </span>
                       </div>
                       <div>
                         <span className="text-oro font-agency text-sm">
                           {dict?.type}:
                         </span>
-                        <span className={`font-chicago text-xs ml-1 ${request.isPhysical ? "text-ama" : "text-verde"}`}>
+                        <span
+                          className={`font-chicago text-xs ml-1 ${
+                            request.isPhysical ? "text-ama" : "text-verde"
+                          }`}
+                        >
                           {request.isPhysical ? dict?.physical : dict?.digital}
                         </span>
                       </div>
@@ -498,104 +407,8 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                   {isOwner &&
                     request.isPending &&
                     (() => {
-                      const parentAvailability = Number(request.parent?.availability);
-                      const childAvailability = Number(item.availability);
-
-                      const parentBoth = parentAvailability === 2;
-                      const parentDigital = parentAvailability === 0;
-                      const parentPhysical = parentAvailability === 1;
-
-                      const childBoth = childAvailability === 2;
-                      const childDigital = childAvailability === 0;
-                      const childPhysical = childAvailability === 1;
-
-                      const needsBothApprovals = parentBoth && childBoth;
-
-                      const needsPhysicalOnly = (parentPhysical) || (parentBoth && childPhysical);
-
-                      if (needsBothApprovals) {
-                        return (
-                          <ApprovalAmountInput
-                            isSupplier={isOwner}
-                            dict={dict}
-                            requestedAmount={request.requestedAmount}
-                            onApprove={(amount) =>
-                              approveParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                amount,
-                                false
-                              )
-                            }
-                            onReject={() =>
-                              rejectParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                false
-                              )
-                            }
-                            loading={false}
-                            rejecting={false}
-                            hasBothAvailability={true}
-                            onApprovePhysical={(amount) =>
-                              approveParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                amount,
-                                true
-                              )
-                            }
-                            onApproveDigital={(amount) =>
-                              approveParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                amount,
-                                false
-                              )
-                            }
-                            onRejectPhysical={() =>
-                              rejectParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                true
-                              )
-                            }
-                            onRejectDigital={() =>
-                              rejectParentRequest(
-                                request.parentContract,
-                                request.parentId,
-                                false
-                              )
-                            }
-                            loadingPhysical={
-                              loadingStates[
-                                `approve-parent-${request.parentContract}-${request.parentId}-physical`
-                              ]
-                            }
-                            loadingDigital={
-                              loadingStates[
-                                `approve-parent-${request.parentContract}-${request.parentId}-digital`
-                              ]
-                            }
-                            rejectingPhysical={
-                              loadingStates[
-                                `reject-parent-${request.parentContract}-${request.parentId}-physical`
-                              ]
-                            }
-                            rejectingDigital={
-                              loadingStates[
-                                `reject-parent-${request.parentContract}-${request.parentId}-digital`
-                              ]
-                            }
-                          />
-                        );
-                      }
-
-                      const isPhysical = needsPhysicalOnly;
-
                       return (
                         <ApprovalAmountInput
-                          isSupplier={isOwner}
                           dict={dict}
                           requestedAmount={request.requestedAmount}
                           onApprove={(amount) =>
@@ -603,28 +416,28 @@ export const ItemRequests = ({ item, dict }: ItemRequestsProps) => {
                               request.parentContract,
                               request.parentId,
                               amount,
-                              isPhysical
+                              request.isPhysical
                             )
                           }
                           onReject={() =>
                             rejectParentRequest(
                               request.parentContract,
                               request.parentId,
-                              isPhysical
+                              request.isPhysical
                             )
                           }
                           loading={
                             loadingStates[
                               `approve-parent-${request.parentContract}-${
                                 request.parentId
-                              }-${isPhysical ? "physical" : "digital"}`
+                              }-${request.isPhysical ? "physical" : "digital"}`
                             ]
                           }
                           rejecting={
                             loadingStates[
                               `reject-parent-${request.parentContract}-${
                                 request.parentId
-                              }-${isPhysical ? "physical" : "digital"}`
+                              }-${request.isPhysical ? "physical" : "digital"}`
                             ]
                           }
                         />

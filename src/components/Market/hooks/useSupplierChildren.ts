@@ -66,6 +66,7 @@ export const useSupplierChildren = (
           skipCount,
           normalizedSupplier
         );
+     
 
         if (!result?.data) {
           setHasMore(false);
@@ -79,7 +80,7 @@ export const useSupplierChildren = (
         }
 
         const processed: SupplierChild[] = await Promise.all(
-          rawChildren.map(async (item: any) => {
+          rawChildren.filter((item: any) => !item.futures).map(async (item: any) => {
             const metadataSource = await ensureMetadata({
               uri: item.uri,
               metadata: item.metadata,

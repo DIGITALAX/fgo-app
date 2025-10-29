@@ -49,6 +49,7 @@ export interface ValidationResult {
     maxEditions: bigint;
     currentEditions: bigint;
     reservedSupply: bigint;
+    channel?: "digital" | "physical";
   }>;
 }
 

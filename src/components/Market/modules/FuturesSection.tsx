@@ -57,7 +57,7 @@ export const FuturesSection = ({
       ? formatDistanceToNow(new Date(Number(futures.deadline) * 1000), {
           addSuffix: true,
         })
-      : dict?.unlimited;
+      : dict?.perpetual;
 
   const supplierAddress = truncateAddress(futures.supplier);
 

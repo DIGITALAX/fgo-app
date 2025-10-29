@@ -136,17 +136,17 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
       if (!supplyRequest?.parent || !supplyRequest?.parent?.infraCurrency)
         return;
 
-      if (supplyRequest.parent.digitalPrice) {
+      if (supplyRequest.parent?.digitalPrice) {
         const digitalPrice = await formatPrice(
-          supplyRequest.parent.digitalPrice,
+          supplyRequest.parent?.digitalPrice,
           supplyRequest?.parent?.infraCurrency
         );
         setFormattedParentDigitalPrice(digitalPrice);
       }
 
-      if (supplyRequest.parent.physicalPrice) {
+      if (supplyRequest.parent?.physicalPrice) {
         const physicalPrice = await formatPrice(
-          supplyRequest.parent.physicalPrice,
+          supplyRequest.parent?.physicalPrice,
           supplyRequest?.parent?.infraCurrency
         );
         setFormattedParentPhysicalPrice(physicalPrice);
@@ -233,7 +233,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
       ? formatDistanceToNow(new Date(Number(supplyRequest.deadline) * 1000), {
           addSuffix: true,
         })
-      : dict?.unlimited || "Perpetual";
+      : dict?.perpetual;
 
   const network = getCurrentNetwork();
 
@@ -246,30 +246,30 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
           className="bg-black p-6 space-y-4"
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <h3 className="text-lg font-agency uppercase text-white">
-            {dict?.requestDetails}
-          </h3>
-          {canProposeMatch && (
-            <button
-              type="button"
-              onClick={openProposeModal}
-              className="relative self-start sm:self-auto"
-            >
-              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center hover:opacity-80">
-                <span className="relative z-10 uppercase text-oro">
-                  {dict?.supplyRequestPropose || dict?.propose}
-                </span>
-                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                  <Image
-                    src="/images/borderoro2.png"
-                    draggable={false}
-                    fill
-                    alt="border"
-                  />
+            <h3 className="text-lg font-agency uppercase text-white">
+              {dict?.requestDetails}
+            </h3>
+            {canProposeMatch && (
+              <button
+                type="button"
+                onClick={openProposeModal}
+                className="relative self-start sm:self-auto"
+              >
+                <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center hover:opacity-80">
+                  <span className="relative z-10 uppercase text-oro">
+                    {dict?.supplyRequestPropose || dict?.propose}
+                  </span>
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src="/images/borderoro2.png"
+                      draggable={false}
+                      fill
+                      alt="border"
+                    />
+                  </div>
                 </div>
-              </div>
-            </button>
-          )}
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -320,7 +320,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
             )}
           </div>
 
-          {supplyRequest.existingChild && (
+          {supplyRequest?.existingChild && (
             <div className="pt-4 border-t border-oro/30">
               <h4 className="text-base font-agency uppercase text-oro mb-3">
                 {dict?.existingChild}
@@ -328,34 +328,36 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
               <div
                 onClick={() =>
                   router.push(
-                    `/library/child/${supplyRequest.existingChild.childContract}/${supplyRequest.existingChild.childId}`
+                    `/library/child/${supplyRequest.existingChild?.childContract}/${supplyRequest.existingChild?.childId}`
                   )
                 }
-                className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity bg-offNegro/30 p-3 rounded"
+                className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity"
               >
                 <div className="relative w-16 h-16 flex-shrink-0">
                   <Image
                     src={
-                      supplyRequest.existingChild.metadata?.image
-                        ? getIPFSUrl(supplyRequest.existingChild.metadata.image)
+                      supplyRequest.existingChild?.metadata?.image
+                        ? getIPFSUrl(
+                            supplyRequest.existingChild?.metadata.image
+                          )
                         : "/images/default.png"
                     }
                     fill
                     draggable={false}
                     alt={
-                      supplyRequest.existingChild.metadata?.title ||
-                      `Child ${supplyRequest.existingChild.childId}`
+                      supplyRequest.existingChild?.metadata?.title ||
+                      `Child ${supplyRequest.existingChild?.childId}`
                     }
                     className="object-contain rounded"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-agency text-sm truncate">
-                    {supplyRequest.existingChild.metadata?.title ||
-                      `${dict?.child} ${supplyRequest.existingChild.childId}`}
+                    {supplyRequest.existingChild?.metadata?.title ||
+                      `${dict?.child} ${supplyRequest.existingChild?.childId}`}
                   </p>
                   <p className="text-gris font-slim text-xs">
-                    {dict?.child} #{supplyRequest.existingChild.childId}
+                    {dict?.child} #{supplyRequest.existingChild?.childId}
                   </p>
                 </div>
               </div>
@@ -379,7 +381,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
                   `/library/child/${supplyRequest.matchedChildContract}/${supplyRequest.matchedChildId}`
                 )
               }
-              className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity bg-offNegro/30 p-4 rounded mb-4"
+              className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity mb-4"
             >
               <div className="relative w-20 h-20 flex-shrink-0">
                 <Image
@@ -544,34 +546,34 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
             <div
               onClick={() =>
                 router.push(
-                  `/library/parent/${supplyRequest.parent.parentContract}/${supplyRequest.parent.designId}`
+                  `/library/parent/${supplyRequest.parent?.parentContract}/${supplyRequest.parent?.designId}`
                 )
               }
-              className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity bg-offNegro/30 p-4 rounded"
+              className="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity"
             >
               <div className="relative w-20 h-20 flex-shrink-0">
                 <Image
                   src={
-                    supplyRequest.parent.metadata?.image
-                      ? getIPFSUrl(supplyRequest.parent.metadata.image)
+                    supplyRequest.parent?.metadata?.image
+                      ? getIPFSUrl(supplyRequest.parent?.metadata.image)
                       : "/images/default.png"
                   }
                   fill
                   draggable={false}
                   alt={
-                    supplyRequest.parent.metadata?.title ||
-                    `Parent ${supplyRequest.parent.designId}`
+                    supplyRequest.parent?.metadata?.title ||
+                    `Parent ${supplyRequest.parent?.designId}`
                   }
                   className="object-contain rounded"
                 />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white font-agency text-base truncate">
-                  {supplyRequest.parent.metadata?.title ||
-                    `${dict?.parent} ${supplyRequest.parent.designId}`}
+                  {supplyRequest.parent?.metadata?.title ||
+                    `${dict?.parent} ${supplyRequest.parent?.designId}`}
                 </p>
                 <p className="text-gris font-slim text-xs">
-                  {dict?.parent} #{supplyRequest.parent.designId}
+                  {dict?.parent} #{supplyRequest.parent?.designId}
                 </p>
               </div>
             </div>
@@ -582,7 +584,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
                   {dict?.availability}
                 </span>
                 <p className="text-white font-slim">
-                  {supplyRequest.parent.availability}
+                  {supplyRequest.parent?.availability}
                 </p>
               </div>
 
@@ -592,7 +594,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
                 </span>
                 <p className="text-white font-slim">
                   {formattedParentDigitalPrice ||
-                    supplyRequest.parent.digitalPrice}
+                    supplyRequest.parent?.digitalPrice}
                 </p>
               </div>
 
@@ -602,7 +604,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
                 </span>
                 <p className="text-white font-slim">
                   {formattedParentPhysicalPrice ||
-                    supplyRequest.parent.physicalPrice}
+                    supplyRequest.parent?.physicalPrice}
                 </p>
               </div>
             </div>
@@ -815,7 +817,7 @@ export const SupplyRequest = ({ dict }: SupplyRequestProps) => {
                                     />
                                   </div>
                                 ) : (
-                                  dict?.supplyRequestPay || dict?.pay 
+                                  dict?.supplyRequestPay || dict?.pay
                                 )}
                               </span>
                               <div className="absolute z-0 top-0 left-0 w-full h-full flex">
