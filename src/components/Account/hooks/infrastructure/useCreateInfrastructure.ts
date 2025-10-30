@@ -19,14 +19,14 @@ export const useCreateInfrastructure = (dict: any) => {
   const context = useContext(AppContext);
 
   const network = getCurrentNetwork();
-  const { Factory: factoryAddress, TestToken: testTokenAddress } =
+  const { Factory: factoryAddress, Mona: monaAddress } =
     getCoreContractAddresses(network.chainId);
 
   const paymentTokens: PaymentToken[] = [
     {
-      address: testTokenAddress,
-      name: "Test Token",
-      symbol: "TEST",
+      address: monaAddress,
+      name: "MONA",
+      symbol: "MONA",
     },
   ];
 

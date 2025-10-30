@@ -15,7 +15,7 @@ export const SupplyRequestCard = ({
   const [formattedPrice, setFormattedPrice] = useState<string>("");
   const router = useRouter();
   const network = getCurrentNetwork();
-  const { TestToken: testTokenAddress } = getCoreContractAddresses(
+  const { Mona: monaAddress} = getCoreContractAddresses(
     network.chainId
   );
 
@@ -23,7 +23,7 @@ export const SupplyRequestCard = ({
     const loadPrice = async () => {
       const price = await formatPrice(
         supplyRequest.preferredMaxPrice,
-        testTokenAddress
+        monaAddress
       );
       setFormattedPrice(price);
     };
