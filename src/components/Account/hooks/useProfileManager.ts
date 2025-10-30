@@ -269,7 +269,7 @@ export const useProfileManager = ({
         if (!abi) {
           throw new Error(`Invalid profile type: ${profileType}`);
         }
-
+     
         const hash = await walletClient.writeContract({
           address: contract as `0x${string}`,
           abi,

@@ -33,7 +33,7 @@ export interface LibraryFilters {
 
 export interface CoreContractAddresses {
   Factory: string;
-  TestToken: string;
+  Mona: string;
   SupplyCoord: string;
   FuturesCoord: string;
 }

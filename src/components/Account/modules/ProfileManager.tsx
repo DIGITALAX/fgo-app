@@ -95,7 +95,7 @@ export const ProfileManager = ({
           </div>
 
           <div className="flex-1">
-          <form onSubmit={handleFormSubmit} className="space-y-4">
+          <form onSubmit={handleFormSubmit} className="space-y-4 overflow-y-scroll">
             <div>
               <label className="block text-sm font-chicago text-gris mb-2">
                 {dict?.title} *

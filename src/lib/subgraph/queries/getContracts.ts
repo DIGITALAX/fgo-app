@@ -354,6 +354,7 @@ query($id: String!) {
         deployer
         blockNumber
         blockTimestamp
+        fulfillerContract
         transactionHash
         contractAddress
         title
