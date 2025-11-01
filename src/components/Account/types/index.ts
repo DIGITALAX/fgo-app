@@ -227,6 +227,7 @@ export interface CreateItemFormData {
   futures?: {
     isFutures: boolean;
     deadline: string;
+    settlementRewardBPS: string;
     maxDigitalEditions: string;
   };
 }
@@ -615,7 +616,6 @@ export interface Designer {
 export interface FutureCreditsTabProps {
   dict: any;
 }
-
 
 export interface FutureCredit {
   child: Child;

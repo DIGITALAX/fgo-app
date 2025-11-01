@@ -14,6 +14,7 @@ export interface FuturePosition {
   };
   pricePerUnit: string;
   deadline: string;
+  settlementRewardBPS: string;
   isSettled: boolean;
   isActive: boolean;
   child: {

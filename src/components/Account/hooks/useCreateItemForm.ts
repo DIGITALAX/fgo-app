@@ -460,6 +460,7 @@ export const useCreateItemForm = (
           ...prev,
           futures: {
             isFutures: true,
+            settlementRewardBPS: "100",
             deadline: "0",
             maxDigitalEditions: "0",
           },
@@ -484,6 +485,21 @@ export const useCreateItemForm = (
                 }
               : undefined,
           }));
+        }
+      } else if (name === "settlementRewardBPS") {
+        if (validateNumberInput(value, "edition")) {
+          const numValue = parseInt(value);
+          if (value === "" || (numValue >= 100 && numValue <= 300)) {
+            setFormData((prev) => ({
+              ...prev,
+              futures: prev.futures
+                ? {
+                    ...prev.futures,
+                    [name]: value,
+                  }
+                : undefined,
+            }));
+          }
         }
       }
     },
@@ -518,6 +534,9 @@ export const useCreateItemForm = (
     (!formData.futures?.isFutures ||
       (formData.futures.deadline &&
         parseInt(formData.futures.deadline) > 0 &&
+        formData.futures.settlementRewardBPS &&
+        parseInt(formData.futures.settlementRewardBPS) >= 100 &&
+        parseInt(formData.futures.settlementRewardBPS) <= 300 &&
         (formData.availability === 1
           ? formData.maxPhysicalEditions &&
             parseInt(formData.maxPhysicalEditions) > 0

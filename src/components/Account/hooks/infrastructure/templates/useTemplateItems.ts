@@ -9,7 +9,10 @@ import { AppContext } from "@/lib/providers/Providers";
 import { Template } from "@/components/Item/types";
 import { ensureMetadata } from "@/lib/helpers/metadata";
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
-import { validateDemandForTemplate, validateFuturesCredits } from "@/lib/helpers/demandValidation";
+import {
+  validateDemandForTemplate,
+  validateFuturesCredits,
+} from "@/lib/helpers/demandValidation";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -249,6 +252,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
           futures: {
             deadline: BigInt("0"),
             maxDigitalEditions: BigInt("0"),
+            settlementRewardBPS: BigInt("0"),
             isFutures: false,
           },
         };
@@ -289,7 +293,9 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
           );
 
           if (!validation.isValid) {
-            const errorMsg = `${dict?.insufficientSupply}:\n${validation.errors.join("\n")}`;
+            const errorMsg = `${
+              dict?.insufficientSupply
+            }:\n${validation.errors.join("\n")}`;
             throw new Error(errorMsg);
           }
 
@@ -303,7 +309,9 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
             );
 
             if (!futuresValidation.isValid) {
-              const errorMsg = `${dict?.insufficientFuturesCredits}:\n${futuresValidation.errors.join("\n")}`;
+              const errorMsg = `${
+                dict?.insufficientFuturesCredits
+              }:\n${futuresValidation.errors.join("\n")}`;
               throw new Error(errorMsg);
             }
           }
@@ -332,7 +340,15 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
         setCreateLoading(false);
       }
     },
-    [contractAddress, walletClient, publicClient, address, dict, context, refetch]
+    [
+      contractAddress,
+      walletClient,
+      publicClient,
+      address,
+      dict,
+      context,
+      refetch,
+    ]
   );
 
   return {

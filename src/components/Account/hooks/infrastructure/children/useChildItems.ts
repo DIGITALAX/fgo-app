@@ -283,11 +283,15 @@ export const useChildItems = (
             ? {
                 deadline: BigInt(formData.futures.deadline),
                 maxDigitalEditions: BigInt(formData.futures.maxDigitalEditions),
+                settlementRewardBPS: BigInt(
+                  formData.futures.settlementRewardBPS
+                ),
                 isFutures: true,
               }
             : {
                 deadline: BigInt("0"),
                 maxDigitalEditions: BigInt("0"),
+                settlementRewardBPS: BigInt("0"),
                 isFutures: false,
               },
           childUri: `ipfs://${metadataHash}`,

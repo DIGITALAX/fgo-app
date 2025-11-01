@@ -12,6 +12,7 @@ query($first: Int!, $skip: Int!) {
     }
     pricePerUnit
     deadline
+    settlementRewardBPS
     isSettled
     isActive
     child {

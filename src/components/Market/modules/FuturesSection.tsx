@@ -65,6 +65,10 @@ export const FuturesSection = ({
     ? new Date(parseInt(futures.blockTimestamp) * 1000).toLocaleDateString()
     : "";
 
+  const settlementReward = futures.settlementRewardBPS
+    ? `${(Number(futures.settlementRewardBPS) / 100).toFixed(2)}%`
+    : dict?.notAvailable || "N/A";
+
   return (
     <FancyBorder type="circle" color="verde" className="bg-black p-6 space-y-4">
       <div className="flex items-center justify-between mb-4">
@@ -109,6 +113,13 @@ export const FuturesSection = ({
             {dict?.soldAmount}
           </span>
           <p className="text-white font-slim">{futures.soldAmount}</p>
+        </div>
+
+        <div className="space-y-2">
+          <span className="text-oro font-agency">
+            {dict?.settlementRewardBPS || "Settlement Reward"}
+          </span>
+          <p className="text-white font-slim">{settlementReward}</p>
         </div>
 
         {formattedDate && (

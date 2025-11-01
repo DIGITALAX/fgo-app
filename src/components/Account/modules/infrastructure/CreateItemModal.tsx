@@ -687,6 +687,29 @@ export const CreateItemModal = ({
                       />
                     </FancyBorder>
                   </div>
+                  <div>
+                    <label className="block text-sm font-chicago text-gris mb-2">
+                      {dict?.settlementRewardBPS} *
+                    </label>
+                    <FancyBorder
+                      color="white"
+                      type="circle"
+                      className="relative"
+                    >
+                      <input
+                        type="number"
+                        name="settlementRewardBPS"
+                        value={formData.futures.settlementRewardBPS}
+                        onChange={handleFuturesInputChange}
+                        className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none"
+                        placeholder="100"
+                        min="100"
+                        max="300"
+                        disabled={loading}
+                        required
+                      />
+                    </FancyBorder>
+                  </div>
                 </div>
               </div>
             )}

@@ -126,6 +126,7 @@ export interface Template {
 
 export interface Futures {
   supplier: string;
+  settlementRewardBPS: string;
   totalAmount: string;
   soldAmount: string;
   pricePerUnit: string;

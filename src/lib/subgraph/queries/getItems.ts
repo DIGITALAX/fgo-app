@@ -72,6 +72,7 @@ query($childContract: String!, $first: Int!, $skip: Int!) {
       deadline
       isSettled
       isActive
+      settlementRewardBPS
       purchases {
         amount
         totalCost
@@ -637,6 +638,7 @@ query($childId: Int!, $childContract: String!) {
     futures {
       supplier
       totalAmount
+      settlementRewardBPS
       soldAmount
       pricePerUnit
       deadline
