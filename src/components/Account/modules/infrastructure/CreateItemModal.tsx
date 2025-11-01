@@ -794,7 +794,7 @@ export const CreateItemModal = ({
             {mode === "parent" && !isEditMode && (
               <div>
                 <h3 className="text-xl font-awk uppercase text-oro mb-4">
-                  {dict?.supplyRequests || "Supply Requests"}
+                  {dict?.supplyRequests}
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -821,7 +821,7 @@ export const CreateItemModal = ({
                           />
                         </div>
                         <span className="relative z-10">
-                          {dict?.addSupplyRequest || "Add Supply Request"} (
+                          {dict?.addSupplyRequest } (
                           {formData.supplyRequests.length})
                         </span>
                       </div>
@@ -837,15 +837,15 @@ export const CreateItemModal = ({
                               <div className="text-sm">
                                 <div className="text-gris font-chicago">
                                   {request.isPhysical
-                                    ? dict?.physical || "Physical"
-                                    : dict?.digital || "Digital"}
+                                    ? dict?.physical
+                                    : dict?.digital}
                                   {request.child &&
                                     ` - Child ID: ${request.existingChildId}`}
                                 </div>
                                 <div className="text-oro font-chicago text-xs">
-                                  {dict?.quantity || "Quantity"}:{" "}
+                                  {dict?.quantity}:{" "}
                                   {request.quantity} |{" "}
-                                  {dict?.maxPrice || "Max Price"}:{" "}
+                                  {dict?.maxPrice}:{" "}
                                   {request.preferredMaxPrice}
                                 </div>
                               </div>

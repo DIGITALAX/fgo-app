@@ -657,6 +657,8 @@ export interface Fulfiller {
   transactionHash: string;
   uri: string;
   version: string;
+  basePrice: string;
+  vigBasisPoints: string;
   metadata: {
     title: string;
     description: string;
@@ -687,6 +689,15 @@ export interface FulfillmentWorkflowModalProps {
   currentWorkflow?: Workflow;
   infraId: string;
   dict: any;
+}
+
+export interface FulfillerSelectionModalProps {
+  isOpen: boolean;
+  infraId: string;
+  dict: any;
+  onClose: () => void;
+  onSelect: (fulfiller: Fulfiller) => void;
+  selectedAddress?: string;
 }
 
 export type ApprovalTab = "markets" | "parents" | "templates";

@@ -145,8 +145,6 @@ export const getDesigner = async (
   }
 };
 
-
-
 const GET_SUPPLIER = `
 query($infraId: String!, $supplier: String!) {
   suppliers(where: {infraId: $infraId, supplier: $supplier}) {
@@ -196,8 +194,6 @@ export const getSupplier = async (
   }
 };
 
-
-
 const GET_FULFILLER = `
 query($infraId: String!, $fulfiller: String!) {
   fulfillers(where: {infraId: $infraId, fulfiller: $fulfiller}) {
@@ -208,6 +204,8 @@ query($infraId: String!, $fulfiller: String!) {
     isActive
     blockTimestamp
     uri
+    vigBasisPoints
+    basePrice
     version
     metadata {
       title
@@ -228,6 +226,61 @@ export const getFulfiller = async (
     variables: {
       infraId,
       fulfiller,
+    },
+    fetchPolicy: "no-cache",
+    errorPolicy: "all",
+  });
+
+  const timeoutPromise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ timedOut: true });
+    }, 60000);
+  });
+
+  const result: any = await Promise.race([queryPromise, timeoutPromise]);
+  if (result.timedOut) {
+    return;
+  } else {
+    return result;
+  }
+};
+
+const GET_FULFILLERS_ALL = `
+query($skip: Int!, $first: Int!, $infraId: String!) {
+  fulfillers(skip: $skip, first: $first, where: {infraId: $infraId}) {
+    infraId
+    fulfillerId
+    fulfiller
+    blockNumber
+    isActive
+    blockTimestamp
+    uri
+    basePrice
+    vigBasisPoints
+    transactionHash
+    accessControlContract
+    version
+    metadata {
+      title
+      image
+      link
+      description
+    }
+  }
+}
+`;
+
+export const getAllFulfillers = async (
+  first: number,
+  skip: number,
+  infraId: string
+): Promise<any> => {
+  const queryPromise = graphFGOClient.query({
+    query: gql(GET_FULFILLERS_ALL),
+    variables: {
+      first,
+      skip,
+      infraId
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",

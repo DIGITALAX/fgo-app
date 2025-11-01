@@ -3,14 +3,20 @@ import { usePublicClient, useWalletClient, useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { ABIS } from "@/abis";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
-import { CreateItemFormData, Parent } from "../../../types";
+import { CreateItemFormData, Parent, FulfillmentStep } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";
 import {
   validateDemandForParent,
   validateFuturesCredits,
 } from "@/lib/helpers/demandValidation";
+import { getFulfiller } from "@/lib/subgraph/queries/getFGOUser";
+import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
-export const useCreateParent = (contractAddress: string, dict: any) => {
+export const useCreateParent = (
+  infraId: string,
+  contractAddress: string,
+  dict: any
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { data: walletClient } = useWalletClient();
@@ -85,6 +91,97 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
         (formData.availability === 0
           ? BigInt("0")
           : BigInt(formData.maxPhysicalEditions || "0"));
+
+      const digitalPriceWei =
+        formData.availability === 1
+          ? BigInt(0)
+          : parseEther(formData.digitalPrice || "0");
+      const physicalPriceWei =
+        formData.availability === 0
+          ? BigInt(0)
+          : parseEther(formData.physicalPrice || "0");
+
+      const digitalSteps =
+        formData.fulfillmentWorkflow?.digitalSteps ?? ([] as FulfillmentStep[]);
+      const physicalSteps =
+        formData.fulfillmentWorkflow?.physicalSteps ?? ([] as FulfillmentStep[]);
+
+      const fulfillerBasePriceCache = new Map<string, bigint>();
+      const infraIdBytes32 = convertInfraIdToBytes32(infraId);
+
+      const collectFulfillerAddresses = (steps: FulfillmentStep[]) => {
+        const addresses = new Set<string>();
+        steps.forEach((step) => {
+          const primary = step.primaryPerformer?.toLowerCase();
+          if (primary?.startsWith("0x")) {
+            addresses.add(primary);
+          }
+          step.subPerformers?.forEach((sub) => {
+            const performer = sub.performer?.toLowerCase();
+            if (performer?.startsWith("0x")) {
+              addresses.add(performer);
+            }
+          });
+        });
+        return Array.from(addresses);
+      };
+
+      const getFulfillerBasePrice = async (addressLower: string) => {
+        if (fulfillerBasePriceCache.has(addressLower)) {
+          return fulfillerBasePriceCache.get(addressLower)!;
+        }
+
+        try {
+          const result = await getFulfiller(infraIdBytes32, addressLower);
+          const fulfillerData = result?.data?.fulfillers?.[0];
+          const basePrice = fulfillerData?.basePrice
+            ? BigInt(fulfillerData.basePrice)
+            : BigInt(0);
+          fulfillerBasePriceCache.set(addressLower, basePrice);
+          return basePrice;
+        } catch (err) {
+          console.error(
+            `Failed to fetch fulfiller base price for ${addressLower}`,
+            err
+          );
+          fulfillerBasePriceCache.set(addressLower, BigInt(0));
+          return BigInt(0);
+        }
+      };
+
+      if (digitalSteps.length > 0 && formData.availability !== 1) {
+        const digitalFulfillers = collectFulfillerAddresses(digitalSteps);
+        let totalDigitalBase = BigInt(0);
+        for (const fulfillerAddress of digitalFulfillers) {
+          totalDigitalBase += await getFulfillerBasePrice(fulfillerAddress);
+        }
+
+        if (totalDigitalBase > digitalPriceWei) {
+          const message =
+            dict?.parentDigitalPriceTooLow ||
+            "Digital price must cover the combined base prices of all digital fulfillers.";
+          context?.showError(message);
+          setError(message);
+          throw new Error(message);
+        }
+      }
+
+      if (physicalSteps.length > 0 && formData.availability !== 0) {
+        const physicalFulfillers = collectFulfillerAddresses(physicalSteps);
+        let totalPhysicalBase = BigInt(0);
+        for (const fulfillerAddress of physicalFulfillers) {
+          totalPhysicalBase += await getFulfillerBasePrice(fulfillerAddress);
+        }
+
+        if (totalPhysicalBase > physicalPriceWei) {
+          const message =
+            dict?.parentPhysicalPriceTooLow ||
+            "Physical price must cover the combined base prices of all physical fulfillers.";
+          context?.showError(message);
+          setError(message);
+          throw new Error(message);
+        }
+      }
 
       if (formData.childReferences && formData.childReferences.length > 0) {
         const childRefsInput = formData.childReferences.map((ref) => ({
@@ -188,14 +285,8 @@ export const useCreateParent = (contractAddress: string, dict: any) => {
       );
 
       const createParentParams = {
-        digitalPrice:
-          formData.availability === 1
-            ? parseEther("0")
-            : parseEther(formData.digitalPrice || "0"),
-        physicalPrice:
-          formData.availability === 0
-            ? parseEther("0")
-            : parseEther(formData.physicalPrice || "0"),
+        digitalPrice: digitalPriceWei,
+        physicalPrice: physicalPriceWei,
         maxDigitalEditions:
           formData.availability === 1
             ? BigInt("0")

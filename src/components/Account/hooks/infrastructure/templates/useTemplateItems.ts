@@ -289,7 +289,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
           );
 
           if (!validation.isValid) {
-            const errorMsg = `${dict?.insufficientSupply || "Insufficient supply"}:\n${validation.errors.join("\n")}`;
+            const errorMsg = `${dict?.insufficientSupply}:\n${validation.errors.join("\n")}`;
             throw new Error(errorMsg);
           }
 
@@ -303,7 +303,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
             );
 
             if (!futuresValidation.isValid) {
-              const errorMsg = `${dict?.insufficientFuturesCredits || "Insufficient futures credits"}:\n${futuresValidation.errors.join("\n")}`;
+              const errorMsg = `${dict?.insufficientFuturesCredits}:\n${futuresValidation.errors.join("\n")}`;
               throw new Error(errorMsg);
             }
           }

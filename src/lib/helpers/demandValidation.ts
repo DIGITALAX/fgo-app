@@ -85,9 +85,7 @@ const getChannelLabel = (dict: any, channel: "digital" | "physical") => {
     return channel === "digital" ? "Digital" : "Physical";
   }
 
-  return channel === "digital"
-    ? dict?.digital ?? "Digital"
-    : dict?.physical ?? "Physical";
+  return channel === "digital" ? dict?.digital : dict?.physical;
 };
 
 export const validateDemandForParent = async (

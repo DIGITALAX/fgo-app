@@ -3,10 +3,13 @@ import { FulfillmentWorkflowModalProps } from "../../types";
 import { validateWorkflowSteps } from "@/lib/helpers/validation";
 import { getFulfiller } from "@/lib/subgraph/queries/getFGOUser";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
-import { useState, useContext, useRef, useCallback } from "react";
+import { useState, useContext, useRef, useCallback, useMemo } from "react";
 import { AppContext } from "@/lib/providers/Providers";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import { FulfillerSelectionModal } from "./FulfillerSelectionModal";
+import { Fulfiller } from "../../types";
+import { formatEther } from "viem";
 
 export const FulfillmentWorkflowModal = ({
   isOpen,
@@ -26,6 +29,12 @@ export const FulfillmentWorkflowModal = ({
     cancelledRef.current = true;
     setValidating(false);
   }, []);
+  const [fulfillerPicker, setFulfillerPicker] = useState<{
+    isDigital: boolean;
+    stepIndex: number;
+    target: "primary" | "sub";
+    subIndex?: number;
+  } | null>(null);
   const {
     digitalSteps,
     physicalSteps,
@@ -43,6 +52,103 @@ export const FulfillmentWorkflowModal = ({
     calculatePrimaryPerformerSplit,
     resetWorkflow,
   } = useFulfillmentWorkflow(currentWorkflow);
+
+  const handleFulfillerSelect = useCallback(
+    (selected: Fulfiller) => {
+      if (!fulfillerPicker) return;
+      if (fulfillerPicker.isDigital) {
+        const step = digitalSteps[fulfillerPicker.stepIndex];
+        if (!step) {
+          setFulfillerPicker(null);
+          return;
+        }
+        if (fulfillerPicker.target === "primary") {
+          updateDigitalStep(fulfillerPicker.stepIndex, {
+            ...step,
+            primaryPerformer: selected.fulfiller,
+            fulfiller: selected,
+          });
+        } else if (
+          typeof fulfillerPicker.subIndex === "number" &&
+          step.subPerformers[fulfillerPicker.subIndex]
+        ) {
+          const updatedSub = [...step.subPerformers];
+          updatedSub[fulfillerPicker.subIndex] = {
+            ...updatedSub[fulfillerPicker.subIndex],
+            performer: selected.fulfiller,
+          };
+          updateDigitalStep(fulfillerPicker.stepIndex, {
+            ...step,
+            subPerformers: updatedSub,
+          });
+        }
+      } else {
+        const step = physicalSteps[fulfillerPicker.stepIndex];
+        if (!step) {
+          setFulfillerPicker(null);
+          return;
+        }
+        if (fulfillerPicker.target === "primary") {
+          updatePhysicalStep(fulfillerPicker.stepIndex, {
+            ...step,
+            primaryPerformer: selected.fulfiller,
+            fulfiller: selected,
+          });
+        } else if (
+          typeof fulfillerPicker.subIndex === "number" &&
+          step.subPerformers[fulfillerPicker.subIndex]
+        ) {
+          const updatedSub = [...step.subPerformers];
+          updatedSub[fulfillerPicker.subIndex] = {
+            ...updatedSub[fulfillerPicker.subIndex],
+            performer: selected.fulfiller,
+          };
+          updatePhysicalStep(fulfillerPicker.stepIndex, {
+            ...step,
+            subPerformers: updatedSub,
+          });
+        }
+      }
+      setFulfillerPicker(null);
+    },
+    [
+      digitalSteps,
+      physicalSteps,
+      fulfillerPicker,
+      updateDigitalStep,
+      updatePhysicalStep,
+    ]
+  );
+
+  const selectedFulfillerAddress = useMemo(() => {
+    if (!fulfillerPicker) return undefined;
+    if (fulfillerPicker.isDigital) {
+      const step = digitalSteps[fulfillerPicker.stepIndex];
+      if (!step) return undefined;
+      if (fulfillerPicker.target === "primary") {
+        return step.primaryPerformer;
+      }
+      if (
+        typeof fulfillerPicker.subIndex === "number" &&
+        step.subPerformers[fulfillerPicker.subIndex]
+      ) {
+        return step.subPerformers[fulfillerPicker.subIndex].performer;
+      }
+      return undefined;
+    }
+    const step = physicalSteps[fulfillerPicker.stepIndex];
+    if (!step) return undefined;
+    if (fulfillerPicker.target === "primary") {
+      return step.primaryPerformer;
+    }
+    if (
+      typeof fulfillerPicker.subIndex === "number" &&
+      step.subPerformers[fulfillerPicker.subIndex]
+    ) {
+      return step.subPerformers[fulfillerPicker.subIndex].performer;
+    }
+    return undefined;
+  }, [digitalSteps, physicalSteps, fulfillerPicker]);
 
   if (!isOpen) return null;
 
@@ -166,6 +272,7 @@ export const FulfillmentWorkflowModal = ({
   const showPhysical = availability === 1 || availability === 2;
 
   return (
+    <>
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60 p-4">
       <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div className="absolute z-0 top-0 left-0 w-full h-full flex">
@@ -178,8 +285,8 @@ export const FulfillmentWorkflowModal = ({
           />
         </div>
         <div className="relative z-10 p-6 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="flex-1">
               <h2 className="text-2xl font-awk uppercase text-oro">
                 {dict?.fulfillmentWorkflowConfiguration ||
                   "Fulfillment Workflow Configuration"}
@@ -189,22 +296,24 @@ export const FulfillmentWorkflowModal = ({
                   "Define the steps required to fulfill orders for this design."}
               </p>
             </div>
-            <div
-              onClick={handleClose}
-              className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
-            >
-              <Image
-                src={"/images/plug.png"}
-                draggable={false}
-                fill
-                objectFit="contain"
-                alt="close"
-              />
+            <div className="flex md:block justify-end">
+              <div
+                onClick={handleClose}
+                className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
+              >
+                <Image
+                  src={"/images/plug.png"}
+                  draggable={false}
+                  fill
+                  objectFit="contain"
+                  alt="close"
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 flex-1 overflow-y-auto px-6 pb-4">
+        <div className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 pb-4">
           <div className="space-y-6">
             {showPhysical && (
               <FancyBorder type="diamond" color="oro" className="relative mb-6">
@@ -234,7 +343,7 @@ export const FulfillmentWorkflowModal = ({
             )}
             {showDigital && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h3 className="text-lg font-awk uppercase text-oro">
                     {dict?.digitalSteps}
                   </h3>
@@ -270,7 +379,7 @@ export const FulfillmentWorkflowModal = ({
                     {digitalSteps.map((step, index) => (
                       <div key={index} className="relative">
                         <div className="relative z-10 p-4 space-y-4">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <h4 className="font-awk uppercase text-oro text-sm">
                               {dict?.step} {index + 1}
                             </h4>
@@ -288,24 +397,66 @@ export const FulfillmentWorkflowModal = ({
                                 {dict?.primaryPerformerAddress ||
                                   "Primary Performer Address"}
                               </label>
-                              <FancyBorder
-                                color="white"
-                                type="circle"
-                                className="relative"
-                              >
-                                <input
-                                  type="text"
-                                  value={step.primaryPerformer}
-                                  onChange={(e) =>
-                                    updateDigitalStep(index, {
-                                      ...step,
-                                      primaryPerformer: e.target.value,
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <FancyBorder
+                                  color="white"
+                                  type="circle"
+                                  className="relative flex-1"
+                                >
+                                  <input
+                                    type="text"
+                                    value={step.primaryPerformer}
+                                    onChange={(e) =>
+                                      updateDigitalStep(index, {
+                                        ...step,
+                                        primaryPerformer: e.target.value,
+                                      })
+                                    }
+                                    className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none bg-transparent"
+                                    placeholder="0x..."
+                                  />
+                                </FancyBorder>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFulfillerPicker({
+                                      isDigital: true,
+                                      stepIndex: index,
+                                      target: "primary",
                                     })
                                   }
-                                  className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none bg-transparent"
-                                  placeholder="0x..."
-                                />
-                              </FancyBorder>
+                                  className="relative text-xs text-gris font-chicago lowercase flex px-3 py-2 bg-offNegro justify-center items-center hover:opacity-80"
+                                >
+                                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                                    <Image
+                                      src={"/images/borderoro2.png"}
+                                      draggable={false}
+                                      fill
+                                      alt="border"
+                                    />
+                                  </div>
+                                  <span className="relative z-10">
+                                    {dict?.select || "Select"}
+                                  </span>
+                                </button>
+                              </div>
+                              {step.fulfiller?.basePrice && (
+                                <div className="mt-1 text-xs text-gris font-chicago">
+                                  {dict?.basePrice || "Base Price"}:{" "}
+                                  {`${formatEther(
+                                    BigInt(step.fulfiller.basePrice)
+                                  )} ${
+                                    dict?.ethSymbol || "ETH"
+                                  }`}{" "}
+                                  • {dict?.vigBasisPoints || "Vig"}:{" "}
+                                  {step.fulfiller.vigBasisPoints
+                                    ? `${(
+                                        Number(step.fulfiller.vigBasisPoints) /
+                                        100
+                                      ).toFixed(2)}%`
+                                    : dict?.notAvailable || "N/A"}
+                                </div>
+                              )}
                               <div className="mt-1 text-xs text-gris font-chicago">
                                 {dict?.primaryShare}:{" "}
                                 {(
@@ -344,7 +495,7 @@ export const FulfillmentWorkflowModal = ({
                             </div>
 
                             <div>
-                              <div className="flex items-center justify-between mb-2">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                                 <label className="block text-xs font-chicago text-gris">
                                   {dict?.subPerformers}
                                 </label>
@@ -380,7 +531,7 @@ export const FulfillmentWorkflowModal = ({
                                   {step.subPerformers.map((sub, subIndex) => (
                                     <div key={subIndex} className="relative">
                                       <div className="relative z-10 p-3 space-y-2">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                           <span className="text-xs text-gris font-chicago">
                                             {dict?.subPerformer ||
                                               "Sub-Performer"}{" "}
@@ -400,34 +551,63 @@ export const FulfillmentWorkflowModal = ({
                                           </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-2">
-                                          <div>
-                                            <label className="block text-xs text-gris font-chicago mb-1">
-                                              {dict?.address}
-                                            </label>
-                                            <FancyBorder
-                                              color="white"
-                                              type="circle"
-                                              className="relative"
-                                            >
-                                              <input
-                                                type="text"
-                                                value={sub.performer}
-                                                onChange={(e) =>
-                                                  updateSubPerformer(
-                                                    index,
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                          <div className="space-y-2">
+                                            <div>
+                                              <label className="block text-xs text-gris font-chicago mb-1">
+                                                {dict?.address}
+                                              </label>
+                                              <FancyBorder
+                                                color="white"
+                                                type="circle"
+                                                className="relative flex-1"
+                                              >
+                                                <input
+                                                  type="text"
+                                                  value={sub.performer}
+                                                  onChange={(e) =>
+                                                    updateSubPerformer(
+                                                      index,
+                                                      subIndex,
+                                                      {
+                                                        ...sub,
+                                                        performer:
+                                                          e.target.value,
+                                                      },
+                                                      true
+                                                    )
+                                                  }
+                                                  className="relative z-10 w-full px-2 py-1 text-gris font-chicago text-xs focus:outline-none bg-transparent"
+                                                  placeholder="0x..."
+                                                />
+                                              </FancyBorder>
+                                            </div>
+                                            <div className="flex justify-end">
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  setFulfillerPicker({
+                                                    isDigital: true,
+                                                    stepIndex: index,
+                                                    target: "sub",
                                                     subIndex,
-                                                    {
-                                                      ...sub,
-                                                      performer: e.target.value,
-                                                    },
-                                                    true
-                                                  )
+                                                  })
                                                 }
-                                                className="relative z-10 w-full px-2 py-1 text-gris font-chicago text-xs focus:outline-none bg-transparent"
-                                                placeholder="0x..."
-                                              />
-                                            </FancyBorder>
+                                                className="relative text-xs text-gris font-chicago lowercase flex px-3 py-2 bg-offNegro justify-center items-center hover:opacity-80"
+                                              >
+                                                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                                                  <Image
+                                                    src={"/images/borderoro2.png"}
+                                                    draggable={false}
+                                                    fill
+                                                    alt="border"
+                                                  />
+                                                </div>
+                                                <span className="relative z-10">
+                                                  {dict?.select || "Select"}
+                                                </span>
+                                              </button>
+                                            </div>
                                           </div>
 
                                           <div>
@@ -491,7 +671,7 @@ export const FulfillmentWorkflowModal = ({
 
             {showPhysical && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h3 className="text-lg font-awk uppercase text-oro">
                     {dict?.physicalSteps}
                   </h3>
@@ -537,7 +717,7 @@ export const FulfillmentWorkflowModal = ({
                           />
                         </div>
                         <div className="relative z-10 p-4 space-y-4">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <h4 className="font-awk uppercase text-oro text-sm">
                               {dict?.step} {index + 1}
                             </h4>
@@ -555,24 +735,64 @@ export const FulfillmentWorkflowModal = ({
                                 {dict?.primaryPerformerAddress ||
                                   "Primary Performer Address"}
                               </label>
-                              <FancyBorder
-                                color="white"
-                                type="circle"
-                                className="relative"
-                              >
-                                <input
-                                  type="text"
-                                  value={step.primaryPerformer}
-                                  onChange={(e) =>
-                                    updatePhysicalStep(index, {
-                                      ...step,
-                                      primaryPerformer: e.target.value,
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <FancyBorder
+                                  color="white"
+                                  type="circle"
+                                  className="relative flex-1"
+                                >
+                                  <input
+                                    type="text"
+                                    value={step.primaryPerformer}
+                                    onChange={(e) =>
+                                      updatePhysicalStep(index, {
+                                        ...step,
+                                        primaryPerformer: e.target.value,
+                                      })
+                                    }
+                                    className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none bg-transparent"
+                                    placeholder="0x..."
+                                  />
+                                </FancyBorder>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFulfillerPicker({
+                                      isDigital: false,
+                                      stepIndex: index,
+                                      target: "primary",
                                     })
                                   }
-                                  className="relative z-10 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none bg-transparent"
-                                  placeholder="0x..."
-                                />
-                              </FancyBorder>
+                                  className="relative text-xs text-gris font-chicago lowercase flex px-3 py-2 bg-offNegro justify-center items-center hover:opacity-80"
+                                >
+                                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                                    <Image
+                                      src={"/images/borderoro2.png"}
+                                      draggable={false}
+                                      fill
+                                      alt="border"
+                                    />
+                                  </div>
+                                  <span className="relative z-10">
+                                    {dict?.select || "Select"}
+                                  </span>
+                                </button>
+                              </div>
+                              {step.fulfiller?.basePrice && (
+                                <div className="mt-1 text-xs text-gris font-chicago">
+                                  {dict?.basePrice || "Base Price"}:{" "}
+                                  {`${formatEther(
+                                    BigInt(step.fulfiller.basePrice)
+                                  )} ${dict?.ethSymbol || "ETH"}`} •{" "}
+                                  {dict?.vigBasisPoints || "Vig"}:{" "}
+                                  {step.fulfiller.vigBasisPoints
+                                    ? `${(
+                                        Number(step.fulfiller.vigBasisPoints) /
+                                        100
+                                      ).toFixed(2)}%`
+                                    : dict?.notAvailable || "N/A"}
+                                </div>
+                              )}
                               <div className="mt-1 text-xs text-gris font-chicago">
                                 {dict?.primaryShare}:{" "}
                                 {(
@@ -611,7 +831,7 @@ export const FulfillmentWorkflowModal = ({
                             </div>
 
                             <div>
-                              <div className="flex items-center justify-between mb-2">
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                                 <label className="block text-xs font-chicago text-gris">
                                   {dict?.subPerformers}
                                 </label>
@@ -647,7 +867,7 @@ export const FulfillmentWorkflowModal = ({
                                   {step.subPerformers.map((sub, subIndex) => (
                                     <div key={subIndex} className="relative">
                                       <div className="relative z-10 p-3 space-y-2">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                           <span className="text-xs text-gris font-chicago">
                                             {dict?.subPerformer ||
                                               "Sub-Performer"}{" "}
@@ -667,34 +887,63 @@ export const FulfillmentWorkflowModal = ({
                                           </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-2">
-                                          <div>
-                                            <label className="block text-xs text-gris font-chicago mb-1">
-                                              {dict?.address}
-                                            </label>
-                                            <FancyBorder
-                                              color="white"
-                                              type="circle"
-                                              className="relative"
-                                            >
-                                              <input
-                                                type="text"
-                                                value={sub.performer}
-                                                onChange={(e) =>
-                                                  updateSubPerformer(
-                                                    index,
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                          <div className="space-y-2">
+                                            <div>
+                                              <label className="block text-xs text-gris font-chicago mb-1">
+                                                {dict?.address}
+                                              </label>
+                                              <FancyBorder
+                                                color="white"
+                                                type="circle"
+                                                className="relative flex-1"
+                                              >
+                                                <input
+                                                  type="text"
+                                                  value={sub.performer}
+                                                  onChange={(e) =>
+                                                    updateSubPerformer(
+                                                      index,
+                                                      subIndex,
+                                                      {
+                                                        ...sub,
+                                                        performer:
+                                                          e.target.value,
+                                                      },
+                                                      false
+                                                    )
+                                                  }
+                                                  className="relative z-10 w-full px-2 py-1 text-gris font-chicago text-xs focus:outline-none bg-transparent"
+                                                  placeholder="0x..."
+                                                />
+                                              </FancyBorder>
+                                            </div>
+                                            <div className="flex justify-end">
+                                              <button
+                                                type="button"
+                                                onClick={() =>
+                                                  setFulfillerPicker({
+                                                    isDigital: false,
+                                                    stepIndex: index,
+                                                    target: "sub",
                                                     subIndex,
-                                                    {
-                                                      ...sub,
-                                                      performer: e.target.value,
-                                                    },
-                                                    false
-                                                  )
+                                                  })
                                                 }
-                                                className="relative z-10 w-full px-2 py-1 text-gris font-chicago text-xs focus:outline-none bg-transparent"
-                                                placeholder="0x..."
-                                              />
-                                            </FancyBorder>
+                                                className="relative text-xs text-gris font-chicago lowercase flex px-3 py-2 bg-offNegro justify-center items-center hover:opacity-80"
+                                              >
+                                                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                                                  <Image
+                                                    src={"/images/borderoro2.png"}
+                                                    draggable={false}
+                                                    fill
+                                                    alt="border"
+                                                  />
+                                                </div>
+                                                <span className="relative z-10">
+                                                  {dict?.select || "Select"}
+                                                </span>
+                                              </button>
+                                            </div>
                                           </div>
 
                                           <div>
@@ -817,5 +1066,16 @@ export const FulfillmentWorkflowModal = ({
         </div>
       </div>
     </div>
+      {fulfillerPicker && (
+        <FulfillerSelectionModal
+          isOpen={!!fulfillerPicker}
+          infraId={infraId}
+          dict={dict}
+          onClose={() => setFulfillerPicker(null)}
+          onSelect={handleFulfillerSelect}
+          selectedAddress={selectedFulfillerAddress}
+        />
+      )}
+    </>
   );
 };

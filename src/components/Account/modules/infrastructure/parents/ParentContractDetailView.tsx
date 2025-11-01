@@ -41,6 +41,7 @@ export const ParentContractDetailView = ({
   } = useParentItems(parentContract.contractAddress, dict);
 
   const { createParent, loading: createLoading } = useCreateParent(
+    parentContract.infraId,
     parentContract.contractAddress,
     dict
   );
