@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
@@ -17,6 +17,7 @@ export const useDeployMarket = (
   const [loading, setLoading] = useState<boolean>(false);
   const [successTxHash, setSuccessTxHash] = useState<string | null>(null);
   const cancelledRef = useRef<boolean>(false);
+  const { address } = useAccount();
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -100,6 +101,7 @@ export const useDeployMarket = (
           abi: ABIS.FGOFactory,
           functionName: CONTRACT_FUNCTIONS.FACTORY.DEPLOY_MARKET_CONTRACT,
           args: [infraIdAsBytes32, marketURI, formData.name, formData.symbol],
+          account: address,
         });
 
         if (cancelledRef.current) {

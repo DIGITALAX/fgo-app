@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
 import { CONTRACT_FUNCTIONS } from "@/constants/contracts";
@@ -16,6 +16,7 @@ export const useDeployTemplate = (
   const [loading, setLoading] = useState<boolean>(false);
   const [successTxHash, setSuccessTxHash] = useState<string | null>(null);
   const cancelledRef = useRef<boolean>(false);
+  const { address } = useAccount();
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -80,6 +81,7 @@ export const useDeployTemplate = (
             formData.symbol,
             formData.scm,
           ],
+          account: address,
         });
 
         if (cancelledRef.current) {

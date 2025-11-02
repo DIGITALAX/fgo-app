@@ -46,3 +46,35 @@ export const parseAvailability = (availability: any, dict: any): number => {
   }
   return availability || 0;
 };
+
+export const getOrderLabel = (
+  orderStatus: number | string,
+  dict: any
+): string => {
+  const availabilityNum =
+    typeof orderStatus === "string" ? parseInt(orderStatus) : orderStatus;
+
+  if (!dict) {
+    switch (availabilityNum) {
+      case 0:
+        return "Paid";
+      case 1:
+        return "Cancelled";
+      case 2:
+        return "Refunded";
+      default:
+        return "Disputed";
+    }
+  }
+
+  switch (availabilityNum) {
+    case 0:
+      return dict?.paid;
+    case 1:
+      return dict?.cancelled;
+    case 2:
+      return dict?.refunded;
+    default:
+      return dict?.disputed;
+  }
+};

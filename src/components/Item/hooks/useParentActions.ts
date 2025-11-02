@@ -44,6 +44,7 @@ export const useParentActions = (
         abi: ABIS.FGOParent,
         functionName: "createParent",
         args: [BigInt(designId)],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -83,6 +84,7 @@ export const useParentActions = (
         abi: ABIS.FGOParent,
         functionName: "deleteParent",
         args: [BigInt(designId), BigInt(0)],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -134,6 +136,7 @@ export const useParentActions = (
           abi: ABIS.FGOParent,
           functionName: "updateParent",
           args: [updateParams],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });

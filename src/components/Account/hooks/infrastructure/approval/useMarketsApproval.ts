@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useWalletClient, usePublicClient } from "wagmi";
+import { useWalletClient, usePublicClient, useAccount } from "wagmi";
 import { getAllMarkets } from "@/lib/subgraph/queries/getApprovals";
 import { MarketContract, Parent } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";
@@ -19,6 +19,7 @@ export const useMarketsApproval = (
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
+  const { address } = useAccount();
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -118,6 +119,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOChild,
             functionName: "approveMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 
@@ -127,6 +129,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOTemplateChild,
             functionName: "approveMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 
@@ -136,6 +139,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOParent,
             functionName: "approveMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 
@@ -172,6 +176,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOChild,
             functionName: "revokeMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 
@@ -181,6 +186,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOTemplateChild,
             functionName: "revokeMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 
@@ -190,6 +196,7 @@ export const useMarketsApproval = (
             abi: ABIS.FGOParent,
             functionName: "revokeMarket",
             args: [BigInt(itemId), marketAddress as `0x${string}`],
+            account: address,
           });
           break;
 

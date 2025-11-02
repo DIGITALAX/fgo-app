@@ -6,7 +6,7 @@ import { ContainerProps } from "../types";
 export const Container = ({ children }: ContainerProps) => {
   return (
     <div className="relative flex items-center justify-center w-full px-4">
-      <div className="relative w-[95%] sm:w-[85%] min-h-[45rem] h-[85vh] ">
+      <div className="relative w-[95%] sm:w-[85%] min-h-[40rem] h-[85vh]">
         <div className="absolute -right-3 top-3 flex w-full h-full">
           <Image
             layout="fill"

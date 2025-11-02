@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import { getChildren } from "@/lib/subgraph/queries/getItems";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { parseEther } from "viem";
 import { getABI } from "@/abis";
 import { CreateItemFormData } from "../../../types";
@@ -25,6 +25,7 @@ export const useChildItems = (
   const [createLoading, setCreateLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [skip, setSkip] = useState<number>(0);
+  const { address } = useAccount();
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -306,6 +307,7 @@ export const useChildItems = (
           abi: getABI("FGOChild"),
           functionName: "createChild",
           args: [createChildParams],
+          account: address,
         });
 
         if (abortController?.signal.aborted) {

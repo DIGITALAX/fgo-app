@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useWalletClient, usePublicClient } from "wagmi";
+import { useWalletClient, usePublicClient, useAccount } from "wagmi";
 import { getAllTemplates } from "@/lib/subgraph/queries/getApprovals";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
@@ -19,6 +19,7 @@ export const useTemplatesApproval = (
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
+  const { address } = useAccount();
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -128,6 +129,7 @@ export const useTemplatesApproval = (
               template.templateContract as `0x${string}`,
               isPhysical,
             ],
+            account: address,
           });
           break;
 
@@ -143,6 +145,7 @@ export const useTemplatesApproval = (
               template.templateContract as `0x${string}`,
               isPhysical,
             ],
+            account: address,
           });
           break;
 
@@ -158,6 +161,7 @@ export const useTemplatesApproval = (
               template.templateContract as `0x${string}`,
               isPhysical,
             ],
+            account: address,
           });
           break;
 
@@ -198,6 +202,7 @@ export const useTemplatesApproval = (
               BigInt(template.templateId),
               template.templateContract as `0x${string}`,
             ],
+            account: address,
           });
           break;
 
@@ -211,6 +216,7 @@ export const useTemplatesApproval = (
               BigInt(template.templateId),
               template.templateContract as `0x${string}`,
             ],
+            account: address,
           });
           break;
 
@@ -224,6 +230,7 @@ export const useTemplatesApproval = (
               BigInt(template.templateId),
               template.templateContract as `0x${string}`,
             ],
+            account: address,
           });
           break;
 

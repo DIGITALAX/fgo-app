@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { parseEther } from "viem";
 import { AppContext } from "@/lib/providers/Providers";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
@@ -34,6 +34,7 @@ export const useProfileManager = ({
   const cancelledRef = useRef<boolean>(false);
 
   const publicClient = usePublicClient();
+  const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const context = useContext(AppContext);
 
@@ -56,7 +57,10 @@ export const useProfileManager = ({
             walletAddress
           );
 
-          if (!result?.data?.designers || result.data.designers.length === 0) {
+          if (
+            (!result?.data?.designers || result.data.designers.length === 0) &&
+            context?.selectedInfrastructure?.infrastructure?.isDesignerGated
+          ) {
             if (showErrorModal && context) {
               context.showError(dict?.youAreNotVerifiedAsDesigner);
             }
@@ -83,7 +87,10 @@ export const useProfileManager = ({
             walletAddress
           );
 
-          if (!result?.data?.suppliers || result.data.suppliers.length === 0) {
+          if (
+            (!result?.data?.suppliers || result.data.suppliers.length === 0) &&
+            context?.selectedInfrastructure?.infrastructure?.isSupplierGated
+          ) {
             if (showErrorModal && context) {
               context.showError(dict?.youAreNotVerifiedAsSupplier);
             }
@@ -269,12 +276,13 @@ export const useProfileManager = ({
         if (!abi) {
           throw new Error(`Invalid profile type: ${profileType}`);
         }
-     
+
         const hash = await walletClient.writeContract({
           address: contract as `0x${string}`,
           abi,
           functionName,
           args,
+          account: address,
         });
 
         if (cancelledRef.current) {

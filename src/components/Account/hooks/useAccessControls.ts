@@ -1,5 +1,5 @@
 import { useState, useContext, useCallback } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
@@ -17,6 +17,7 @@ export const useAccessControls = ({
   infrastructure,
   dict,
 }: UseAccessControlsProps) => {
+  const { address } = useAccount();
   const [adminAddress, setAdminAddress] = useState<string>("");
   const [designerAddress, setDesignerAddress] = useState<string>("");
   const [supplierAddress, setSupplierAddress] = useState<string>("");
@@ -40,13 +41,13 @@ export const useAccessControls = ({
   const { Factory: factoryAddress } = getCoreContractAddresses(network.chainId);
 
   const handleRoleAction = useCallback(
-    async (role: RoleType, action: "add" | "remove", address: string) => {
+    async (role: RoleType, action: "add" | "remove", addAddress: string) => {
       if (
         !walletClient ||
         !publicClient ||
         !context ||
         infrastructure.isActive == false ||
-        !address
+        !addAddress
       )
         return;
 
@@ -59,7 +60,8 @@ export const useAccessControls = ({
           address: infrastructure.accessControlContract as `0x${string}`,
           abi: ABIS.FGOAccessControl,
           functionName: getRoleFunctionName(role, action),
-          args: [address],
+          args: [addAddress],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
@@ -71,7 +73,11 @@ export const useAccessControls = ({
         setSupplierAddress("");
         setFulfillerAddress("");
       } catch (error) {
-        context.showError(dict?.failedToActionRole?.replace('{action}', action).replace('{role}', role) || `Failed to ${action} ${role}`);
+        context.showError(
+          dict?.failedToActionRole
+            ?.replace("{action}", action)
+            .replace("{role}", role) || `Failed to ${action} ${role}`
+        );
         setLoading(null);
       }
     },
@@ -128,6 +134,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOAccessControl,
         functionName: CONTRACT_FUNCTIONS.ACCESS_CONTROL.TOGGLE_DESIGNER_GATING,
         args: [],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -157,6 +164,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOAccessControl,
         functionName: CONTRACT_FUNCTIONS.ACCESS_CONTROL.TOGGLE_SUPPLIER_GATING,
         args: [],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -186,6 +194,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOAccessControl,
         functionName: CONTRACT_FUNCTIONS.ACCESS_CONTROL.UPDATE_PAYMENT_TOKEN,
         args: [newPaymentToken],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -217,6 +226,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOAccessControl,
         functionName: CONTRACT_FUNCTIONS.ACCESS_CONTROL.LOCK_PAYMENT_TOKEN,
         args: [],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -246,6 +256,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOAccessControl,
         functionName: CONTRACT_FUNCTIONS.ACCESS_CONTROL.REVOKE_ADMIN_CONTROL,
         args: [],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -293,6 +304,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOFactory,
         functionName: CONTRACT_FUNCTIONS.FACTORY.UPDATE_INFRASTRUCTURE_URI,
         args: [infraIdAsBytes32, newURI],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -332,6 +344,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOFactory,
         functionName: CONTRACT_FUNCTIONS.FACTORY.DEACTIVATE_INFRASTRUCTURE,
         args: [infraIdAsBytes32],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -363,6 +376,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOFactory,
         functionName: CONTRACT_FUNCTIONS.FACTORY.REACTIVATE_INFRASTRUCTURE,
         args: [infraIdAsBytes32],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -394,6 +408,7 @@ export const useAccessControls = ({
         abi: ABIS.FGOFactory,
         functionName: CONTRACT_FUNCTIONS.FACTORY.TRANSFER_SUPER_ADMIN,
         args: [infraIdAsBytes32, newSuperAdmin],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });

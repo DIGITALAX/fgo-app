@@ -1,4 +1,4 @@
-import { FGOUser } from "@/components/Account/types";
+import { FGOUser, Infrastructure } from "@/components/Account/types";
 import { SetStateAction } from "react";
 
 export interface SuccessData {
@@ -11,6 +11,16 @@ export interface ErrorData {
 }
 
 export interface AppContextType {
+  selectedInfrastructure: {
+    infrastructure: Infrastructure;
+    isOwner: boolean;
+  } | null;
+  setSelectedInfrastructure: (
+    e: SetStateAction<{
+      infrastructure: Infrastructure;
+      isOwner: boolean;
+    } | null>
+  ) => void;
   showSuccess: (message: string, txHash?: string) => void;
   showError: (message: string) => void;
   hideSuccess: () => void;

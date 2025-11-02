@@ -92,27 +92,22 @@ export const ParentItemCard = ({
         </div>
 
         <div className="relative aspect-square overflow-hidden">
-          {displayImage ? (
-            <Image
-              src={
-                displayImage.startsWith("ipfs://")
-                  ? `${INFURA_GATEWAY}${displayImage.slice(7)}`
-                  : displayImage
-              }
-              fill
-              draggable={false}
-              alt={displayTitle}
-              className="object-cover rounded-md transition-transform duration-300"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="text-oro text-4xl">🎨</div>
-            </div>
-          )}
+          <Image
+            src={
+              displayImage.startsWith("ipfs://")
+                ? `${INFURA_GATEWAY}${displayImage.slice(7)}`
+                : displayImage
+            }
+            fill
+            draggable={false}
+            alt={displayTitle}
+            className="object-cover rounded-md transition-transform duration-300"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = "none";
+            }}
+          />
+
           <div className="absolute z-0 top-0 left-0 w-full h-full flex">
             <Image
               src={"/images/borderblue.png"}

@@ -17,6 +17,7 @@ export const useParentContracts = (infraId: string, dict: any) => {
 
     try {
       const result = await getParentContracts(convertInfraIdToBytes32(infraId));
+      
       if (result?.data?.parentContracts) {
         const processedContracts = await Promise.all(
           result.data.parentContracts.map(async (contract: any) => {

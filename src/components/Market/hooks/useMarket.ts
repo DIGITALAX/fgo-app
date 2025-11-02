@@ -49,8 +49,14 @@ export const useMarket = (dict: any) => {
         const allItems: MarketItem[] = [];
 
         if (futuresResult?.data?.futurePositions) {
-          const futurePositions: FuturePosition[] =
-            futuresResult.data.futurePositions;
+          const futurePositions: FuturePosition[] = await Promise.all(
+            futuresResult.data.futurePositions.map(async (data: any) => {
+              return {
+                ...data,
+                child: await ensureMetadata(data?.child),
+              };
+            })
+          );
           allItems.push(...futurePositions);
         }
 

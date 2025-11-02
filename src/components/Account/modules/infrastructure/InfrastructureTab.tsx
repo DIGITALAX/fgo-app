@@ -15,7 +15,6 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
     loading,
     error,
     isConnected,
-    selectedInfrastructure,
     handleInfrastructureClick,
     handleBackToList,
   } = useInfrastructure(dict);
@@ -47,11 +46,11 @@ export const InfrastructureTab = ({ dict }: { dict: any }) => {
     );
   }
 
-  if (selectedInfrastructure) {
+  if (context?.selectedInfrastructure) {
     return (
       <InfrastructureDetailView
-        infrastructure={selectedInfrastructure.infrastructure}
-        isOwner={selectedInfrastructure.isOwner}
+        infrastructure={context?.selectedInfrastructure.infrastructure}
+        isOwner={context?.selectedInfrastructure.isOwner}
         onBack={handleBackToList}
         dict={dict}
       />

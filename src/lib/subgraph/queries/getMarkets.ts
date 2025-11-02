@@ -16,6 +16,7 @@ query($first: Int!, $skip: Int!) {
     isSettled
     isActive
     child {
+    uri
         childId
         childContract
         infraCurrency
@@ -344,6 +345,107 @@ export const getSupplierChildren = async (
       first,
       skip,
       supplier,
+    },
+    fetchPolicy: "no-cache",
+    errorPolicy: "all",
+  });
+  const timeoutPromise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ timedOut: true });
+    }, 60000);
+  });
+
+  const result: any = await Promise.race([queryPromise, timeoutPromise]);
+  if (result.timedOut) {
+    return;
+  } else {
+    return result;
+  }
+};
+
+
+const FLOWS = `
+query($first: Int!, $skip: Int!, $fulfiller: String!) {
+  fulfillers(first: $first, skip: $skip, orderBy: blockTimestamp, orderDirection: desc, where: { fulfiller: $fulfiller }) {
+  fulfillments {
+   orderId
+   contract
+    order {
+      fulfillmentData
+      orderStatus
+      transactionHash
+      totalPayments
+      parentAmount
+    }
+    parent {
+      parentContract
+      designId
+      infraCurrency
+      uri
+      metadata {
+        title
+        image
+      }
+    }
+    currentStep
+    createdAt
+    lastUpdated
+    isPhysical
+    estimatedDeliveryDuration
+    fulfillmentOrderSteps {
+      notes
+      completedAt
+      isCompleted
+    }
+    digitalSteps {
+      fulfiller {
+        fulfiller 
+        uri
+        metadata {
+          image
+          title
+        }
+      }
+      instructions
+      subPerformers {
+        step
+        performer
+        splitBasisPoints
+      }
+    }
+    physicalSteps {
+      fulfiller {
+        fulfiller 
+        uri
+        metadata {
+          image
+          title
+        }
+      }
+      instructions
+      subPerformers {
+        step
+        performer
+        splitBasisPoints
+      }
+    }
+  }
+   
+  }
+}
+`;
+
+export const getAllFlows = async (
+  first: number,
+  skip: number,
+  fulfiller: string
+): Promise<any> => {
+  const queryPromise = graphFGOClient.query({
+    query: gql(FLOWS),
+    variables: {
+      first,
+      skip,
+      fulfiller,
     },
     fetchPolicy: "no-cache",
     errorPolicy: "all",

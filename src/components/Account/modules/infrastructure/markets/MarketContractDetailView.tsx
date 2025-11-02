@@ -5,6 +5,9 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import Image from "next/image";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
+import useFulfillerFlow from "@/components/Account/hooks/infrastructure/markets/useFufillerFlow";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { FulfillmentCard } from "./FulfillmentCard";
 
 export const MarketContractDetailView = ({
   marketContract,
@@ -13,6 +16,8 @@ export const MarketContractDetailView = ({
 }: MarketContractDetailViewProps) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   const { address } = useAccount();
+  const { flows, error, hasMore, refresh, loadMore, setFlows } =
+    useFulfillerFlow();
 
   const network = getCurrentNetwork();
   const explorerUrl = `${network.blockExplorer}/tx/${marketContract.transactionHash}`;
@@ -41,9 +46,7 @@ export const MarketContractDetailView = ({
               />
             </div>
             <span className="relative z-10 text-sm">←</span>
-            <span className="relative z-10">
-              {dict?.backToMarketContracts}
-            </span>
+            <span className="relative z-10">{dict?.backToMarketContracts}</span>
           </div>
         </div>
       </div>
@@ -73,7 +76,7 @@ export const MarketContractDetailView = ({
             </div>
             <div className="space-y-1">
               <span className="font-awk uppercase text-gris text-xs">
-                {dict?.txHash }:
+                {dict?.txHash}:
               </span>
               <a
                 href={explorerUrl}
@@ -117,23 +120,82 @@ export const MarketContractDetailView = ({
                     alt="border"
                   />
                 </div>
-                <span className="relative z-10">
-                  {dict?.fulfillerProfile }
-                </span>
+                <span className="relative z-10">{dict?.fulfillerProfile}</span>
               </div>
             </button>
           </div>
         </div>
       </div>
 
-      <FancyBorder className="relative" type="diamond" color="oro">
-        <div className="relative z-10 p-4 text-center">
-          <p className="text-gris font-chicago text-sm">
-            {dict?.marketFunctionalityComingSoon ||
-              "Market functionality coming soon"}
-          </p>
-        </div>
-      </FancyBorder>
+      <div className="space-y-3">
+        {error && (
+          <div className="relative">
+            <div className="relative z-10 p-4 space-y-3">
+              <p className="text-fresa text-sm font-chicago">
+                {dict?.error}: {error}
+              </p>
+              <div
+                onClick={refresh}
+                className="relative cursor-pointer hover:opacity-80 transition-opacity w-fit"
+              >
+                <div className="text-xs text-gris font-chicago relative lowercase flex px-3 py-1 bg-offNegro">
+                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                    <Image
+                      src={"/images/borderoro2.png"}
+                      draggable={false}
+                      objectFit="fill"
+                      fill
+                      alt="border"
+                    />
+                  </div>
+                  <span className="relative z-10">{dict?.tryAgain}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {flows.length > 0 ? (
+          <InfiniteScroll
+            dataLength={flows.length}
+            next={loadMore}
+            hasMore={hasMore}
+            loader={
+              <div className="w-full flex items-center justify-center py-4">
+                <div className="relative w-fit animate-spin h-fit flex">
+                  <div className="relative w-6 h-6 flex">
+                    <Image
+                      layout="fill"
+                      objectFit="cover"
+                      src={"/images/scissors.png"}
+                      draggable={false}
+                      alt="loader"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+            className="space-y-3"
+          >
+            {flows.map((flow) => (
+              <FulfillmentCard
+                key={flow.orderId}
+                fulfillment={flow}
+                dict={dict}
+                setFlows={setFlows}
+              />
+            ))}
+          </InfiniteScroll>
+        ) : (
+          <FancyBorder className="relative" type="diamond" color="oro">
+            <div className="relative z-10 p-4 text-center">
+              <p className="text-gris font-chicago text-sm">
+                {dict?.noFulfillmentsFound || "No fulfillments yet"}
+              </p>
+            </div>
+          </FancyBorder>
+        )}
+      </div>
 
       <ProfileManager
         dict={dict}

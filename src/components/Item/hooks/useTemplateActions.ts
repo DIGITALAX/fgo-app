@@ -47,6 +47,7 @@ export const useTemplateActions = (
         abi: ABIS.FGOTemplateChild,
         functionName: "createTemplate",
         args: [BigInt(templateId)],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -86,6 +87,7 @@ export const useTemplateActions = (
         abi: ABIS.FGOTemplateChild,
         functionName: "deleteTemplate",
         args: [BigInt(templateId)],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -184,6 +186,7 @@ export const useTemplateActions = (
           abi: ABIS.FGOTemplateChild,
           functionName: "updateChild",
           args: [updateParams],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });

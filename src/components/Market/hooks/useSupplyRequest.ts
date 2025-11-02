@@ -372,6 +372,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
             BigInt(child.childId),
             child.childContract as `0x${string}`,
           ],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
@@ -450,6 +451,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
           abi: ABIS.FGOSupplyCoordination,
           functionName: "cancelProposal",
           args: [proposal.positionId as `0x${string}`],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
@@ -567,6 +569,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
           abi: ABIS.ERC20,
           functionName: "approve",
           args: [supplyCoordAddress, totalCost],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
@@ -684,6 +687,7 @@ export const useSupplyRequest = (id: string, dict: any) => {
             proposal.positionId as `0x${string}`,
             proposal.supplier as `0x${string}`,
           ],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({ hash });

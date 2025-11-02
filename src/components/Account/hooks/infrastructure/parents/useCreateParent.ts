@@ -104,7 +104,8 @@ export const useCreateParent = (
       const digitalSteps =
         formData.fulfillmentWorkflow?.digitalSteps ?? ([] as FulfillmentStep[]);
       const physicalSteps =
-        formData.fulfillmentWorkflow?.physicalSteps ?? ([] as FulfillmentStep[]);
+        formData.fulfillmentWorkflow?.physicalSteps ??
+        ([] as FulfillmentStep[]);
 
       const fulfillerBasePriceCache = new Map<string, bigint>();
       const infraIdBytes32 = convertInfraIdToBytes32(infraId);
@@ -228,6 +229,28 @@ export const useCreateParent = (
         }
       }
 
+      const processWorkflowSteps = async (steps: FulfillmentStep[]) => {
+        return Promise.all(
+          steps.map(async (step) => {
+            let instructionsUri = "";
+            if (step.instructions && step.instructions.trim() !== "") {
+              const instructionsHash = await uploadJSONToIPFS({
+                instructions: step.instructions,
+              });
+              instructionsUri = `ipfs://${instructionsHash}`;
+            }
+
+            return {
+              ...step,
+              instructions: instructionsUri,
+            };
+          })
+        );
+      };
+
+      const processedDigitalSteps = await processWorkflowSteps(digitalSteps);
+      const processedPhysicalSteps = await processWorkflowSteps(physicalSteps);
+
       const processedSupplyRequests = await Promise.all(
         formData.supplyRequests?.map(async (request) => {
           const customSpecHash = await uploadJSONToIPFS({
@@ -308,8 +331,8 @@ export const useCreateParent = (
           estimatedDeliveryDuration: BigInt(
             formData.fulfillmentWorkflow?.estimatedDeliveryDuration ?? 0
           ),
-          digitalSteps: formData.fulfillmentWorkflow?.digitalSteps || [],
-          physicalSteps: formData.fulfillmentWorkflow?.physicalSteps || [],
+          digitalSteps: processedDigitalSteps,
+          physicalSteps: processedPhysicalSteps,
         },
       };
 
@@ -318,6 +341,7 @@ export const useCreateParent = (
         abi: ABIS.FGOParent,
         functionName: "reserveParent",
         args: [createParentParams],
+        account: address,
       });
       await publicClient.waitForTransactionReceipt({ hash });
       context?.showSuccess(dict?.parentReservedSuccessfully, hash);

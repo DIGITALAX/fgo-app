@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { getParent } from "@/lib/subgraph/queries/getItems";
 import { ensureMetadata } from "@/lib/helpers/metadata";
-import { ChildReference, Parent } from "@/components/Account/types";
+import { fetchMetadataFromIPFS } from "@/lib/helpers/ipfs";
+import { ChildReference, Parent, FulfillmentStep } from "@/components/Account/types";
 
 export const useParentDetails = (
   contractAddress: string,
@@ -35,6 +36,49 @@ export const useParentDetails = (
         }
 
         const processedParent = await ensureMetadata(parentData);
+
+        if (processedParent.workflow) {
+          const resolveWorkflowSteps = async (steps: FulfillmentStep[]) => {
+            return Promise.all(
+              steps.map(async (step) => {
+                let resolvedInstructions = step.instructions || "";
+                if (
+                  step.instructions &&
+                  typeof step.instructions === "string" &&
+                  step.instructions.startsWith("ipfs://")
+                ) {
+                  try {
+                    const instructionsData = await fetchMetadataFromIPFS(
+                      step.instructions
+                    );
+                    resolvedInstructions =
+                      instructionsData?.instructions || step.instructions;
+                  } catch (error) {
+                    resolvedInstructions = step.instructions;
+                  }
+                }
+
+                return {
+                  ...step,
+                  instructions: resolvedInstructions,
+                };
+              })
+            );
+          };
+
+          const resolvedDigitalSteps = await resolveWorkflowSteps(
+            processedParent.workflow.digitalSteps || []
+          );
+          const resolvedPhysicalSteps = await resolveWorkflowSteps(
+            processedParent.workflow.physicalSteps || []
+          );
+
+          processedParent.workflow = {
+            ...processedParent.workflow,
+            digitalSteps: resolvedDigitalSteps,
+            physicalSteps: resolvedPhysicalSteps,
+          };
+        }
 
         let finalAuthorizedChildren = [
           ...(processedParent.authorizedChildren || []),

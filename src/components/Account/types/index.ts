@@ -5,6 +5,7 @@ import {
   MarketRequests,
   Template,
 } from "@/components/Item/types";
+import { SetStateAction } from "react";
 
 export interface MarketContractDetailViewProps {
   marketContract: MarketContract;
@@ -721,4 +722,59 @@ export interface ApprovalItemCardProps {
   dict: any;
   onApprovePhysical?: () => void;
   onApproveDigital?: () => void;
+}
+
+export interface Fulfillment {
+  orderId: string;
+  contract: string;
+  parent: Parent;
+  currentStep: string;
+  createdAt: string;
+  lastUpdated: string;
+  isPhysical: boolean;
+  order: Order;
+  estimatedDeliveryDuration: string;
+  fulfillmentOrderSteps: FulfillmentOrderStep[];
+  digitalSteps: FulfillmentStep[];
+  physicalSteps: FulfillmentStep[];
+}
+
+export interface FulfillmentCardProps {
+  fulfillment: Fulfillment;
+  dict: any;
+  setFlows: (e: SetStateAction<Fulfillment[]>) => void;
+}
+
+export interface Order {
+  fulfillmentData: string | EncryptedData | Details;
+  orderStatus: string;
+  totalPayments: string;
+  parentAmount: string;
+  transactionHash: string;
+  decrypted?: boolean;
+}
+
+export interface Details {
+  address: string;
+  zip: string;
+  city: string;
+  state: string;
+  country: string;
+  color?: string;
+  size?: string;
+}
+
+export interface EncryptedData {
+  [address: string]: {
+    ephemPublicKey: string;
+    iv: string;
+    ciphertext: string;
+  };
+}
+
+export interface FulfillmentOrderStep {
+  notes: string;
+  completedAt: string;
+  isCompleted: boolean;
+  stepIndex: string;
 }

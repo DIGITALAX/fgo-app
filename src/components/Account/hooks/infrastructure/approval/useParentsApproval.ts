@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useWalletClient, usePublicClient } from "wagmi";
+import { useWalletClient, usePublicClient, useAccount } from "wagmi";
 import { getAllParents } from "@/lib/subgraph/queries/getApprovals";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";
@@ -19,6 +19,7 @@ export const useParentsApproval = (
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [approving, setApproving] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
+  const { address } = useAccount();
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -124,6 +125,7 @@ export const useParentsApproval = (
               parent.parentContract as `0x${string}`,
               isPhysical,
             ],
+            account: address,
           });
           break;
 
@@ -139,6 +141,7 @@ export const useParentsApproval = (
               parent.parentContract as `0x${string}`,
               isPhysical,
             ],
+            account: address,
           });
           break;
 
@@ -179,6 +182,7 @@ export const useParentsApproval = (
               BigInt(parent.designId),
               parent.parentContract as `0x${string}`,
             ],
+            account: address,
           });
           break;
 
@@ -192,6 +196,7 @@ export const useParentsApproval = (
               BigInt(parent.designId),
               parent.parentContract as `0x${string}`,
             ],
+            account: address,
           });
           break;
 

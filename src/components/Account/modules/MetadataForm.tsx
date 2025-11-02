@@ -508,16 +508,12 @@ export const MetadataForm = ({
                 </p>
                 {Object.entries(formData.customFields || {}).map(
                   ([key, value]) => (
-                    <div key={key} className="relative">
-                      <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                        <Image
-                          src={"/images/borderpurple.png"}
-                          draggable={false}
-                          objectFit="fill"
-                          fill
-                          alt="border"
-                        />
-                      </div>
+                    <FancyBorder
+                      color="purple"
+                      type="diamond"
+                      key={key}
+                      className="relative flex-1"
+                    >
                       <div className="relative z-10 p-3 flex items-center justify-between">
                         <div className="flex-1">
                           <span className="text-sm font-chicago text-oro">
@@ -536,7 +532,7 @@ export const MetadataForm = ({
                           ✕
                         </button>
                       </div>
-                    </div>
+                    </FancyBorder>
                   )
                 )}
               </div>

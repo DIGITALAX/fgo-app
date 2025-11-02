@@ -532,8 +532,8 @@ export const useCreateItemForm = (
     formData.version.trim() &&
     hasValidMetadata &&
     (!formData.futures?.isFutures ||
-      (formData.futures.deadline &&
-        parseInt(formData.futures.deadline) > 0 &&
+      (formData.futures.deadline !== undefined &&
+        formData.futures.deadline !== "" &&
         formData.futures.settlementRewardBPS &&
         parseInt(formData.futures.settlementRewardBPS) >= 100 &&
         parseInt(formData.futures.settlementRewardBPS) <= 300 &&

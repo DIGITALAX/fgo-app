@@ -97,6 +97,7 @@ export const ChildDetails = ({
         abi: ABIS.FGOChild,
         functionName: "deleteChild",
         args: [BigInt(childId)],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -183,6 +184,7 @@ export const ChildDetails = ({
         abi: ABIS.FGOChild,
         functionName: "updateChild",
         args: [updateParams],
+        account: address,
       });
 
       await publicClient.waitForTransactionReceipt({ hash });

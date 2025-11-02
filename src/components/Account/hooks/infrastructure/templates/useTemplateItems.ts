@@ -322,6 +322,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
           abi: getABI("FGOTemplateChild"),
           functionName: "reserveTemplate",
           args: [createTemplateParams, placements],
+          account: address,
         });
 
         await publicClient.waitForTransactionReceipt({

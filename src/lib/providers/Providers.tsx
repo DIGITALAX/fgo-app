@@ -11,7 +11,7 @@ import {
   SuccessData,
 } from "@/components/Modals/types";
 import { chains } from "@lens-chain/sdk/viem";
-import { FGOUser } from "@/components/Account/types";
+import { FGOUser, Infrastructure } from "@/components/Account/types";
 
 const currentNetwork = getCurrentNetwork();
 
@@ -40,6 +40,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [colorSwitch, setColorSwitch] = useState<boolean>(false);
   const [errorData, setErrorData] = useState<ErrorData | null>(null);
   const [fgoUser, setFgoUser] = useState<FGOUser | null>(null);
+  const [selectedInfrastructure, setSelectedInfrastructure] = useState<{
+    infrastructure: Infrastructure;
+    isOwner: boolean;
+  } | null>(null);
   const showSuccess = (message: string, txHash?: string) => {
     setSuccessData({ message, txHash });
   };
@@ -67,6 +71,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     setFgoUser,
     colorSwitch,
     setColorSwitch,
+    selectedInfrastructure,
+    setSelectedInfrastructure,
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AppContext } from "@/lib/providers/Providers";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
@@ -9,13 +9,15 @@ import { Infrastructure, DeployParentFormData } from "../../../types";
 import { convertInfraIdToBytes32 } from "@/lib/helpers/infraId";
 
 export const useDeployParent = (
-  infrastructure: Infrastructure,  dict: any,
+  infrastructure: Infrastructure,
+  dict: any,
   onSuccess?: () => void
 ) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [successTxHash, setSuccessTxHash] = useState<string | null>(null);
   const cancelledRef = useRef<boolean>(false);
+  const { address } = useAccount();
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -105,6 +107,7 @@ export const useDeployParent = (
             formData.symbol,
             formData.name,
           ],
+          account: address,
         });
 
         if (cancelledRef.current) {

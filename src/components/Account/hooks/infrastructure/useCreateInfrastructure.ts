@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useContext, useRef } from "react";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { getCoreContractAddresses } from "@/constants";
 import { getCurrentNetwork } from "@/constants";
@@ -15,6 +15,7 @@ export const useCreateInfrastructure = (dict: any) => {
   const cancelledRef = useRef<boolean>(false);
 
   const publicClient = usePublicClient();
+  const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const context = useContext(AppContext);
 
@@ -87,6 +88,7 @@ export const useCreateInfrastructure = (dict: any) => {
           abi: ABIS.FGOFactory,
           functionName: "deployInfrastructure",
           args: [formData.paymentToken as `0x${string}`, uri],
+          account: address,
         });
 
         if (cancelledRef.current) {

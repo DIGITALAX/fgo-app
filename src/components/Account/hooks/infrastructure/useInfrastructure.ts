@@ -10,10 +10,6 @@ export const useInfrastructure = (dict: any) => {
   const context = useContext(AppContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedInfrastructure, setSelectedInfrastructure] = useState<{
-    infrastructure: Infrastructure;
-    isOwner: boolean;
-  } | null>(null);
 
   useEffect(() => {
     const fetchUserInfrastructure = async () => {
@@ -78,18 +74,17 @@ export const useInfrastructure = (dict: any) => {
     infrastructure: Infrastructure,
     isOwner: boolean
   ) => {
-    setSelectedInfrastructure({ infrastructure, isOwner });
+    context?.setSelectedInfrastructure({ infrastructure, isOwner });
   };
 
   const handleBackToList = () => {
-    setSelectedInfrastructure(null);
+    context?.setSelectedInfrastructure(null);
   };
 
   return {
     loading,
     error,
     isConnected,
-    selectedInfrastructure,
     handleInfrastructureClick,
     handleBackToList,
   };
