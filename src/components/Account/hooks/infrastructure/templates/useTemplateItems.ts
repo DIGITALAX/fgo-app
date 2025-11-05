@@ -270,6 +270,7 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
               amount: BigInt(ref.amount),
               prepaidAmount: BigInt("0"),
               prepaidUsed: BigInt("0"),
+              futuresCreditsReserved: BigInt("0"),
               childContract: ref.childContract as `0x${string}`,
               placementURI: `ipfs://${placementHash}`,
             };

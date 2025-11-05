@@ -95,7 +95,7 @@ export const FulfillmentCard = ({
           </div>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="text-xs font-awk uppercase tracking-wide mb-1 text-oro">
-              {dict?.order} #{fulfillment?.orderId.substring(0, 12)}...
+              {dict?.order} #{fulfillment?.orderId}
             </div>
             <h4 className="font-agency text-base leading-tight text-white truncate">
               {displayTitle}
@@ -134,7 +134,11 @@ export const FulfillmentCard = ({
               {dict?.currentStep}:
             </span>
             <p className="text-white font-chicago">
-              {Number(fulfillment?.currentStep) + 1}
+              {fulfillment.fulfillmentOrderSteps?.every(
+                (step) => step.isCompleted
+              )
+                ? Number(fulfillment?.currentStep)
+                : Number(fulfillment?.currentStep) + 1}
             </p>
           </div>
           <div className="space-y-1">
@@ -347,177 +351,173 @@ export const FulfillmentCard = ({
             </span>
             <div className="space-y-2">
               {workflow?.map((step, index) => (
-                  <div
-                    key={index}
-                    className="space-y-1 text-xs border-l border-gris/30 pl-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-chicago text-gris">
-                        {dict?.step} {index + 1}
-                      </span>
-                      {step?.fulfiller && (
-                        <div className="space-y-1">
-                          <span className="font-awk uppercase text-gris text-xs block">
-                            {dict?.primaryFulfiller}:
-                          </span>
-                          <span className="text-oro font-chicago break-all block">
-                            {step?.fulfiller?.metadata?.title ??
-                              step?.fulfiller?.fulfiller}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {step?.instructions && (
-                      <p className="text-white font-chicago">
-                        {step?.instructions}
-                      </p>
-                    )}
-                    {step?.subPerformers && step?.subPerformers?.length > 0 && (
-                      <div className="space-y-1 pt-1">
-                        <span className="text-gris font-awk uppercase text-xs">
-                          {dict?.subPerformers}:
+                <div
+                  key={index}
+                  className="space-y-1 text-xs border-l border-gris/30 pl-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-chicago text-gris">
+                      {dict?.step} {index + 1}
+                    </span>
+                    {step?.fulfiller && (
+                      <div className="space-y-1">
+                        <span className="font-awk uppercase text-gris text-xs block">
+                          {dict?.primaryFulfiller}:
                         </span>
-                        {step?.subPerformers?.map((subPerformer, subIndex) => (
-                          <div
-                            key={subIndex}
-                            className="flex items-center gap-2 text-gris ml-2"
-                          >
-                            <span className="text-oro">•</span>
-                            <span className="break-all text-xs">
-                              {subPerformer?.performer}
-                            </span>
-                            {subPerformer?.splitBasisPoints > 0 && (
-                              <span className="text-oro text-xs flex-shrink-0">
-                                {(subPerformer.splitBasisPoints / 100).toFixed(
-                                  0
-                                )}
-                                %
-                              </span>
-                            )}
-                          </div>
-                        ))}
+                        <span className="text-oro font-chicago break-all block">
+                          {step?.fulfiller?.metadata?.title ??
+                            step?.fulfiller?.fulfiller}
+                        </span>
                       </div>
                     )}
-                    {step?.fulfiller?.fulfiller?.toLowerCase() ===
-                      address?.toLowerCase() &&
-                      fulfillment?.fulfillmentOrderSteps?.length == index && (
-                        <div className="pt-2 border-t border-oro/30 space-y-2">
-                          <div className="space-y-1">
-                            <label className="block text-xs font-awk uppercase text-gris">
-                              {dict?.notes}
-                            </label>
-                            <div className="flex flex-col w-full items-start gap-2">
-                              <FancyBorder
-                                color="white"
-                                type="circle"
-                                className="relative flex w-full"
-                              >
-                                <textarea
-                                  value={notes}
-                                  onChange={(e) => setNotes(e.target.value)}
-                                  placeholder={dict?.notesPlaceholder}
-                                  className="relative z-10 h-32 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none align-top resize-none"
-                                ></textarea>
-                              </FancyBorder>
-                              <div
-                                onClick={() =>
-                                  !completing && completeStep(index)
-                                }
-                                className="relative cursor-pointer hover:opacity-80 transition-opacity"
-                              >
-                                <div className="text-xs text-white font-chicago relative lowercase flex px-3 py-2 bg-offNegro">
-                                  <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                                    <Image
-                                      src={"/images/borderoro2.png"}
-                                      draggable={false}
-                                      objectFit="fill"
-                                      fill
-                                      alt="border"
-                                    />
-                                  </div>
-                                  <div className="relative z-10 flex items-center gap-2">
-                                    {completing ? (
-                                      <div className="relative w-4 h-4 animate-spin">
-                                        <Image
-                                          layout="fill"
-                                          objectFit="cover"
-                                          src={"/images/scissors.png"}
-                                          draggable={false}
-                                          alt="loader"
-                                        />
-                                      </div>
-                                    ) : (
-                                      dict?.completeStep
-                                    )}
-                                  </div>
+                  </div>
+
+                  {step?.instructions && (
+                    <p className="text-white font-chicago">
+                      {step?.instructions}
+                    </p>
+                  )}
+                  {step?.subPerformers && step?.subPerformers?.length > 0 && (
+                    <div className="space-y-1 pt-1">
+                      <span className="text-gris font-awk uppercase text-xs">
+                        {dict?.subPerformers}:
+                      </span>
+                      {step?.subPerformers?.map((subPerformer, subIndex) => (
+                        <div
+                          key={subIndex}
+                          className="flex items-center gap-2 text-gris ml-2"
+                        >
+                          <span className="text-oro">•</span>
+                          <span className="break-all text-xs">
+                            {subPerformer?.performer}
+                          </span>
+                          {subPerformer?.splitBasisPoints > 0 && (
+                            <span className="text-oro text-xs flex-shrink-0">
+                              {(subPerformer.splitBasisPoints / 100).toFixed(0)}
+                              %
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {step?.fulfiller?.fulfiller?.toLowerCase() ===
+                    address?.toLowerCase() &&
+                    fulfillment?.fulfillmentOrderSteps?.length == index && (
+                      <div className="pt-2 border-t border-oro/30 space-y-2">
+                        <div className="space-y-1">
+                          <label className="block text-xs font-awk uppercase text-gris">
+                            {dict?.notes}
+                          </label>
+                          <div className="flex flex-col w-full items-start gap-2">
+                            <FancyBorder
+                              color="white"
+                              type="circle"
+                              className="relative flex w-full"
+                            >
+                              <textarea
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                placeholder={dict?.notesPlaceholder}
+                                className="relative z-10 h-32 w-full px-3 py-2 text-gris font-chicago text-sm focus:outline-none align-top resize-none"
+                              ></textarea>
+                            </FancyBorder>
+                            <div
+                              onClick={() => !completing && completeStep(index)}
+                              className="relative cursor-pointer hover:opacity-80 transition-opacity"
+                            >
+                              <div className="text-xs text-white font-chicago relative lowercase flex px-3 py-2 bg-offNegro">
+                                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                                  <Image
+                                    src={"/images/borderoro2.png"}
+                                    draggable={false}
+                                    objectFit="fill"
+                                    fill
+                                    alt="border"
+                                  />
+                                </div>
+                                <div className="relative z-10 flex items-center gap-2">
+                                  {completing ? (
+                                    <div className="relative w-4 h-4 animate-spin">
+                                      <Image
+                                        layout="fill"
+                                        objectFit="cover"
+                                        src={"/images/scissors.png"}
+                                        draggable={false}
+                                        alt="loader"
+                                      />
+                                    </div>
+                                  ) : (
+                                    dict?.completeStep
+                                  )}
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      )}
-                    {fulfillment?.fulfillmentOrderSteps[index] && (
-                      <div className="pt-2 border-t border-oro/30 font-chicago">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-awk uppercase text-gris">
-                            {dict?.fulfillmentSteps}:
-                          </span>
-                          <span className="text-xs text-oro font-chicago">
-                            {
-                              fulfillment?.fulfillmentOrderSteps?.map(
-                                (item) => item.isCompleted
-                              ).length
-                            }
-                            /{workflow?.length}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          <div
-                            key={index}
-                            className="flex items-center gap-2 text-xs"
-                          >
-                            <div
-                              className={`w-4 h-4 rounded-sm border flex items-center justify-center ${
-                                fulfillment?.fulfillmentOrderSteps[index]
-                                  ?.isCompleted
-                                  ? "bg-oro border-oro"
-                                  : "border-gris bg-offNegro"
-                              }`}
-                            >
-                              {fulfillment?.fulfillmentOrderSteps[index]
-                                ?.isCompleted && (
-                                <span className="text-black text-xs">✓</span>
-                              )}
-                            </div>
-                            <span className="text-gris">
-                              {dict?.step} {index + 1}
-                            </span>
-                            {fulfillment?.fulfillmentOrderSteps[index]
-                              ?.completedAt &&
-                              fulfillment?.fulfillmentOrderSteps[index]
-                                ?.completedAt !== "0" && (
-                                <span className="text-oro text-xs ml-auto">
-                                  {new Date(
-                                    parseInt(
-                                      fulfillment?.fulfillmentOrderSteps[index]
-                                        ?.completedAt
-                                    ) * 1000
-                                  ).toLocaleDateString()}
-                                </span>
-                              )}
-                          </div>
-                          {fulfillment?.fulfillmentOrderSteps[index]?.notes &&
-                            typeof fulfillment?.fulfillmentOrderSteps[index]
-                              ?.notes === "string" && (
-                              <div className="pl-6 text-xs text-gris font-chicago">
-                                {fulfillment?.fulfillmentOrderSteps[index]?.notes}
-                              </div>
-                            )}
-                        </div>
                       </div>
                     )}
-                  </div>
+                  {fulfillment?.fulfillmentOrderSteps[index] && (
+                    <div className="pt-2 border-t border-oro/30 font-chicago">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-awk uppercase text-gris">
+                          {dict?.fulfillmentSteps}:
+                        </span>
+                        <span className="text-xs text-oro font-chicago">
+                          {
+                            fulfillment?.fulfillmentOrderSteps?.map(
+                              (item) => item.isCompleted
+                            ).length
+                          }
+                          /{workflow?.length}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 text-xs"
+                        >
+                          <div
+                            className={`w-4 h-4 rounded-sm border flex items-center justify-center ${
+                              fulfillment?.fulfillmentOrderSteps[index]
+                                ?.isCompleted
+                                ? "bg-oro border-oro"
+                                : "border-gris bg-offNegro"
+                            }`}
+                          >
+                            {fulfillment?.fulfillmentOrderSteps[index]
+                              ?.isCompleted && (
+                              <span className="text-black text-xs">✓</span>
+                            )}
+                          </div>
+                          <span className="text-gris">
+                            {dict?.step} {index + 1}
+                          </span>
+                          {fulfillment?.fulfillmentOrderSteps[index]
+                            ?.completedAt &&
+                            fulfillment?.fulfillmentOrderSteps[index]
+                              ?.completedAt !== "0" && (
+                              <span className="text-oro text-xs ml-auto">
+                                {new Date(
+                                  parseInt(
+                                    fulfillment?.fulfillmentOrderSteps[index]
+                                      ?.completedAt
+                                  ) * 1000
+                                ).toLocaleDateString()}
+                              </span>
+                            )}
+                        </div>
+                        {fulfillment?.fulfillmentOrderSteps[index]?.notes &&
+                          typeof fulfillment?.fulfillmentOrderSteps[index]
+                            ?.notes === "string" && (
+                            <div className="pl-6 text-xs text-gris font-chicago">
+                              {fulfillment?.fulfillmentOrderSteps[index]?.notes}
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>
