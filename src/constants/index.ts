@@ -88,7 +88,7 @@ export const DEFAULT_NETWORK =
     : NETWORKS.LENS_TESTNET;
 
 export const getCurrentNetwork = (): NetworkConfig => {
-  const isMainnet = true;
+  const isMainnet = process.env.NEXT_PUBLIC_NETWORK === "mainnet";
   return isMainnet ? NETWORKS.LENS_MAINNET : NETWORKS.LENS_TESTNET;
 };
 
