@@ -160,6 +160,7 @@
   "deleteTemplate": "Delete Template",
   "deleting": "Deleting...",
   "approvals": "Approvals",
+  "manualApprovals": "MANUAL APPROVALS",
   "cannotDeleteParentPurchases": "Cannot delete parent with total purchases greater than 0",
   "yes": "Yes",
   "no": "No",

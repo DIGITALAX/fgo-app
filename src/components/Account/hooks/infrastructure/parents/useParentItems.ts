@@ -12,15 +12,14 @@ export const useParentItems = (parentContract: string, dict: any) => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [skip, setSkip] = useState<number>(0);
 
-  const fetchParentItems = useCallback(async (reset = false) => {
+  const fetchParentItems = useCallback(async (skipValue: number, reset = false) => {
     if (!parentContract) return;
-    if (loading) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const currentSkip = reset ? 0 : skip;
+      const currentSkip = reset ? 0 : skipValue;
       const result = await getParents(parentContract, ITEMS_PER_PAGE, currentSkip);
 
       if (result?.data?.parents) {
@@ -36,7 +35,6 @@ export const useParentItems = (parentContract: string, dict: any) => {
           setSkip(ITEMS_PER_PAGE);
         } else {
           setParentItems((prev) => [...prev, ...processedItems]);
-          setSkip((prev) => prev + ITEMS_PER_PAGE);
         }
 
         if (processedItems.length < ITEMS_PER_PAGE) {
@@ -57,23 +55,26 @@ export const useParentItems = (parentContract: string, dict: any) => {
     } finally {
       setLoading(false);
     }
-  }, [parentContract, skip, loading, dict]);
+  }, [parentContract, dict]);
 
   const loadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchParentItems(false);
+      setSkip((prevSkip) => {
+        fetchParentItems(prevSkip, false);
+        return prevSkip + ITEMS_PER_PAGE;
+      });
     }
   }, [fetchParentItems, loading, hasMore]);
 
   const refetch = useCallback(() => {
     setSkip(0);
     setHasMore(true);
-    fetchParentItems(true);
+    fetchParentItems(0, true);
   }, [fetchParentItems]);
 
   useEffect(() => {
-    fetchParentItems(true);
-  }, [parentContract]);
+    fetchParentItems(0, true);
+  }, [parentContract, fetchParentItems]);
 
   return {
     parentItems,

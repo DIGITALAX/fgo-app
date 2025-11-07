@@ -105,7 +105,8 @@ export const TemplatesApprovalTab = ({
                 itemData.authorizedTemplates?.some(
                   (at: AuthorizedTemplates | Template) =>
                     at.templateContract?.toLowerCase() ===
-                    template.templateContract?.toLowerCase()
+                      template.templateContract?.toLowerCase() &&
+                    at.templateId == template.templateId
                 ) || false;
 
               const hasBothAvailability = template.availability === "2";

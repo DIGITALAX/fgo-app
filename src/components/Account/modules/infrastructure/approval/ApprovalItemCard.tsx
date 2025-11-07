@@ -140,24 +140,6 @@ export const ApprovalItemCard = ({
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex justify-between items-center">
               <span className="font-awk uppercase text-gris">
-                {dict?.symbol}:
-              </span>
-              <div className="text-xs text-gris font-chicago relative lowercase flex px-2 py-1 bg-offNegro">
-                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                  <Image
-                    src={"/images/borderoro2.png"}
-                    draggable={false}
-                    objectFit="fill"
-                    fill
-                    alt="border"
-                  />
-                </div>
-                <span className="relative z-10">{itemData.symbol}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <span className="font-awk uppercase text-gris">
                 {dict?.status}:
               </span>
               <div

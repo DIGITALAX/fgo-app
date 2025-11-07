@@ -129,15 +129,6 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                       {parent.metadata?.title ||
                         `${dict?.parent} ${parent.designId}`}
                     </div>
-                    <span
-                      className={`px-2 py-0.5 text-xs font-chicago rounded ${
-                        parent.isPhysical
-                          ? "bg-ama/20 text-ama"
-                          : "bg-verde/20 text-verde"
-                      }`}
-                    >
-                      {parent.isPhysical ? dict?.physical : dict?.digital}
-                    </span>
                   </div>
                 </div>
               </button>
@@ -184,15 +175,6 @@ export const ItemAuthorized = ({ item, dict }: ItemAuthorizedProps) => {
                       {template.metadata?.title ||
                         `${dict?.template} ${template.templateId}`}
                     </div>
-                    <span
-                      className={`px-2 py-0.5 text-xs font-chicago rounded ${
-                        template.isPhysical
-                          ? "bg-ama/20 text-ama"
-                          : "bg-verde/20 text-verde"
-                      }`}
-                    >
-                      {template.isPhysical ? dict?.physical : dict?.digital}
-                    </span>
                   </div>
                 </div>
               </button>

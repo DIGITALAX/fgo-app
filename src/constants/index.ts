@@ -75,7 +75,7 @@ export const NETWORKS = {
   LENS_MAINNET: {
     chainId: 232,
     name: "Lens Network",
-    rpcUrl: "https://rpc.lens.dev",
+    rpcUrl: "https://rpc.lens.xyz",
     blockExplorer: "https://explorer.lens.xyz",
   },
 } as const;
@@ -88,21 +88,21 @@ export const DEFAULT_NETWORK =
     : NETWORKS.LENS_TESTNET;
 
 export const getCurrentNetwork = (): NetworkConfig => {
-  const isMainnet = process.env.NEXT_PUBLIC_NETWORK === "mainnet";
+  const isMainnet = true;
   return isMainnet ? NETWORKS.LENS_MAINNET : NETWORKS.LENS_TESTNET;
 };
 
 export const CORE_CONTRACT_ADDRESSES: Record<number, CoreContractAddresses> = {
   [NETWORKS.LENS_TESTNET.chainId]: {
-    Factory: "0xf0434751a063F57D98CABe88620515DAB0895CeA",
-    SupplyCoord: "0x8d37280916C56a15EB06bbdE06F2DEdEea21d866",
-    FuturesCoord: "0xa9E055bec825D0D27b15dD4cF78BEB6C89c5Db7E",
+    Factory: "0x85dE01C2f16Bb12Ab19D16AEfd9ee11e970e7769",
+    SupplyCoord: "0x71Fb058745f58691B933C1EBddA6Eaf55E890f5e",
+    FuturesCoord: "0xbA5267B9e0E764Cb703f406C43b8d6d97efFbDb6",
     Mona: "0x3D7f4Fc4E17Ead2ABBcf282A38F209D683e03835",
   },
   [NETWORKS.LENS_MAINNET.chainId]: {
-    Factory: "0xf0434751a063F57D98CABe88620515DAB0895CeA",
-    SupplyCoord: "0x8d37280916C56a15EB06bbdE06F2DEdEea21d866",
-    FuturesCoord: "0xa9E055bec825D0D27b15dD4cF78BEB6C89c5Db7E",
-    Mona: "0x3D7f4Fc4E17Ead2ABBcf282A38F209D683e03835",
+    Factory: "0x6575d8045e4421E4E7B6540C2D733a839E6a367A",
+    SupplyCoord: "0xD8e8Eb733Beb1e1602DAc23AAAd20401a192b061",
+    FuturesCoord: "0x403Fd2D23D0467e0255aA37AFC06AEC178AF9983",
+    Mona: "0x28547B5b6B405A1444A17694AC84aa2d6A03b3Bd",
   },
 };

@@ -212,6 +212,7 @@ export const TemplateContractDetailView = ({
             dataLength={templateItems.length}
             next={loadMore}
             hasMore={hasMore}
+            scrollableTarget="account-scroll-container"
             loader={
               <div className="w-full flex items-center justify-center py-4">
                 <div className="relative w-fit animate-spin h-fit flex">

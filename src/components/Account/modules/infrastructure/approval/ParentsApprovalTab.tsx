@@ -104,7 +104,8 @@ export const ParentsApprovalTab = ({
                 (itemData as Child | Template).authorizedParents?.some(
                   (ap: AuthorizedParents) =>
                     ap.parentContract?.toLowerCase() ===
-                    parent.parentContract?.toLowerCase()
+                    parent.parentContract?.toLowerCase()  &&
+                    ap.designId == parent.designId
                 ) || false;
 
               const hasBothAvailability = parent.availability === "2";

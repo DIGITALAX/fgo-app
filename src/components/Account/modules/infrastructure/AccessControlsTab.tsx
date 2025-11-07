@@ -727,8 +727,7 @@ export const AccessControlsTab = ({
                   />
                 </div>
                 <span className="relative z-10">
-                  {dict?.lockPaymentTokenPermanent ||
-                    "lock payment token permanent"}
+                  {dict?.lockPaymentTokenPermanent}
                 </span>
               </div>
             </button>
@@ -885,8 +884,7 @@ export const AccessControlsTab = ({
                         </div>
                       </div>
                     )}
-                    {dict?.deactivateInfrastructure ||
-                      "deactivate infrastructure"}
+                    {dict?.deactivateInfrastructure}
                   </span>
                 </div>
               </button>
@@ -919,8 +917,7 @@ export const AccessControlsTab = ({
                         </div>
                       </div>
                     )}
-                    {dict?.reactivateInfrastructure ||
-                      "reactivate infrastructure"}
+                    {dict?.reactivateInfrastructure}
                   </span>
                 </div>
               </button>
@@ -934,8 +931,7 @@ export const AccessControlsTab = ({
             <div className="relative mb-3">
               <div className="relative z-10 p-4">
                 <p className="text-white text-sm font-chicago">
-                  {dict?.transferSuperAdminWarning ||
-                    "warning: this action is permanent"}
+                  {dict?.transferSuperAdminWarning}
                 </p>
               </div>
             </div>
@@ -1038,8 +1034,7 @@ export const AccessControlsTab = ({
               <div className="relative mb-3">
                 <div className="relative z-10 p-4">
                   <p className="text-fresa text-sm font-chicago">
-                    {dict?.revokeAdminWarning ||
-                      "warning: this action is permanent"}
+                    {dict?.revokeAdminWarning}
                   </p>
                 </div>
               </div>
@@ -1059,8 +1054,7 @@ export const AccessControlsTab = ({
                     />
                   </div>
                   <span className="relative z-10">
-                    {dict?.revokeAdminControlPermanent ||
-                      "revoke admin control permanent"}
+                    {dict?.revokeAdminControlPermanent}
                   </span>
                 </div>
               </button>

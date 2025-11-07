@@ -707,15 +707,7 @@ export const FulfillmentWorkflowModal = ({
                   <div className="space-y-4">
                     {physicalSteps.map((step, index) => (
                       <div key={index} className="relative">
-                        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
-                          <Image
-                            src={"/images/borderpurple.png"}
-                            draggable={false}
-                            objectFit="fill"
-                            fill
-                            alt="border"
-                          />
-                        </div>
+                   
                         <div className="relative z-10 p-4 space-y-4">
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <h4 className="font-awk uppercase text-oro text-sm">

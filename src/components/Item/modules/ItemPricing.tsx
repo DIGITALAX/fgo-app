@@ -1,6 +1,6 @@
 import { getAvailabilityLabel } from "@/lib/helpers/availability";
 import { useItemPricing } from "../hooks/useItemPricing";
-import { Child, ItemPricingProps } from "../types";
+import { Child, Template, ItemPricingProps } from "../types";
 import { FancyBorder } from "@/components/Layout/modules/FancyBorder";
 
 export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
@@ -121,7 +121,13 @@ export const ItemPricing = ({ item, dict }: ItemPricingProps) => {
 
             <div className="space-y-2">
               <span className="text-oro font-agency">{dict?.usageCount}</span>
-              <p className="text-white font-slim">{item.usageCount}</p>
+              <p className="text-white font-slim">
+                {Number(item.authorizedMarkets?.length || 0) > 0 &&
+                (Number(item.maxPhysicalEditions) === 0 ||
+                  ('maxDigitalEditions' in item && Number((item as Template).maxDigitalEditions) === 0))
+                  ? dict?.unlimited
+                  : item.usageCount}
+              </p>
             </div>
 
             {Number((item as Child).totalPrepaidUsed) > 0 && (

@@ -66,7 +66,7 @@ export const Account = ({ dict }: { dict: any }) => {
   return (
     <div className="h-full flex flex-col">
       <AccountTabs activeTab={activeTab} onTabChange={setActiveTab} dict={dict} />
-      <div className="flex-1 overflow-auto min-h-0">{renderActiveTab()}</div>
+      <div id="account-scroll-container" className="flex-1 overflow-auto min-h-0">{renderActiveTab()}</div>
     </div>
   );
 };

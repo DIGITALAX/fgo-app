@@ -161,6 +161,7 @@
   "deleteTemplate": "Excluir Template",
   "deleting": "Excluindo...",
   "approvals": "Aprovações",
+  "manualApprovals": "APROVAÇÕES MANUAIS",
   "cannotDeleteParentPurchases": "Não é possível excluir pai com compras totais maiores que 0",
   "yes": "Sim",
   "no": "Não",

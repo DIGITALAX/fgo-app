@@ -161,6 +161,7 @@
   "deleteTemplate": "Eliminar Template",
   "deleting": "Eliminando...",
   "approvals": "Aprobaciones",
+  "manualApprovals": "APROBACIONES MANUALES",
   "cannotDeleteParentPurchases": "No se puede eliminar padre con compras totales mayores que 0",
   "yes": "Sí",
   "no": "No",

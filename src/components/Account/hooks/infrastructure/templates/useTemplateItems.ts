@@ -30,15 +30,15 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
   const context = useContext(AppContext);
 
   const fetchTemplateItems = useCallback(
-    async (reset = false) => {
+    async (skipValue: number, reset = false) => {
+    
       if (!contractAddress) return;
-      if (loading) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        const currentSkip = reset ? 0 : skip;
+        const currentSkip = reset ? 0 : skipValue;
         const result = await getTemplates(
           contractAddress,
           ITEMS_PER_PAGE,
@@ -131,7 +131,6 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
             setSkip(ITEMS_PER_PAGE);
           } else {
             setTemplateItems((prev) => [...prev, ...processedItems]);
-            setSkip((prev) => prev + ITEMS_PER_PAGE);
           }
 
           if (processedItems.length < ITEMS_PER_PAGE) {
@@ -155,24 +154,27 @@ export const useTemplateItems = (contractAddress: string, dict: any) => {
         setLoading(false);
       }
     },
-    [contractAddress, skip, loading, dict]
+    [contractAddress, dict]
   );
 
   const loadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchTemplateItems(false);
+      setSkip((prevSkip) => {
+        fetchTemplateItems(prevSkip, false);
+        return prevSkip + ITEMS_PER_PAGE;
+      });
     }
   }, [fetchTemplateItems, loading, hasMore]);
 
   const refetch = useCallback(() => {
     setSkip(0);
     setHasMore(true);
-    fetchTemplateItems(true);
+    fetchTemplateItems(0, true);
   }, [fetchTemplateItems]);
 
   useEffect(() => {
-    fetchTemplateItems(true);
-  }, [contractAddress]);
+    fetchTemplateItems(0, true);
+  }, [contractAddress, fetchTemplateItems]);
 
   const createTemplate = useCallback(
     async (formData: CreateItemFormData) => {

@@ -32,15 +32,14 @@ export const useChildItems = (
   const context = useContext(AppContext);
 
   const fetchChildItems = useCallback(
-    async (reset = false) => {
+    async (skipValue: number, reset = false) => {
       if (!contractAddress) return;
-      if (loading) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        const currentSkip = reset ? 0 : skip;
+        const currentSkip = reset ? 0 : skipValue;
         const result = await getChildren(
           contractAddress,
           ITEMS_PER_PAGE,
@@ -132,7 +131,6 @@ export const useChildItems = (
             setSkip(ITEMS_PER_PAGE);
           } else {
             setChildItems((prev) => [...prev, ...processedItems]);
-            setSkip((prev) => prev + ITEMS_PER_PAGE);
           }
 
           if (processedItems.length < ITEMS_PER_PAGE) {
@@ -156,24 +154,27 @@ export const useChildItems = (
         setLoading(false);
       }
     },
-    [contractAddress, skip, loading, dict]
+    [contractAddress, dict]
   );
 
   const loadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchChildItems(false);
+      setSkip((prevSkip) => {
+        fetchChildItems(prevSkip, false);
+        return prevSkip + ITEMS_PER_PAGE;
+      });
     }
   }, [fetchChildItems, loading, hasMore]);
 
   const refetch = useCallback(() => {
     setSkip(0);
     setHasMore(true);
-    fetchChildItems(true);
+    fetchChildItems(0, true);
   }, [fetchChildItems]);
 
   useEffect(() => {
-    fetchChildItems(true);
-  }, [contractAddress]);
+    fetchChildItems(0, true);
+  }, [contractAddress, fetchChildItems]);
 
   const createChild = useCallback(
     async (formData: CreateItemFormData, abortController?: AbortController) => {

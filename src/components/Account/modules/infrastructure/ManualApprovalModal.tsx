@@ -73,7 +73,7 @@ export const ManualApprovalModal = ({
           <div className="p-6 border-b border-gris/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-awk uppercase text-oro">
-                manual approvals
+                {dict?.manualApprovals}
               </h2>
               <div
                 onClick={onClose}
