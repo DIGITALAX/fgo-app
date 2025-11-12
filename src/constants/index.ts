@@ -83,12 +83,14 @@ export const NETWORKS = {
 export type NetworkConfig = (typeof NETWORKS)[keyof typeof NETWORKS];
 
 export const DEFAULT_NETWORK =
-  process.env.NODE_ENV === "production"
-    ? NETWORKS.LENS_MAINNET
-    : NETWORKS.LENS_TESTNET;
+  // process.env.NODE_ENV === "production"
+  //   ? 
+    NETWORKS.LENS_MAINNET
+    // : NETWORKS.LENS_TESTNET;
 
 export const getCurrentNetwork = (): NetworkConfig => {
-  const isMainnet = process.env.NEXT_PUBLIC_NETWORK === "mainnet";
+  // const isMainnet = process.env.NEXT_PUBLIC_NETWORK === "mainnet";
+    const isMainnet =true;
   return isMainnet ? NETWORKS.LENS_MAINNET : NETWORKS.LENS_TESTNET;
 };
 
