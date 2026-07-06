@@ -27,7 +27,7 @@ export const AVAILABILITY_LABELS = {
 
 export const LOCALES: string[] = ["en", "es", "pt"];
 
-export const INFURA_GATEWAY: string = "https://thedial.infura-ipfs.io/ipfs/";
+export const INFURA_GATEWAY: string = "https://cdn.digitalax.xyz/ipfs/";
 
 export const AVAILABILITY_OPTIONS = [
   { value: 0, label: "Both Digital & Physical" },

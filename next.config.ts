@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "thedial.infura-ipfs.io",
+        hostname: "cdn.digitalax.xyz",
         pathname: "/ipfs/**",
       },
     ],
@@ -37,8 +37,8 @@ const nextConfig: NextConfig = {
       "base-uri 'self'",
       "frame-ancestors 'self'",
       "object-src 'none'",
-      "img-src 'self' data: blob: https://thedial.infura-ipfs.io",
-      "media-src 'self' data: blob: https://thedial.infura-ipfs.io",
+      "img-src 'self' data: blob: https://cdn.digitalax.xyz",
+      "media-src 'self' data: blob: https://cdn.digitalax.xyz",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline'",
@@ -46,15 +46,14 @@ const nextConfig: NextConfig = {
         "connect-src 'self'",
         "https://rpc.lens.xyz",
         "https://rpc.testnet.lens.dev",
-        "https://thedial.infura-ipfs.io",
-        "https://ipfs.infura.io",
+        "https://cdn.digitalax.xyz",
       ].join(" "),
       "frame-src 'self'",
       "form-action 'self'",
       "upgrade-insecure-requests",
     ].join("; ");
 
-    const allowedOrigins = ["https://thedial.infura-ipfs.io", "*"];
+    const allowedOrigins = ["https://cdn.digitalax.xyz", "*"];
     allowedOrigins.forEach((origin) => {
       headersConfig.push({
         source: "/(.*)",
