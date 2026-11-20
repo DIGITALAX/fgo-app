@@ -9,7 +9,8 @@ import { decryptData } from "@/lib/helpers/encryption";
 import { uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { AppContext } from "@/lib/providers/Providers";
 import { SetStateAction, useCallback, useContext, useState } from "react";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 
 export const isEncryptedDetails = (details: EncryptedData) => {
   if (!details || typeof details !== "object" || Array.isArray(details)) {

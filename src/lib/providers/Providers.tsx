@@ -13,6 +13,7 @@ import {
 } from "@/components/Modals/types";
 import { chains } from "@lens-chain/sdk/viem";
 import { FGOUser, Infrastructure } from "@/components/Account/types";
+import { useNotice } from "@/components/Modals/hooks/useNotice";
 
 const currentNetwork = getCurrentNetwork();
 
@@ -45,7 +46,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     setSuccessData({ message, txHash });
   };
 
+  const { noticeOpen, hideNotice, wasJustBlocked } = useNotice();
+
   const showError = (message: string) => {
+    if (wasJustBlocked(message)) return;
     setErrorData({ message });
   };
 
@@ -64,6 +68,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     hideError,
     successData,
     errorData,
+    noticeOpen,
+    hideNotice,
     fgoUser,
     setFgoUser,
     colorSwitch,

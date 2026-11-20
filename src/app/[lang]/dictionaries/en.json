@@ -661,5 +661,6 @@
   "info": "Fulfillment Info",
   "notes": "Notes",
   "notesPlaceholder": "Any notes?...",
-  "completeStep": "Complete Step"
+  "completeStep": "Complete Step",
+  "contractNotice": "The FGO contracts are being rebuilt. Until the new ones are live, on-chain actions here are switched off. For more details go to"
 }

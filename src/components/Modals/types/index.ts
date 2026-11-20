@@ -27,6 +27,8 @@ export interface AppContextType {
   hideError: () => void;
   successData: SuccessData | null;
   errorData: ErrorData | null;
+  noticeOpen: boolean;
+  hideNotice: () => void;
   fgoUser: FGOUser | null;
   setFgoUser: (e: SetStateAction<FGOUser | null>) => void;
   colorSwitch: boolean;

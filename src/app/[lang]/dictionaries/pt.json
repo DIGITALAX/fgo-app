@@ -661,5 +661,6 @@
   "info": "Informações de Cumprimento",
   "notes": "Notas",
   "notesPlaceholder": "Alguma nota?...",
-  "completeStep": "Completar Etapa"
+  "completeStep": "Completar Etapa",
+  "contractNotice": "Os contratos do FGO estão sendo reconstruídos. Até que os novos estejam ativos, as ações on-chain estão desativadas aqui. Para mais detalhes acesse"
 }

@@ -27,6 +27,18 @@ export const AVAILABILITY_LABELS = {
 
 export const LOCALES: string[] = ["en", "es", "pt"];
 
+export const CONTRACTS_PAUSED: boolean = true;
+export const CONTRACTS_PAUSED_EVENT: string = "fgo-contracts-paused";
+export const NOTICE_STORAGE_KEY: string = "fgo-contract-notice-seen";
+export const NOTICE_URL: string = "https://restore.digitalax.xyz";
+export const NOTICE_URL_LABEL: string = "restore.digitalax.xyz";
+export const BLOCKED_WALLET_ACTIONS: string[] = [
+  "writeContract",
+  "sendTransaction",
+  "deployContract",
+  "sendRawTransaction",
+];
+
 export const INFURA_GATEWAY: string = "https://cdn.digitalax.xyz/ipfs/";
 
 export const AVAILABILITY_OPTIONS = [

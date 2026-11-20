@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useContext, useRef } from "react";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
 import { getCoreContractAddresses } from "@/constants";
 import { getCurrentNetwork } from "@/constants";

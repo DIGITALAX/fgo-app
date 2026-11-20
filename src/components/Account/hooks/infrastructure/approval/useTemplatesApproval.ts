@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useWalletClient, usePublicClient, useAccount } from "wagmi";
+import { usePublicClient, useAccount } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { getAllTemplates } from "@/lib/subgraph/queries/getApprovals";
 import { AppContext } from "@/lib/providers/Providers";
 import { ABIS } from "@/abis";

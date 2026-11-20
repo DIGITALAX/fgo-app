@@ -1,5 +1,6 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { AppContext } from "@/lib/providers/Providers";
 import { getCoreContractAddresses, getCurrentNetwork } from "@/constants";
 import { CONTRACT_FUNCTIONS } from "@/constants/contracts";

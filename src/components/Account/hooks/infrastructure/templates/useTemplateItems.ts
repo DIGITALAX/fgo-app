@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import { getTemplates } from "@/lib/subgraph/queries/getItems";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
-import { usePublicClient, useWalletClient, useAccount } from "wagmi";
+import { usePublicClient, useAccount } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { parseEther } from "viem";
 import { getABI } from "@/abis";
 import { CreateItemFormData } from "../../../types";

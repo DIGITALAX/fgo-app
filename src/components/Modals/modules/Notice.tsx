@@ -1,0 +1,78 @@
+import { useContext } from "react";
+import { AppContext } from "@/lib/providers/Providers";
+import Image from "next/image";
+import { NOTICE_URL, NOTICE_URL_LABEL } from "@/constants";
+
+export const Notice = ({ dict }: { dict: any }) => {
+  const context = useContext(AppContext);
+
+  if (!context?.noticeOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+      <div className="relative max-w-md w-full max-h-[90vh] flex flex-col bg-black">
+        <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+          <Image
+            src={"/images/borderblue.png"}
+            draggable={false}
+            objectFit="fill"
+            fill
+            alt="border"
+          />
+        </div>
+        <div className="relative z-10 p-6 flex-shrink-0">
+          <div className="flex items-center justify-end">
+            <div
+              onClick={context.hideNotice}
+              className="relative cursor-pointer hover:opacity-80 transition-opacity w-4 h-4"
+            >
+              <Image
+                src={"/images/plug.png"}
+                draggable={false}
+                fill
+                objectFit="contain"
+                alt="close"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex-1 min-h-0 overflow-y-auto px-6">
+          <div className="relative flex flex-col mb-6">
+            <p className="text-gris font-chicago text-sm leading-relaxed break-words">
+              {dict?.contractNotice}{" "}
+              <a
+                href={NOTICE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ama underline hover:opacity-80 transition-opacity"
+              >
+                {NOTICE_URL_LABEL}
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+
+        <div className="relative z-10 px-6 pb-6 flex-shrink-0">
+          <div className="flex justify-end">
+            <button onClick={context.hideNotice} className="relative">
+              <div className="text-xs text-gris font-chicago relative lowercase flex px-4 py-2 bg-offNegro justify-center items-center cursor-pointer">
+                <div className="absolute z-0 top-0 left-0 w-full h-full flex">
+                  <Image
+                    src={"/images/borderoro2.png"}
+                    draggable={false}
+                    objectFit="fill"
+                    fill
+                    alt="border"
+                  />
+                </div>
+                <span className="relative z-10">{dict?.close}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,6 +1,8 @@
 import { INFURA_GATEWAY } from "@/constants";
+import { blockIfPaused } from "@/lib/helpers/contractsPaused";
 
 export const uploadImageToIPFS = async (file: File): Promise<string> => {
+  blockIfPaused();
   const formData = new FormData();
   formData.append("file", file);
 
@@ -18,6 +20,7 @@ export const uploadImageToIPFS = async (file: File): Promise<string> => {
 };
 
 export const uploadJSONToIPFS = async (json: object): Promise<string> => {
+  blockIfPaused();
   const response = await fetch("/api/ipfs", {
     method: "POST",
     headers: {

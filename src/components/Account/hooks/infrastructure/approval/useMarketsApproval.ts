@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { useWalletClient, usePublicClient, useAccount } from "wagmi";
+import { usePublicClient, useAccount } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { getAllMarkets } from "@/lib/subgraph/queries/getApprovals";
 import { MarketContract, Parent } from "../../../types";
 import { AppContext } from "@/lib/providers/Providers";

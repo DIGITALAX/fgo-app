@@ -29,6 +29,18 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@x402/core": false,
+      "@x402/evm": false,
+      "@x402/svm": false,
+      "@x402/extensions": false,
+      "@x402/express": false,
+      "@x402/fetch": false,
+    };
+    return config;
+  },
   async headers() {
     let headersConfig: any = [];
 
@@ -41,7 +53,9 @@ const nextConfig: NextConfig = {
       "media-src 'self' data: blob: https://cdn.digitalax.xyz",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline'",
+      process.env.NODE_ENV === "development"
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+        : "script-src 'self' 'unsafe-inline'",
       [
         "connect-src 'self'",
         "https://rpc.lens.xyz",

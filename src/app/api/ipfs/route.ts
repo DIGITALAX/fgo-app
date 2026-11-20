@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
+import { CONTRACTS_PAUSED } from "@/constants";
 
 const auth = "Bearer " + process.env.IPFS_ADD_KEY;
 
 export async function POST(req: Request) {
+  if (CONTRACTS_PAUSED) {
+    return NextResponse.json({ error: "Uploads are paused" }, { status: 503 });
+  }
   try {
     const contentType = req.headers.get("content-type") || "";
     let body;

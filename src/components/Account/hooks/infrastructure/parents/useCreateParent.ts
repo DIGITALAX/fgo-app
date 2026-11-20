@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { usePublicClient, useWalletClient, useAccount } from "wagmi";
+import { usePublicClient, useAccount } from "wagmi";
+import { useWalletClient } from "@/lib/hooks/useWalletClient";
 import { parseEther } from "viem";
 import { ABIS } from "@/abis";
 import { uploadImageToIPFS, uploadJSONToIPFS } from "@/lib/helpers/ipfs";
